@@ -14,9 +14,6 @@ group :assets do
 end
 
 group :development do
-  gem 'haml2slim', '>= 0.4.6'
-  gem 'haml-rails', '>= 0.4'
-  gem 'html2haml', '>= 1.0.1'
   gem 'guard-bundler', '>= 1.0.0'
   gem 'guard-cucumber', '>= 1.4.0'
   gem 'guard-rails', '>= 0.4.0'

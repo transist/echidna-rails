@@ -6,6 +6,7 @@ gem 'mongoid', '>= 3.1.2'
 gem 'slim', '>= 2.0.0.pre.6'
 gem 'devise', '>= 2.2.3'
 gem 'figaro', '>= 0.6.3'
+gem 'simple_form'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

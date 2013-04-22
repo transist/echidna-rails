@@ -3,11 +3,15 @@ class Group
 
   field :age_range, type: String
   field :gender, type: String
-  field :city, type: String
+  field :tier_id, type: String
 
   belongs_to :user
 
+  def tier
+    Tier.find(tier_id)
+  end
+
   def to_s
-    '%s %s %s' % [city, age_range, gender]
+    '%s %s %s' % [tier['name'], age_range, gender]
   end
 end

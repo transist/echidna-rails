@@ -1,0 +1,7 @@
+h3 New group
+
+= simple_form_for @group do |f|
+  = f.select :tier_id, Tier.all.map {|tier| [tier['name'], tier['id']] }
+  = f.select :age_range, %w(18- 24- 35- 40+ All)
+  = f.select :gender, %w(Men Women Both)
+  = f.button :submit

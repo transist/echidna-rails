@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  def index
-    @users = User.all
+  def dashboard
+    @groups = current_user.groups
   end
 end

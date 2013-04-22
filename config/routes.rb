@@ -1,8 +1,10 @@
 EchidnaUi::Application.routes.draw do
+  resources :groups
+
   authenticated :user do
-    root :to => 'home#index'
+    root to: 'home#dashboard'
   end
-  root :to => "home#index"
+  root to: 'home#index'
   devise_for :users
   resources :users
 end

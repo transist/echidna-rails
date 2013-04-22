@@ -1,0 +1,7 @@
+h3 Dashboard
+
+= link_to 'New group', new_group_path
+
+- @groups.each do |group|
+  p
+    | Group: #{link_to group, group}

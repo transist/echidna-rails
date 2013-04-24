@@ -4,4 +4,5 @@ h3 Dashboard
 
 - @groups.each do |group|
   p
-    | Group: #{link_to group, group}
+    ' Group:
+    = link_to group, trends_group_path(group)

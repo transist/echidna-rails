@@ -3,6 +3,12 @@ class GroupsController < InheritedResources::Base
     create! { root_url }
   end
 
+  def trends
+    params[:time] ||= Time.now
+    @z_scores = resource.z_scores(params[:time])
+    show!
+  end
+
   protected
 
   def begin_of_association_chain

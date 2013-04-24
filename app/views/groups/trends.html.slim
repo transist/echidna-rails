@@ -1,0 +1,21 @@
+h3 Trends for group #{@group}
+
+- (1..7).to_a.reverse.each do |i|
+  span=' link_to "#{i} days ago", time: i.days.ago
+  '|
+span=' link_to 'today'
+
+- if @z_scores.present?
+  table
+    thead
+      tr
+        th Keyword
+        th Z-score
+    tbody
+      - @z_scores.each do |e|
+        tr
+          td= e.first
+          td= e.last
+
+- else
+  p Not available

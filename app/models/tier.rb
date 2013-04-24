@@ -1,5 +1,5 @@
 class Tier
-  TIERS_URL = 'http://localhost:62306/tiers'
+  TIERS_URL = 'http://echidna.transi.st:62300/tiers'
 
   def self.all
     @tiers ||= begin

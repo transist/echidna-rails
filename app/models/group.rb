@@ -1,7 +1,7 @@
 class Group
   include Mongoid::Document
 
-  GET_GROUP_ID_URL = 'http://localhost:62306/group_id'
+  GET_GROUP_ID_URL = 'http://echidna.transi.st:62300/group_id'
   Z_SCORES_URL = 'http://echidna.transi.st:62300/z-scores'
 
   field :age_range, type: String

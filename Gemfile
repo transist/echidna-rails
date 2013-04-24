@@ -27,6 +27,10 @@ group :development do
   gem 'quiet_assets', '>= 1.0.2'
   gem 'better_errors', '>= 0.7.2'
   gem 'binding_of_caller', '>= 0.7.1'
+  gem 'awesome_print'
+  gem 'pry'
+  gem 'pry-stack_explorer'
+  gem 'pry-nav'
 end
 
 group :test do

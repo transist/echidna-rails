@@ -3,7 +3,7 @@ h3 New group
 = simple_form_for @group do |f|
   p
     = f.label :cities
-    = f.select :cities, City.all.map(&:name), {}, multiple: true, size: 10
+    = f.collection_select :cities, City.all, :name, :name, {}, multiple: true, size: 10
   p
     = f.label :start_birth_year
     = f.select :start_birth_year, (1947..2010).to_a
@@ -12,5 +12,5 @@ h3 New group
     = f.select :end_birth_year, (1953..2013).to_a
   p
     = f.label :gender
-    = f.select :gender, %w(Men Women Both)
+    = f.select :gender, %w(Male Female Both)
   p= f.button :submit

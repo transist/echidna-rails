@@ -7,12 +7,12 @@ class Group
   field :start_birth_year, type: Integer
   field :end_birth_year, type: Integer
   field :gender, type: String
+  field :cities, type: Array
 
   validates :gender, inclusion: { in: %w(Male Female Both) }
 
   belongs_to :user
   has_many :persons
-  has_many :cities
 
   def tier
     Tier.find(tier_id)

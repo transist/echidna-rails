@@ -41,6 +41,6 @@ class Group
   end
 
   def to_s
-    '%s %s %s' % [tier['name'], age_range, gender]
+    '%s - %s %s %s' % [start_birth_year, end_birth_year, gender, cities.join(',')]
   end
 end

@@ -7,7 +7,7 @@ class Group
   field :start_birth_year, type: Integer
   field :end_birth_year, type: Integer
   field :gender, type: String
-  field :cities, type: Array
+  field :cities, type: Array # ["上海", "北京"]
 
   validates :gender, inclusion: { in: %w(Male Female Both) }
 

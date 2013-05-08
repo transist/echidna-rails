@@ -1,7 +1,13 @@
 h3 New group
 
 = simple_form_for @group do |f|
-  = f.select :tier_id, Tier.all.map {|tier| [tier['name'], tier['id']] }
-  = f.select :age_range, %w(18- 24- 35- 40+ All)
-  = f.select :gender, %w(Men Women Both)
-  = f.button :submit
+  p
+    = f.label :start_birth_year
+    = f.select :start_birth_year, (1947..2010).to_a
+  p
+    = f.label :end_birth_year
+    = f.select :end_birth_year, (1953..2013).to_a
+  p
+    = f.label :gender
+    = f.select :gender, %w(Men Women Both)
+  p= f.button :submit

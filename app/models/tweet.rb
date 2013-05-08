@@ -4,5 +4,7 @@ class Tweet
   field :content
   field :url
 
+  validates :content, :url, presence: true
+
   belongs_to :person
 end

@@ -8,7 +8,9 @@ class Group
   field :end_birth_year, type: Integer
   field :gender, type: String
 
-  has_many :person
+  validates :gender, inclusion: { in: %w(Men Women Both) }
+
+  has_many :persons
   has_many :cities
 
   def tier

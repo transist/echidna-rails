@@ -1,5 +1,7 @@
 require 'spec_helper'
 
 describe Group do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should validate_inclusions_of(:gender).to_allow(%w(Men Women Both)) }
+  it { should have_many :persons }
+  it { should have_many :cities }
 end

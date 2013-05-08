@@ -16,6 +16,11 @@ gem 'sidekiq_status'
 gem 'kiqstand'
 gem 'sinatra', '>= 1.3.0', require: nil
 
+gem 'oauth2', git: 'git://github.com/rainux/oauth2'
+gem 'tencent-weibo', git: 'git://github.com/rainux/tencent-weibo'
+gem 'rufus-scheduler', git: 'git://github.com/rainux/rufus-scheduler'
+gem 'sidekiq', '~> 2.11.2'
+
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'

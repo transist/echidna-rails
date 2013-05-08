@@ -15,7 +15,7 @@ if defined?(Bundler)
   # Bundler.require(:default, :assets, Rails.env)
 end
 
-module EchidnaUi
+module Echidna
   class Application < Rails::Application
     config.generators do |g|
       g.helper false

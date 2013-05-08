@@ -1,0 +1,4 @@
+tencent:
+  key: '801353931'
+  secret: '9f3314ad6cba8548afca61deccf85c27'
+  redirect_uri: 'http://127.0.0.1:3000/agents/create'

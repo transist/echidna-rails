@@ -4,11 +4,12 @@ class Group
   GET_GROUP_ID_URL = 'http://echidna.transi.st:62300/group_id'
   Z_SCORES_URL = 'http://echidna.transi.st:62300/z-scores'
 
-  field :age_range, type: String
+  field :start_birth_year, type: Integer
+  field :end_birth_year, type: Integer
   field :gender, type: String
-  field :tier_id, type: String
 
-  belongs_to :user
+  has_many :person
+  has_many :cities
 
   def tier
     Tier.find(tier_id)

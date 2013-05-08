@@ -4,4 +4,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-EchidnaUi::Application.load_tasks
+Echidna::Application.load_tasks

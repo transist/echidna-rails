@@ -2,6 +2,9 @@ h3 New group
 
 = simple_form_for @group do |f|
   p
+    = f.label :cities
+    = f.select :cities, City.all.map(&:name), {}, multiple: true, size: 10
+  p
     = f.label :start_birth_year
     = f.select :start_birth_year, (1947..2010).to_a
   p

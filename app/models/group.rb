@@ -8,8 +8,9 @@ class Group
   field :end_birth_year, type: Integer
   field :gender, type: String
 
-  validates :gender, inclusion: { in: %w(Men Women Both) }
+  validates :gender, inclusion: { in: %w(Male Female Both) }
 
+  belongs_to :user
   has_many :persons
   has_many :cities
 

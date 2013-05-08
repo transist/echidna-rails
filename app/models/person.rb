@@ -6,7 +6,7 @@ class Person
   field :birth_year, type: Integer
   field :gender, type: String
 
-  validates :gender, inclusion: { in: %w(Men Women Both) }
+  validates :gender, inclusion: { in: %w(Male Female Both) }
 
   has_many :tweets
   belongs_to :city

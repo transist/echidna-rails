@@ -21,18 +21,13 @@ class TencentAgent
   end
 
   private
-  def weibo
-    @weibo ||= begin
-      config = YAML::load(File.open(Rails.root.join("config/spider.yml")))
-      
-      Tencent::Weibo::Client.new(
-        config['tencent']['key'], config['tencent']['secret'], config['tencent']['redirect_uri']
-      )
-    end
-  end
 
   def access_token
-    @access_token ||= Tencent::Weibo::AccessToken.from_hash(weibo, attributes)
+    @weibo ||= Tencent::Weibo::Client.new(
+      ENV['ECHIDNA_SPIDER_TENCENT_APP_KEY'], ENV['ECHIDNA_SPIDER_TENCENT_APP_SECRET'],
+      ENV['ECHIDNA_SPIDER_TENCENT_REDIRECT_URI']
+    )
+    @access_token ||= Tencent::Weibo::AccessToken.from_hash(@weibo, attributes)
   end
 
   def log(message)

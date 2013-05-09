@@ -22,5 +22,9 @@ describe HourlyStat do
     it "checks history for only 1 hour" do
       expect(HourlyStat.top_trends(1, hours: 1)).to eq %w(word1 word2 word3)
     end
+
+    it "query 2 days data" do
+      expect(HourlyStat.top_trends(1, hours: 20)).to eq %w()
+    end
   end
 end

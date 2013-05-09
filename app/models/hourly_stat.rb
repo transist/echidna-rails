@@ -6,8 +6,7 @@ class HourlyStat
   field :date, type: Date
   field :stats, type: Array # [{hour: 0, count: 1}, {hour: 1, count: 2}, {hour: 10, count: 0}]
 
-  def self.top_trends(options)
-    group_id = options[:group_id]
+  def self.top_trends(group_id, options={})
     hour = Time.now.hour
     HourlyStat.where(group_id: group_id, date: Date.today).sort_by { |hourly_stat|
       history_stats = []

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe HourlyStat do
-  context "top_trends" do
+  context ".top_trends" do
     before do
       FactoryGirl.create(:hourly_stat,
         word: "word1",
@@ -85,7 +85,11 @@ describe HourlyStat do
     end
 
     it "returns word1, word3 and word2 for group 1" do
-      expect(HourlyStat.top_trends(group_id: 1)).to eq %w(word1 word3 word2)
+      expect(HourlyStat.top_trends(1)).to eq %w(word1 word3 word2)
+    end
+
+    it "returns nothing for group 2" do
+      expect(HourlyStat.top_trends(2)).to eq []
     end
   end
 end

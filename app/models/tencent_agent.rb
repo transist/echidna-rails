@@ -1,5 +1,6 @@
 class TencentAgent
   include Mongoid::Document
+  include UsersSampling
 
   field :openid, type: String
   field :name, type: String

@@ -1,5 +1,3 @@
-require_relative 'users_gathering'
-
 class TencentAgent
   module TweetsGathering
     extend ActiveSupport::Concern

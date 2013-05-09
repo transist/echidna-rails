@@ -6,9 +6,12 @@
 # GMAIL_USERNAME: Your_Gmail_Username
 # makes 'Your_Gmail_Username' available as ENV["GMAIL_USERNAME"]
 # Add application configuration variables here, as shown below.
-#
+
+# Used for ActionMalier smtp settings
 GMAIL_USERNAME: Your_Username
 GMAIL_PASSWORD: Your_Password
+
+# Seed data for first user
 ADMIN_NAME: First User
 ADMIN_EMAIL: user@example.com
 ADMIN_PASSWORD: changeme

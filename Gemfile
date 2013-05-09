@@ -24,6 +24,7 @@ group :development do
   gem 'guard-cucumber', '>= 1.4.0'
   gem 'guard-rails', '>= 0.4.0'
   gem 'guard-rspec', '>= 2.5.2'
+  gem 'guard-sidekiq'
   gem 'rb-inotify', '>= 0.9.0', require: false
   gem 'rb-fsevent', '>= 0.9.3', require: false
   gem 'rb-fchange', '>= 0.0.6', require: false

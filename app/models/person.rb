@@ -1,4 +1,5 @@
 class Person
+  GENDERS = %w(male female both)
   include Mongoid::Document
 
   field :target_source, type: String
@@ -6,7 +7,7 @@ class Person
   field :birth_year, type: Integer
   field :gender, type: String
 
-  validates :gender, inclusion: { in: %w(Men Women Both) }
+  validates :gender, inclusion: { in: GENDERS }
 
   has_many :tweets
   belongs_to :city

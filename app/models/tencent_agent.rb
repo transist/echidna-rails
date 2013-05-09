@@ -20,13 +20,18 @@ class TencentAgent
     log_unexpected_error(e)
   end
 
+  def self.weibo_client
+    Tencent::Weibo::Client.new(
+      ENV['ECHIDNA_SPIDER_TENCENT_APP_KEY'],
+      ENV['ECHIDNA_SPIDER_TENCENT_APP_SECRET'],
+      ENV['ECHIDNA_SPIDER_TENCENT_REDIRECT_URI']
+    )
+  end
+
   private
 
   def access_token
-    @weibo ||= Tencent::Weibo::Client.new(
-      ENV['ECHIDNA_SPIDER_TENCENT_APP_KEY'], ENV['ECHIDNA_SPIDER_TENCENT_APP_SECRET'],
-      ENV['ECHIDNA_SPIDER_TENCENT_REDIRECT_URI']
-    )
+    @weibo ||= self.class.weibo_client
     @access_token ||= Tencent::Weibo::AccessToken.from_hash(@weibo, attributes)
   end
 

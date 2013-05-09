@@ -19,6 +19,9 @@ Echidna::Application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
-  get 'agents/new'
-  get 'agents/create'
+  namespace :tencent do
+    resources :agents do
+      get 'callback', on: :collection
+    end
+  end
 end

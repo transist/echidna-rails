@@ -9,7 +9,7 @@ class Group
   field :gender, type: String
   field :cities, type: Array # ["上海", "北京"]
 
-  validates :gender, inclusion: { in: %w(Male Female Both) }
+  validates :gender, inclusion: { in: Person::GENDERS }
 
   belongs_to :user
   has_many :persons

@@ -12,5 +12,5 @@ h3 New group
     = f.select :end_birth_year, (1953..2013).to_a
   p
     = f.label :gender
-    = f.select :gender, %w(Male Female Both)
+    = f.select :gender, Person::GENDERS
   p= f.button :submit

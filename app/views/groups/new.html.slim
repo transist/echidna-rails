@@ -2,8 +2,8 @@ h3 New group
 
 = simple_form_for @group do |f|
   p
-    = f.label :cities
-    = f.collection_select :cities, City.all, :name, :name, {}, multiple: true, size: 10
+    = f.label :city
+    = f.select :city, City.all.collect { |city| [city.name, city.id] }
   p
     = f.label :start_birth_year
     = f.select :start_birth_year, (1947..2010).to_a

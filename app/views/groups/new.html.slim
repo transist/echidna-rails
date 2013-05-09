@@ -12,5 +12,5 @@ h3 New group
     = f.select :end_birth_year, (1953..2013).to_a
   p
     = f.label :gender
-    = f.select :gender, Person::GENDERS
+    = f.select :gender, Person::GENDERS.map { |gender| [gender.capitalize, gender] }
   p= f.button :submit

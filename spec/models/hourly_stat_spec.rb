@@ -91,5 +91,9 @@ describe HourlyStat do
     it "returns nothing for group 2" do
       expect(HourlyStat.top_trends(2)).to eq []
     end
+
+    it "checks history for only 1 hour" do
+      expect(HourlyStat.top_trends(1, hours: 1)).to eq %w(word1 word2 word3)
+    end
   end
 end

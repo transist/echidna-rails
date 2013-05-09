@@ -21,6 +21,8 @@ gem 'tencent-weibo', git: 'git://github.com/rainux/tencent-weibo'
 gem 'rufus-scheduler', git: 'git://github.com/rainux/rufus-scheduler'
 gem 'sidekiq', '~> 2.11.2'
 
+gem 'syslog-ml-logger'
+
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'

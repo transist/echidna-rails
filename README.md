@@ -3,6 +3,14 @@ Install Prerequisites
 
 * MongoDB.
 
+Setup
+-----
+
+    cp config/application.example.yml config/application.yml
+
+* Tweak configuration settings in `config/application.yml`.
+* Run `rake db:setup`.
+
 Load Rails Development Environment
 ----------------------------------
 

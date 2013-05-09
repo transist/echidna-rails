@@ -31,6 +31,9 @@ group :development do
   gem 'pry'
   gem 'pry-stack_explorer'
   gem 'pry-nav'
+  gem 'capistrano', require: nil
+  gem 'capistrano_colors', require: nil
+  gem 'rvm-capistrano', require: nil
 end
 
 group :test do

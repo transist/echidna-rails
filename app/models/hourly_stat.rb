@@ -2,18 +2,19 @@ class HourlyStat
   include Mongoid::Document
 
   field :word
-  field :group_id, type: Integer
   field :date, type: Date
   field :stats, type: Array # [{hour: 0, count: 1}, {hour: 1, count: 2}, {hour: 10, count: 0}]
 
+  belongs_to :group
+
   def self.top_trends(group_id, options={})
-    current_time = Time.now
+    current_time = Time.now.beginning_of_hour
     hours = options[:hours] || 7
     start_time = current_time.ago(hours.hours)
 
     history_stats = {}
     current_stats = {}
-    HourlyStat.where(group_id: group_id).lte(date: current_time.to_date).gte(date: start_time.to_date).each do |hourly_stat|
+    self.where(group_id: group_id).lte(date: current_time.to_date).gte(date: start_time.to_date).each do |hourly_stat|
       word = hourly_stat.word
       time = hourly_stat.date.to_time
       hourly_stat.stats.each do |stat|

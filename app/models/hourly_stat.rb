@@ -11,20 +11,24 @@ class HourlyStat
     hours = options[:hours] || 7
     start_time = current_time.ago(hours.hours)
 
-    HourlyStat.where(group_id: group_id).lte(date: current_time.to_date).gte(date: start_time.to_date).sort_by { |hourly_stat|
-      history_stats = []
-      current_stat = 0
+    history_stats = {}
+    current_stats = {}
+    HourlyStat.where(group_id: group_id).lte(date: current_time.to_date).gte(date: start_time.to_date).each do |hourly_stat|
+      word = hourly_stat.word
       time = hourly_stat.date.to_time
       hourly_stat.stats.each do |stat|
         time = time.change(hour: stat["hour"])
         stat_count = stat["count"]
         if time >= start_time && time < current_time
-          history_stats << stat_count
+          history_stats[word] ||= []
+          history_stats[word] << stat_count
         elsif time == current_time
-          current_stat = stat_count
+          current_stats[word] = stat_count
         end
       end
-      FAZScore.new(0.5, history_stats).score(current_stat)
-    }.map(&:word)
+    end
+    current_stats.map { |word, current_stat|
+      [word, FAZScore.new(0.5, history_stats[word]).score(current_stat)]
+    }.sort_by { |stat| -stat[1] }
   end
 end

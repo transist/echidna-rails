@@ -14,7 +14,7 @@ class HourlyStat
 
     history_stats = {}
     current_stats = {}
-    self.where(group_id: group_id).lte(date: current_time.to_date).gte(date: start_time.to_date).each do |hourly_stat|
+    self.where(group_id: group_id).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
       word = hourly_stat.word
       time = hourly_stat.date.to_time
       hourly_stat.stats.each do |stat|

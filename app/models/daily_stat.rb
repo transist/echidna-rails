@@ -14,7 +14,7 @@ class DailyStat
 
     history_stats = {}
     current_stats = {}
-    self.where(group_id: group_id).lte(date: current_time.to_date.beginning_of_month).gte(date: start_time.to_date.beginning_of_month).each do |daily_stat|
+    self.where(group_id: group_id).lte(date: current_time.to_date.beginning_of_month).gte(date: start_time.to_date.beginning_of_month).asc(:date).each do |daily_stat|
       word = daily_stat.word
       time = daily_stat.date.to_time
       daily_stat.stats.each do |stat|

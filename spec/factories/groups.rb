@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :group do
+    gender 'female'
   end
 end

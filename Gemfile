@@ -25,6 +25,7 @@ group :development do
   gem 'guard-rails', '>= 0.4.0'
   gem 'guard-rspec', '>= 2.5.2'
   gem 'guard-sidekiq'
+  gem 'guard-zeus'
   gem 'rb-inotify', '>= 0.9.0', require: false
   gem 'rb-fsevent', '>= 0.9.3', require: false
   gem 'rb-fchange', '>= 0.0.6', require: false
@@ -34,6 +35,7 @@ group :development do
   gem 'capistrano', require: nil
   gem 'capistrano_colors', require: nil
   gem 'rvm-capistrano', require: nil
+  gem 'zeus', require: nil
 end
 
 group :test do

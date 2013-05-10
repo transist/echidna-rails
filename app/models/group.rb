@@ -12,7 +12,7 @@ class Group
 
   belongs_to :user
   belongs_to :city
-  has_many :persons
+  has_and_belongs_to_many :people
 
   def tier
     Tier.find(tier_id)

@@ -31,10 +31,6 @@ group :development do
   gem 'quiet_assets', '>= 1.0.2'
   gem 'better_errors', '>= 0.7.2'
   gem 'binding_of_caller', '>= 0.7.1'
-  gem 'awesome_print'
-  gem 'pry'
-  gem 'pry-stack_explorer'
-  gem 'pry-nav'
   gem 'capistrano', require: nil
   gem 'capistrano_colors', require: nil
   gem 'rvm-capistrano', require: nil
@@ -50,6 +46,10 @@ group :test do
 end
 
 group :development, :test do
+  gem 'awesome_print'
+  gem 'pry'
+  gem 'pry-stack_explorer'
+  gem 'pry-nav'
   gem 'rspec-rails', '>= 2.12.2'
   gem 'factory_girl_rails', '>= 4.2.0'
 end

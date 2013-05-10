@@ -16,7 +16,7 @@ class HourlyStat
       current_stat = 0
       time = hourly_stat.date.to_time
       hourly_stat.stats.each do |stat|
-        time.change(hour: stat["hour"])
+        time = time.change(hour: stat["hour"])
         stat_count = stat["count"]
         if time >= start_time && time < current_time
           history_stats << stat_count

@@ -9,6 +9,7 @@ gem 'figaro', '>= 0.6.3'
 gem 'inherited_resources'
 gem 'simple_form'
 gem 'faraday'
+gem 'fazscore', github: 'transist/fazscore'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
@@ -17,6 +18,7 @@ group :assets do
 end
 
 group :development do
+  gem 'thin'
   gem 'guard-bundler', '>= 1.0.0'
   gem 'guard-cucumber', '>= 1.4.0'
   gem 'guard-rails', '>= 0.4.0'
@@ -43,6 +45,7 @@ group :test do
   gem 'cucumber-rails', '>= 1.3.1', require: false
   gem 'launchy', '>= 2.2.0'
   gem 'capybara', '>= 2.0.3'
+  gem 'timecop'
 end
 
 group :development, :test do

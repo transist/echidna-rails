@@ -31,13 +31,14 @@ class Group
   end
 
   def z_scores(time)
-    response = Faraday.get(
-      Z_SCORES_URL,
-      interval: :day,
-      time: time,
-      group_id: get_group_id
-    )
-    MultiJson.load(response.body)[get_group_id]
+    DailyStat.top_trends(self.id)
+    #response = Faraday.get(
+      #Z_SCORES_URL,
+      #interval: :day,
+      #time: time,
+      #group_id: get_group_id
+    #)
+    #MultiJson.load(response.body)[get_group_id]
   end
 
   def to_s

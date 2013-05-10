@@ -11,7 +11,7 @@ City.delete_all
 User.delete_all
 
 puts 'DEFAULT USERS'
-user = User.create! :name => ENV['ADMIN_NAME'].dup, :email => ENV['ADMIN_EMAIL'].dup, :password => ENV['ADMIN_PASSWORD'].dup, :password_confirmation => ENV['ADMIN_PASSWORD'].dup
+user = User.create! :name => "Admin", :email => "admin@admin.com", :password => "administrator", :password_confirmation => "administrator"
 puts 'user: ' << user.name
 
 ["北京", "上海", "广州", "深圳", "天津", "重庆"].each do |city_name|

@@ -76,77 +76,84 @@ module Support
     end
 
     def prepare_daily_stats
+      date = Date.today.ago(3.months).beginning_of_month
       FactoryGirl.create(:daily_stat,
         word: "word1",
         group_id: 1,
-        date: Date.today.ago(3.months).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i} }
       )
       FactoryGirl.create(:daily_stat,
         word: "word2",
         group_id: 1,
-        date: Date.today.ago(3.months).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i} }
       )
       FactoryGirl.create(:daily_stat,
         word: "word3",
         group_id: 1,
-        date: Date.today.ago(3.months).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i} }
       )
+
+      date = Date.today.ago(2.months).beginning_of_month
       FactoryGirl.create(:daily_stat,
         word: "word1",
         group_id: 1,
-        date: Date.today.ago(2.months).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i * 2} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i * 2} }
       )
       FactoryGirl.create(:daily_stat,
         word: "word2",
         group_id: 1,
-        date: Date.today.ago(2.months).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i} }
       )
       FactoryGirl.create(:daily_stat,
         word: "word3",
         group_id: 1,
-        date: Date.today.ago(2.months).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i * 4} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i * 4} }
       )
+
+      date = Date.today.ago(1.month).beginning_of_month
       FactoryGirl.create(:daily_stat,
         word: "word1",
         group_id: 1,
-        date: Date.today.ago(1.month).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i * 6} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i * 6} }
       )
       FactoryGirl.create(:daily_stat,
         word: "word2",
         group_id: 1,
-        date: Date.today.ago(1.month).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i} }
       )
       FactoryGirl.create(:daily_stat,
         word: "word3",
         group_id: 1,
-        date: Date.today.ago(1.month).beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i * 8} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i * 8} }
       )
+
+      date = Date.today.beginning_of_month
       FactoryGirl.create(:daily_stat,
         word: "word1",
         group_id: 1,
-        date: Date.today.beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i * 10} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i * 10} }
       )
       FactoryGirl.create(:daily_stat,
         word: "word2",
         group_id: 1,
-        date: Date.today.beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i} }
       )
       FactoryGirl.create(:daily_stat,
         word: "word3",
         group_id: 1,
-        date: Date.today.beginning_of_month,
-        stats: (1..31).map { |i| {day: i, count: i * 12} }
+        date: date,
+        stats: (1..Time.days_in_month(date.month, date.year)).map { |i| {day: i, count: i * 12} }
       )
     end
   end

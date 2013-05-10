@@ -1,4 +1,4 @@
-EchidnaUi::Application.routes.draw do
+Echidna::Application.routes.draw do
   resources :groups do
     member do
       get :trends

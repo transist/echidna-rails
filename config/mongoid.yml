@@ -5,7 +5,7 @@ development:
     default:
       # Defines the name of the default database that Mongoid can connect to.
       # (required).
-      database: echidna_ui_development
+      database: echidna_development
       # Provides the hosts the default session can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
@@ -69,7 +69,7 @@ development:
 test:
   sessions:
     default:
-      database: echidna_ui_test
+      database: echidna_test
       hosts:
         - localhost:27017
       options:
@@ -78,3 +78,10 @@ test:
         # low amounts for fast failures.
         max_retries: 1
         retry_interval: 0
+
+production:
+  sessions:
+    default:
+      database: echidna_production
+      hosts:
+        - localhost:27017

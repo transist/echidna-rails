@@ -7,11 +7,11 @@ class Group
   field :start_birth_year, type: Integer
   field :end_birth_year, type: Integer
   field :gender, type: String
-  field :cities, type: Array # ["上海", "北京"]
 
   validates :gender, inclusion: { in: Person::GENDERS }
 
   belongs_to :user
+  belongs_to :city
   has_many :persons
 
   def tier
@@ -41,6 +41,6 @@ class Group
   end
 
   def to_s
-    '%s - %s %s %s' % [start_birth_year, end_birth_year, gender, cities.join(',')]
+    '%s - %s %s %s' % [start_birth_year, end_birth_year, gender, city.name]
   end
 end

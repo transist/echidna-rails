@@ -3,7 +3,7 @@ require 'spec_helper'
 describe HourlyStat do
   it { should belong_to :group }
 
-  context ".top_trends" do
+  describe ".top_trends" do
     before do
       Timecop.freeze(Time.now.change(hour: 10))
       prepare_hourly_stats

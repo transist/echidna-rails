@@ -3,7 +3,7 @@ require 'spec_helper'
 describe DailyStat do
   it { should belong_to :group }
 
-  context ".top_trends" do
+  describe ".top_trends" do
     before do
       Timecop.freeze(Time.now.change(day: 10))
       prepare_daily_stats

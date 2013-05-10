@@ -29,7 +29,7 @@ class DailyStat
       end
     end
     current_stats.map { |word, current_stat|
-      [word, FAZScore.new(0.5, history_stats[word]).score(current_stat)]
-    }.sort_by { |stat| -stat[1] }
+      {word: word, z_score: FAZScore.new(0.5, history_stats[word]).score(current_stat)}
+    }.sort_by { |stat| -stat[:z_score] }
   end
 end

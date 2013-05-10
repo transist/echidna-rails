@@ -34,26 +34,13 @@ end
 puts 'Cities created'
 
 
-birth_years_data = [
-  {start_birth_year: 1947, end_birth_year: 1953},
-  {start_birth_year: 1954, end_birth_year: 1960},
-  {start_birth_year: 1961, end_birth_year: 1967},
-  {start_birth_year: 1968, end_birth_year: 1974},
-  {start_birth_year: 1975, end_birth_year: 1981},
-  {start_birth_year: 1982, end_birth_year: 1988},
-  {start_birth_year: 1989, end_birth_year: 1995},
-  {start_birth_year: 1996, end_birth_year: 2002},
-  {start_birth_year: 2003, end_birth_year: 2009},
-  {start_birth_year: 2010, end_birth_year: 2013}
-]
-
 Person::GENDERS.each do |gender|
   City.all.each do |city|
-    birth_years_data.each do |birth_year_data|
+    Person::BIRTH_YEARS.each do |birth_year|
       Group.create!(
         gender: gender, city: city,
-        start_birth_year: birth_year_data[:start_birth_year],
-        end_birth_year: birth_year_data[:end_birth_year]
+        start_birth_year: birth_year[:start],
+        end_birth_year: birth_year[:end]
       )
     end
   end

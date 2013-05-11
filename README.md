@@ -24,3 +24,10 @@ Deploy to Production
 --------------------
 
     cap deploy
+
+Mock DailyStat
+--------------
+
+    rake mock_stats
+
+it will update daily_stats every 5 seconds

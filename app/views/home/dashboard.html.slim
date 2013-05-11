@@ -1,8 +1,8 @@
 h3 Dashboard
 
-= link_to 'New group', new_group_path
+= link_to 'New panel', new_panel_path
 
-- @groups.each do |group|
+- @panels.each do |panel|
   p
-    ' Group:
-    = link_to group, trends_group_path(group)
+    ' Panel:
+    = link_to panel, trends_panel_path(panel)

@@ -1,5 +1,5 @@
 Echidna::Application.routes.draw do
-  resources :groups do
+  resources :panels do
     member do
       get :trends
     end

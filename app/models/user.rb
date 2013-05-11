@@ -48,5 +48,5 @@ class User
   validates_presence_of :name
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me, :created_at, :updated_at
 
-  has_many :groups
+  has_many :panels
 end

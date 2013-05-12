@@ -5,30 +5,33 @@ class Panel
   field :gender
 
   belongs_to :user
-  embeds_many :cities
+  has_and_belongs_to_many :cities
+  has_and_belongs_to_many :groups
 
-  before_save :remove_empty_values
+  before_save :remove_empty_age_range, :set_groups
 
-  def city_ids=(city_ids)
-    self.cities = city_ids.map { |city_id|
-      if city_id.present?
-        City.find(city_id)
-      end
-    }
-  end
-
-  def city_ids
-    cities.map(&:id)
+  def z_scores(time)
+    DailyStat.top_trends(self.id)
   end
 
   def to_s
     '%s %s %s' % [age_ranges.join(', '), gender, cities.map(&:name)]
   end
 
-  private
+  def start_years
+    self.age_ranges.map { |age_range| age_range.split(' - ').first }
+  end
 
-  def remove_empty_values
-    self.cities.reject! { |city_id| city_id.blank? }
-    self.age_ranges.reject! { |city_id| city_id.blank? }
+  def end_years
+    self.age_ranges.map { |age_range| age_range.split(' - ').last }
+  end
+
+  private
+  def remove_empty_age_range
+    self.age_ranges.reject! { |age_range| age_range.blank? }
+  end
+
+  def set_groups
+    self.group_ids = Group.all_for_panel(self).map(&:id)
   end
 end

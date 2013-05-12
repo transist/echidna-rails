@@ -1,7 +1,8 @@
 class City
   include Mongoid::Document
 
-  embedded_in :panel
+  has_and_belongs_to_many :panels
+  has_many :groups
 
   field :name
   field :tier

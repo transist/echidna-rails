@@ -1,7 +1,7 @@
 h3 New panel
 
 = simple_form_for @panel do |f|
-  = f.select :city_ids, City.all.map {|city| [city.name, city.id] }, {}, multiple: true, size: 10
-  = f.select :age_range, %w(18- 24- 35- 40+ All)
-  = f.select :gender, Person::GENDERS.map { |gender| [gender, gender] }
+  = f.select :city_ids, cities_options_for_select, {}, multiple: true, size: 10
+  = f.select :age_ranges, age_ranges_options_for_select, {}, multiple: true, size: 10
+  = f.select :gender, gender_options_for_select
   = f.button :submit

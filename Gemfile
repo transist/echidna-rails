@@ -11,6 +11,9 @@ gem 'simple_form'
 gem 'faraday'
 gem 'fazscore', github: 'transist/fazscore'
 
+gem 'sidekiq'
+gem 'sinatra', '>= 1.3.0', require: nil
+
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
@@ -23,19 +26,18 @@ group :development do
   gem 'guard-cucumber', '>= 1.4.0'
   gem 'guard-rails', '>= 0.4.0'
   gem 'guard-rspec', '>= 2.5.2'
+  gem 'guard-sidekiq'
+  gem 'guard-zeus'
   gem 'rb-inotify', '>= 0.9.0', require: false
   gem 'rb-fsevent', '>= 0.9.3', require: false
   gem 'rb-fchange', '>= 0.0.6', require: false
   gem 'quiet_assets', '>= 1.0.2'
   gem 'better_errors', '>= 0.7.2'
   gem 'binding_of_caller', '>= 0.7.1'
-  gem 'awesome_print'
-  gem 'pry'
-  gem 'pry-stack_explorer'
-  gem 'pry-nav'
   gem 'capistrano', require: nil
   gem 'capistrano_colors', require: nil
   gem 'rvm-capistrano', require: nil
+  gem 'zeus', require: nil
 end
 
 group :test do
@@ -49,6 +51,10 @@ group :test do
 end
 
 group :development, :test do
+  gem 'awesome_print'
+  gem 'pry'
+  gem 'pry-stack_explorer'
+  gem 'pry-nav'
   gem 'rspec-rails', '>= 2.12.2'
   gem 'factory_girl_rails', '>= 4.2.0'
 end

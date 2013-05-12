@@ -12,7 +12,20 @@ class Group
 
   belongs_to :user
   belongs_to :city
-  has_many :persons
+  has_and_belongs_to_many :people
+
+  def self.all_for_person(person)
+    where(
+      :start_birth_year.lte => person.birth_year,
+      :end_birth_year.gte => person.birth_year,
+      :gender.in => [person.gender, 'both'],
+      city_id: person.city_id
+    )
+  end
+
+  def add_person(person)
+    people << person
+  end
 
   def tier
     Tier.find(tier_id)

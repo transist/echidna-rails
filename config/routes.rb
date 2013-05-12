@@ -11,4 +11,9 @@ Echidna::Application.routes.draw do
   root to: 'home#index'
   devise_for :users
   resources :users
+
+  authenticated :user do
+    require 'sidekiq/web'
+    mount Sidekiq::Web => '/sidekiq'
+  end
 end

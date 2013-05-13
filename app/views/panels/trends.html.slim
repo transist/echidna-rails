@@ -1,9 +1,9 @@
 h3 Trends for panel #{@panel}
 
-- (1..7).to_a.reverse.each do |i|
-  span=' link_to "#{i} days ago", time: i.days.ago
-  '|
-span=' link_to 'today'
+.periods
+  = link_to '1 month', period: 'month'
+  = link_to '1 week', period: 'week'
+  = link_to '1 day', period: 'day'
 
 - if @z_scores.present?
   table

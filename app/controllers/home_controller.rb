@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
   def dashboard
-    @groups = current_user.groups
+    @panels = current_user.panels
   end
 end

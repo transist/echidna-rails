@@ -7,7 +7,7 @@ module PanelsHelper
   end
 
   def current_period
-    "1 " + params[:period] || "day"
+    "1 " + (params[:period] || "day")
   end
 
   def cities_options_for_select

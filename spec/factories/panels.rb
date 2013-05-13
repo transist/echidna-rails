@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :panel do
+    age_ranges []
   end
 end

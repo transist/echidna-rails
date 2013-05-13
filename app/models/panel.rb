@@ -11,7 +11,7 @@ class Panel
   before_save :remove_empty_age_range, :set_groups
 
   def z_scores(time)
-    DailyStat.top_trends(self.id)
+    DailyStat.top_trends(self)
   end
 
   def to_s

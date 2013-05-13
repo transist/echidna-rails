@@ -63,8 +63,8 @@ RSpec.configure do |config|
         Person::BIRTH_YEARS.each do |birth_year|
           Group.create!(
             gender: gender, city: city,
-            start_birth_year: birth_year[:start],
-            end_birth_year: birth_year[:end]
+            start_birth_year: birth_year.first,
+            end_birth_year: birth_year.last
           )
         end
       end

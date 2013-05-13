@@ -1,4 +1,15 @@
 module PanelsHelper
+  def panels_links
+    current_user.panels.each { |panel|
+      concat content_tag('p', link_to("Panel: #{panel.to_s}", trends_panel_path(panel)))
+    }
+    nil
+  end
+
+  def current_period
+    "1 " + (params[:period] || "day")
+  end
+
   def cities_options_for_select
     City.all.map {|city| [city.name, city.id] }
   end

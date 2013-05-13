@@ -24,6 +24,7 @@ gem 'hiredis'
 gem 'redis-namespace'
 gem 'rmmseg-cpp', require: 'rmmseg'
 gem 'yajl-ruby', require: 'yajl'
+gem 'msworddoc-extractor', require: false
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

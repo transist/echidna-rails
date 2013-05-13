@@ -49,6 +49,7 @@ group :test do
   gem 'launchy', '>= 2.2.0'
   gem 'capybara', '>= 2.0.3'
   gem 'timecop'
+  gem 'mocha', require: 'mocha/api'
 end
 
 group :development, :test do

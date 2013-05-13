@@ -10,8 +10,12 @@ class Panel
 
   before_save :remove_empty_age_range, :set_groups
 
-  def z_scores(time)
-    DailyStat.top_trends(self)
+  def z_scores(length, period)
+    if period == "days"
+      DailyStat.top_trends(self, days: length)
+    else
+      HourlyStat.top_trends(self, hours: length)
+    end
   end
 
   def to_s

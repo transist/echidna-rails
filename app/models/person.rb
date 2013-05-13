@@ -17,6 +17,7 @@ class Person
 
   field :target_source, type: String
   field :target_id, type: String
+  field :target_name, type: String
   field :birth_year, type: Integer
   field :gender, type: String
 

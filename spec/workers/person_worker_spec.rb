@@ -6,8 +6,9 @@ describe PersonWorker do
   end
 
   let(:person_attrs) { {
-    target_id: 1234567890,
     target_source: 'tencent',
+    target_id: '5a67a4b2818d0651ad5b70091ad6c73a',
+    target_name: 'Lolita',
     birth_year: 1999,
     gender: 'female',
     city: '上海'

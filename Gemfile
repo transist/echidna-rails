@@ -11,14 +11,19 @@ gem 'simple_form'
 gem 'faraday'
 gem 'fazscore', github: 'transist/fazscore'
 
+gem 'oauth2', git: 'git://github.com/rainux/oauth2'
+gem 'tencent-weibo', git: 'git://github.com/rainux/tencent-weibo'
+gem 'rufus-scheduler', git: 'git://github.com/rainux/rufus-scheduler'
+
 gem 'sidekiq'
 gem 'sidekiq_status'
 gem 'kiqstand'
 gem 'sinatra', '>= 1.3.0', require: nil
 
-gem 'oauth2', git: 'git://github.com/rainux/oauth2'
-gem 'tencent-weibo', git: 'git://github.com/rainux/tencent-weibo'
-gem 'rufus-scheduler', git: 'git://github.com/rainux/rufus-scheduler'
+gem 'hiredis'
+gem 'redis-namespace'
+gem 'rmmseg-cpp', require: 'rmmseg'
+gem 'yajl-ruby', require: 'yajl'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

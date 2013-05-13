@@ -1,10 +1,11 @@
 class Tweet
   include Mongoid::Document
 
+  field :target_id
   field :content
-  field :url
+  field :posted_at, type: Time
 
-  validates :content, :url, presence: true
+  validates :content, presence: true
 
   belongs_to :person
 end

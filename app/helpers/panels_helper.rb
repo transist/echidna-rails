@@ -15,7 +15,7 @@ module PanelsHelper
   end
 
   def age_ranges_options_for_select
-    Person::BIRTH_YEARS.map { |birth_year| ["#{birth_year[:start]} - #{birth_year[:end]}", "#{birth_year[:start]} - #{birth_year[:end]}"]}
+    Person::BIRTH_YEARS.map { |birth_year| ["#{birth_year.first} - #{birth_year.last}", "#{birth_year.first} - #{birth_year.last}"]}
   end
 
   def gender_options_for_select

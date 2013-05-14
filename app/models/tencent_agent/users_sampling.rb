@@ -30,6 +30,8 @@ class TencentAgent
         sleep SLEEP_WAIT
       end
 
+      $spider_logger.warn log('No more keywords in queue for users gathering') if @keywords.count.zero?
+
       $spider_logger.info log('Finished users gathering')
 
     rescue Error => e
@@ -53,7 +55,9 @@ class TencentAgent
     private
 
     def random_keyword
-      ["公知", "淘宝", "皮鞋", "大象", "豆瓣"].sample
+      @keywords ||= ["公知", "淘宝", "皮鞋", "大象", "豆瓣", "楼主", "萨摩耶", "卤煮", "乌鸦", "瓶子"]
+      word = @keywords.sample
+      @keywords.delete(word)
     end
 
     def publish_user(user)

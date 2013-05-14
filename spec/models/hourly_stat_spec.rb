@@ -5,6 +5,56 @@ describe HourlyStat do
   it { should have_field(:stats).of_type(Array).with_default_value_of(
     (0..23).map {|n| {hour: n, count: 0} }
   ) }
+  it { should validate_uniqueness_of(:word).scoped_to([:group, :date]) }
+
+  describe '.record' do
+    let(:word) { 'Zerg' }
+    let(:group) { create(:group) }
+    let(:times) { [
+      Time.parse('2013-05-14 00:20:12'), Time.parse('2013-05-15 12:50:02'),
+      Time.parse('2013-05-16 23:32:55')
+    ] }
+
+    context 'when the HourlyStat instance not exists' do
+      it 'create an instance' do
+        times.each do |time|
+          expect {
+            HourlyStat.record(word, group, time)
+          }.to change(HourlyStat, :count).by(1)
+        end
+      end
+
+      it 'increment count for the hour' do
+        times.each do |time|
+          HourlyStat.record(word, group, time)
+          hourly_stat = HourlyStat.where(date: time.to_date).first
+          expect(hourly_stat.stats.find {|stat| stat['hour'] == time.hour }['count']).to eq(1)
+        end
+      end
+    end
+
+    context 'when the HourlyStat instance already exists' do
+      before do
+        times.each {|time| HourlyStat.record(word, group, time) }
+      end
+
+      it 'do not create new instance' do
+        times.each do |time|
+          expect {
+            HourlyStat.record(word, group, time)
+          }.to_not change(HourlyStat, :count)
+        end
+      end
+
+      it 'increment count for the hour' do
+        times.each do |time|
+          HourlyStat.record(word, group, time)
+          hourly_stat = HourlyStat.where(date: time.to_date).first
+          expect(hourly_stat.stats.find {|stat| stat['hour'] == time.hour }['count']).to eq(2)
+        end
+      end
+    end
+  end
 
   describe ".top_trends" do
     let(:group1) { create :group }

@@ -7,7 +7,15 @@ class DailyStat
 
   belongs_to :group
 
+  validates :word, uniqueness: {scope: [:group, :date]}
+
   before_save :set_default_stats
+
+  def self.record(word, group, date)
+    daily_stat = DailyStat.find_or_create_by(word: word, group: group, date: date.beginning_of_month)
+    DailyStat.collection.find(:_id => daily_stat.id, 'stats.day' => date.mday).
+      update('$inc' => {'stats.$.count' => 1})
+  end
 
   def self.top_trends(panel, options={})
     current_time = Time.now.beginning_of_day

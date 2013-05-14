@@ -7,6 +7,14 @@ class HourlyStat
 
   belongs_to :group
 
+  validates :word, uniqueness: {scope: [:group, :date]}
+
+  def self.record(word, group, time)
+    houly_stat = HourlyStat.find_or_create_by(word: word, group: group, date: time.to_date)
+    HourlyStat.collection.find(:_id => houly_stat.id, 'stats.hour' => time.hour).
+      update({'$inc' => {'stats.$.count' => 1}})
+  end
+
   def self.top_trends(panel, options={})
     current_time = Time.now.beginning_of_hour
     hours = options[:hours] || 7

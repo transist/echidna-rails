@@ -9,7 +9,7 @@ class Tweet
 
   belongs_to :person
 
-  after_save :update_stats
+  after_create :update_stats
 
   def extract_words
     Stopword.filter(Segment.get(content))
@@ -18,14 +18,10 @@ class Tweet
   private
 
   def update_stats
-    posted_on = posted_at.to_date
-
     extract_words.each do |word|
       person.groups.each do |group|
-        HourlyStat.create(word: word, group: group, date: posted_on,
-                         stats: {})
-        DailyStat.create(word: word, group: group, date: posted_on.beginning_of_month,
-                        stats: {})
+        DailyStat.record(word, group, posted_at.to_date)
+        HourlyStat.record(word, group, posted_at)
       end
     end
   end

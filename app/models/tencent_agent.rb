@@ -1,6 +1,7 @@
 class TencentAgent
   include Mongoid::Document
   include UsersSampling
+  include ApiResponseCacher
 
   field :openid, type: String
   field :name, type: String
@@ -19,10 +20,10 @@ class TencentAgent
 
   def refresh_access_token
     if Time.at(expires_at.to_i) - Time.now <= 1.day
-      puts log('Refreshing access token...')
+      $spider_logger.info log('Refreshing access token...')
       new_token = access_token.refresh!
       TencentAgent.create(new_token.to_hash.symbolize_keys)
-      puts log('Finished access token refreshing')
+      $spider_logger.info log('Finished access token refreshing')
     end
   rescue => e
     log_unexpected_error(e)
@@ -65,8 +66,8 @@ class TencentAgent
       error[:response] = faraday_response
     end
 
-    puts log(error)
-    puts log(exception.inspect)
+    $spider_logger.error log(error)
+    $spider_logger.info log(exception.inspect)
   end
 
 end

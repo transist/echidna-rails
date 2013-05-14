@@ -7,7 +7,7 @@ class TencentAgent
 
       while keyword = random_keyword
         $spider_logger.info log(%{Gathering first user from tweets of keyword "#{keyword}"...})
-        result = get('api/search/t', keyword: keyword, pagesize: 30)
+        result = cached_get('api/search/t', keyword: keyword, pagesize: 30)
 
         if result['ret'].to_i.zero?
 
@@ -37,7 +37,7 @@ class TencentAgent
     end
 
     def sample_user(user_name, keyword = nil)
-      result = get('api/user/other_info', name: user_name)
+      result = cached_get('api/user/other_info', name: user_name)
 
       if result['ret'].to_i.zero? && result['data']
         user = UserDecorator.decorate(result['data'])

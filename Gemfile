@@ -12,6 +12,8 @@ gem 'faraday'
 gem 'fazscore', github: 'transist/fazscore'
 
 gem 'sidekiq'
+gem 'sidekiq_status'
+gem 'kiqstand'
 gem 'sinatra', '>= 1.3.0', require: nil
 
 group :assets do
@@ -48,6 +50,7 @@ group :test do
   gem 'launchy', '>= 2.2.0'
   gem 'capybara', '>= 2.0.3'
   gem 'timecop'
+  gem 'mocha', require: 'mocha/api'
 end
 
 group :development, :test do

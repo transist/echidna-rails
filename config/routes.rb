@@ -5,6 +5,8 @@ Echidna::Application.routes.draw do
     end
   end
 
+  get '/jobs/:id/status', to: 'jobs#status'
+
   authenticated :user do
     root to: 'home#dashboard'
   end

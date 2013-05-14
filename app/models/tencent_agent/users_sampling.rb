@@ -2,6 +2,8 @@ class TencentAgent
   module UsersSampling
     extend ActiveSupport::Concern
 
+    SLEEP_WAIT = 5
+
     def sample_users
       $spider_logger.info log('Sampling Users...')
 
@@ -25,7 +27,7 @@ class TencentAgent
           break
         end
 
-        sleep 5
+        sleep SLEEP_WAIT
       end
 
       $spider_logger.info log('Finished users gathering')

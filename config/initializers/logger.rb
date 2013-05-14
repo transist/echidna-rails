@@ -1,0 +1,1 @@
+$spider_logger = Logger.new('log/spider.log', 10, 1024000)

@@ -11,17 +11,18 @@ gem 'simple_form'
 gem 'faraday'
 gem 'fazscore', github: 'transist/fazscore'
 
+<<<<<<< HEAD
 gem 'sidekiq'
 gem 'sidekiq_status'
 gem 'kiqstand'
+=======
+>>>>>>> Change logger output
 gem 'sinatra', '>= 1.3.0', require: nil
 
 gem 'oauth2', git: 'git://github.com/rainux/oauth2'
 gem 'tencent-weibo', git: 'git://github.com/rainux/tencent-weibo'
 gem 'rufus-scheduler', git: 'git://github.com/rainux/rufus-scheduler'
 gem 'sidekiq', '~> 2.11.2'
-
-gem 'syslog-ml-logger'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

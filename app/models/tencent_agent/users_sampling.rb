@@ -3,16 +3,16 @@ class TencentAgent
     extend ActiveSupport::Concern
 
     def sample_users
-      $logger.info log('Sampling Users...')
+      $spider_logger.info log('Sampling Users...')
 
       while keyword = random_keyword
-        $logger.info log(%{Gathering first user from tweets of keyword "#{keyword}"...})
+        $spider_logger.info log(%{Gathering first user from tweets of keyword "#{keyword}"...})
         result = get('api/search/t', keyword: keyword, pagesize: 30)
 
         if result['ret'].to_i.zero?
 
           unless result['data']
-            $logger.info log(%{No results for keyword "#{keyword}"})
+            $spider_logger.info log(%{No results for keyword "#{keyword}"})
             next
           end
 
@@ -21,17 +21,17 @@ class TencentAgent
           sample_user(user_name, keyword)
 
         else
-          $logger.error log("Failed to gather user: #{result['msg']}")
+          $spider_logger.error log("Failed to gather user: #{result['msg']}")
           break
         end
 
         sleep 5
       end
 
-      $logger.info log('Finished users gathering')
+      $spider_logger.info log('Finished users gathering')
 
     rescue Error => e
-      $logger.error log("Aborted users gathering: #{e.message}")
+      $spider_logger.error log("Aborted users gathering: #{e.message}")
     rescue => e
       log_unexpected_error(e)
     end
@@ -43,7 +43,7 @@ class TencentAgent
         user = UserDecorator.decorate(result['data'])
         publish_user(user)
       else
-        $logger.error log(%{Failed to gather profile of user "#{user_name}"})
+        $spider_logger.error log(%{Failed to gather profile of user "#{user_name}"})
       end
       false
     end
@@ -55,7 +55,7 @@ class TencentAgent
     end
 
     def publish_user(user)
-      $logger.info log(%{Publishing user "#{user['name']}"})
+      $spider_logger.info log(%{Publishing user "#{user['name']}"})
       # TODO: Add this user to sidekiq queue
 
       # $redis.lpush 'streaming/messages', {

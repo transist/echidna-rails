@@ -7,7 +7,7 @@ class TencentAgent
     USERS_TRACKING_QUEUE = 'spider:tencent:users_tracking_queue'
 
     def track_users
-      $logger.info log('Tracking users...')
+      $spider_logger.info log('Tracking users...')
 
       # Tencent Weibo's add_to_list API accept at most 8 user names per request.
       loop do
@@ -32,9 +32,9 @@ class TencentAgent
         end
       end
 
-      $logger.info log('Finished users tracking')
+      $spider_logger.info log('Finished users tracking')
     rescue Error => e
-      $logger.error log("Aborted users tracking: #{e.message}")
+      $spider_logger.error log("Aborted users tracking: #{e.message}")
     rescue => e
       log_unexpected_error(e)
     end
@@ -69,7 +69,7 @@ class TencentAgent
       result = post('api/list/create', name: list_name, access: 1)
       if result['ret'].to_i.zero?
         add_list_to_users_tracking_lists(result['data'])
-        $logger.info log(%{Created list "#{list_name}"})
+        $spider_logger.info log(%{Created list "#{list_name}"})
         result['data']
 
       elsif result['ret'].to_i == 4 and result['errcode'].to_i == 98
@@ -89,7 +89,7 @@ class TencentAgent
     def track_users_by_list(user_names)
       result = post('api/list/add_to_list', names: user_names.join(','), listid: latest_users_tracking_list_id)
       if result['ret'].to_i.zero?
-        $logger.info log(%{Tracked users "#{user_names.join(',')}" by list})
+        $spider_logger.info log(%{Tracked users "#{user_names.join(',')}" by list})
 
       else
         # List limitation of maximized members reached

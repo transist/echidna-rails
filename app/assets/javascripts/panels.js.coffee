@@ -7,7 +7,6 @@ class Job
     $.poll (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         if data["status"] == "complete"
-          console.log 'complete'
           if data["payload"].length == 0
             $('#trends').html $('<p>Not available</p>')
           else
@@ -15,7 +14,6 @@ class Job
             $.each data["payload"], (index, row)->
               $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td></tr>")
         else
-          console.log 'working'
           retry()
 
 $ ->

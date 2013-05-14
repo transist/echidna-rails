@@ -22,6 +22,7 @@ class Person
   field :gender, type: String
 
   validates :gender, inclusion: { in: GENDERS }
+  validates :target_id, uniqueness: {scope: :target_source}
 
   has_many :tweets
   belongs_to :city

@@ -34,5 +34,23 @@ describe PersonWorker do
         group.people.should include(person)
       end
     end
+
+    context 'the person already exists' do
+      before do
+        PersonWorker.perform_async(person_attrs)
+      end
+
+      it 'should not save duplicate person' do
+        expect {
+          PersonWorker.perform_async(person_attrs)
+        }.to_not change(Person, :count)
+      end
+
+      it 'should not raise error' do
+        expect {
+          PersonWorker.perform_async(person_attrs)
+        }.to_not raise_error
+      end
+    end
   end
 end

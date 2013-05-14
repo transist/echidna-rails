@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :tweet do
+    content 'We sense a soul in search of answers.'
   end
 end

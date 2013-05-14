@@ -22,6 +22,15 @@ describe TweetWorker do
     end
 
     it 'segement the tweet' do
+      Segment.expects(:get).with(tweet_attrs[:content]).
+        returns(%w(We sense a soul in search of answers))
+      TweetWorker.perform_async(tweet_attrs)
+    end
+
+    it 'filter the stop words' do
+      words = Segment.get(tweet_attrs[:content])
+      Stopword.expects(:filter).with(words)
+      TweetWorker.perform_async(tweet_attrs)
     end
 
     it 'update daily stats of all words for all groups of the author' do

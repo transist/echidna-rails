@@ -6,9 +6,16 @@
 # GMAIL_USERNAME: Your_Gmail_Username
 # makes 'Your_Gmail_Username' available as ENV["GMAIL_USERNAME"]
 # Add application configuration variables here, as shown below.
-#
+
+# Used for ActionMalier smtp settings
 GMAIL_USERNAME: Your_Username
 GMAIL_PASSWORD: Your_Password
+
+# Seed data for first user
 ADMIN_NAME: First User
 ADMIN_EMAIL: user@example.com
 ADMIN_PASSWORD: changeme
+
+ECHIDNA_SPIDER_TENCENT_APP_KEY: 801317572
+ECHIDNA_SPIDER_TENCENT_APP_SECRET: 2a7d8fc10f48f5dbacffed0cee5dc49e
+ECHIDNA_SPIDER_TENCENT_REDIRECT_URI: http://localhost:3000/agents/tencent/create

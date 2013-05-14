@@ -7,17 +7,5 @@ h3 Trends for panel #{@panel} #{current_period}
   = link_to '1 week', period: 'week'
   = link_to '1 day', period: 'day'
 
-- if @z_scores.present?
-  table
-    thead
-      tr
-        th Keyword
-        th Z-score
-    tbody
-      - @z_scores.each do |e|
-        tr
-          td= e[:word]
-          td= e[:z_score]
-
-- else
-  p Not available
+#trends_job_id.hide data-job-id=@job_id
+#trends= image_tag "loading.gif"

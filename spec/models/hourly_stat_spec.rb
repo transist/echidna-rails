@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe HourlyStat do
   it { should belong_to :group }
+  it { should have_field(:stats).of_type(Array).with_default_value_of(
+    (0..23).map {|n| {hour: n, count: 0} }
+  ) }
 
   describe ".top_trends" do
     let(:group1) { create :group }

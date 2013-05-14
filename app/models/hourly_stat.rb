@@ -3,7 +3,7 @@ class HourlyStat
 
   field :word
   field :date, type: Date
-  field :stats, type: Array # [{hour: 0, count: 1}, {hour: 1, count: 2}, {hour: 10, count: 0}]
+  field :stats, type: Array, default: (0..23).map {|n| {hour: n, count: 0} }
 
   belongs_to :group
 

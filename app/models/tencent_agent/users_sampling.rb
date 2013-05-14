@@ -61,19 +61,8 @@ class TencentAgent
     end
 
     def publish_user(user)
-      $spider_logger.info log(%{Publishing user "#{user['name']}"})
-      # TODO: Add this user to sidekiq queue
-
-      # $redis.lpush 'streaming/messages', {
-      #   type: 'add_user',
-      #   body: {
-      #     id: user['name'],
-      #     type: 'tencent',
-      #     birth_year: user['birth_year'],
-      #     gender: user['gender'],
-      #     city: user['city']
-      #   }
-      # }.to_json
+      $spider_logger.info log(%{Publishing user "#{user['name']}" openid: #{user['openid']}})
+      PersonWorker.perform_async(user)
     end
   end
 end

@@ -10,10 +10,6 @@ class Panel
 
   before_save :remove_empty_age_range, :set_groups
 
-  def z_scores(length, period)
-    TrendsWorker.perform_async(self.id, length, period)
-  end
-
   def to_s
     '%s %s %s' % [age_ranges.join(', '), gender, cities.map(&:name)]
   end

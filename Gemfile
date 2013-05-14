@@ -12,6 +12,7 @@ gem 'faraday'
 gem 'fazscore', github: 'transist/fazscore'
 
 gem 'sidekiq'
+gem 'sidekiq_status'
 gem 'kiqstand'
 gem 'sinatra', '>= 1.3.0', require: nil
 

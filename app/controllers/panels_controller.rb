@@ -5,7 +5,7 @@ class PanelsController < InheritedResources::Base
 
   def trends
     length, period = parse_period(params[:period])
-    @job_id = TrendsWorker.perform_async(resource.id, length, period)
+    @job_id = PanelTrendsWorker.perform_async(resource.id, length, period)
     show!
   end
 

@@ -33,7 +33,7 @@ describe DailyStat do
       ])
     end
 
-    it "returns nothing for other panel" do
+    it "returns 0s if we don't have enough history stats" do
       expect(DailyStat.aggregate_stats(
         [{
           "中国" => [90], "美国" => [9], "日本" => [108]

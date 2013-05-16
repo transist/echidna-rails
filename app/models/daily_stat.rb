@@ -6,13 +6,14 @@ class DailyStat
   field :date, type: Date
   field :stats, type: Array # [{day: 0, count: 1}, {day: 1, count: 2}, {day: 10, count: 0}]
 
+  belongs_to :group
+
   scope :group_stats_in_period, ->(group_id, current_time, start_time) {
     where(group_id: group_id).
     lte(date: current_time.to_date.beginning_of_month).
     gte(date: start_time.to_date.beginning_of_month).
     asc(:date)
   }
-  belongs_to :group
 
   def self.words_stats(group_id, options={})
     current_time = options[:current_time].beginning_of_day

@@ -3,52 +3,48 @@ require 'spec_helper'
 describe HourlyStat do
   it { should belong_to :group }
 
-  describe ".top_trends" do
-    let(:group1) { create :group }
-    let(:group2) { create :group }
-    let(:panel) {
-      panel = create(:panel).tap do |panel|
-        panel.groups << group1
-        panel.groups << group2
-      end
-    }
-    let(:other_panel) { create(:panel) }
+  let(:group) { create :group }
+  let(:other_group) { create :group }
 
-    before do
-      Timecop.freeze(Time.now.change(hour: 10))
-      prepare_hourly_stats(panel)
+  before do
+    Timecop.freeze(Time.now.change(hour: 10))
+    prepare_hourly_stats(group)
+  end
+
+  after do
+    Timecop.return
+  end
+
+  describe ".word_stats" do
+    it "returns 中国, 日本 and 美国 stats" do
+      stats = HourlyStat.words_stats(group.id, current_time: Time.now, start_time: 7.hours.ago)
+      expect(stats).to eq({
+        history_stats: {
+          "中国" => [30, 40, 50, 60, 70, 80, 90],
+          "美国" => [3, 4, 5, 6, 7, 8, 9],
+          "日本" => [36, 48, 60, 72, 84, 96, 108]
+        },
+        current_stats: {
+          "中国" => 100, "美国" => 10, "日本" => 120
+        }
+      })
     end
 
-    after do
-      Timecop.return
+    it "returns nothing for other group" do
+      stats = HourlyStat.words_stats(other_group.id, current_time: Time.now, start_time: 7.hours.ago)
+      expect(stats).to eq({history_stats: {}, current_stats: {}})
     end
 
-    it "returns 中国, 日本 and 美国" do
-      expect(HourlyStat.top_trends(panel)).to eq [
-        {word: "美国", z_score: 1.4804519606800843},
-        {word: "中国", z_score: 1.4804519606800841},
-        {word: "日本", z_score: 1.4804519606800841}
-      ]
-    end
-
-    it "returns nothing for other panel" do
-      expect(HourlyStat.top_trends(other_panel)).to be_empty
-    end
-
-    it "checks history for only 1 hour" do
-      expect(HourlyStat.top_trends(panel, hours: 1)).to eq [
-        {word: "中国", z_score: 0},
-        {word: "美国", z_score: 0},
-        {word: "日本", z_score: 0}
-      ]
-    end
-
-    it "query 2 days data" do
-      expect(HourlyStat.top_trends(panel, hours: 20)).to eq [
-        {word: "中国", z_score: 1.429954466009161},
-        {word: "日本", z_score: 1.4226184910682367},
-        {word: "美国", z_score: 1.3661642830588334}
-      ]
+    it "returns stats for only 1 hour" do
+      stats = HourlyStat.words_stats(group.id, current_time: Time.now, start_time: 1.hour.ago)
+      expect(stats).to eq({
+        history_stats: {
+          "中国" => [90], "美国" => [9], "日本" => [108]
+        },
+        current_stats: {
+          "中国" => 100, "美国" => 10, "日本" => 120
+        }
+      })
     end
   end
 end

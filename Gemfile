@@ -65,7 +65,7 @@ end
 
 group :development, :test do
   gem 'awesome_print'
-  gem 'pry'
+  gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'pry-nav'
   gem 'rspec-rails', '>= 2.12.2'

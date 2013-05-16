@@ -25,6 +25,8 @@ Deploy to Production
 
     cap deploy
 
+Visit http://echidna.transi.st to access the UI. Username and password for HTTP Basic auth is `ecihdna` and `aeg3aughoh5se1OuThom`.
+
 Mock DailyStat
 --------------
 

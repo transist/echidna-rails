@@ -1,3 +1,5 @@
+= link_to 'New panel', new_panel_path
+
 = panels_links
 
 h3 Trends for panel #{@panel} #{current_period}
@@ -7,5 +9,12 @@ h3 Trends for panel #{@panel} #{current_period}
   = link_to '1 week', period: 'week'
   = link_to '1 day', period: 'day'
 
+.live
+  input type='checkbox' name='live' id='live'
+  label for='live' Live
+.spinner Loading...
+
+.clear
+
 #trends_job_id.hide data-job-id=@job_id
-#trends= image_tag "loading.gif"
+#trends

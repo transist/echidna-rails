@@ -30,6 +30,6 @@ Visit http://echidna.transi.st to access the UI. Username and password for HTTP 
 Mock DailyStat
 --------------
 
-    rake mock_stats
+    PANEL_ID=xxx rake mock_stats
 
-it will update daily_stats every 5 seconds
+it will update hourly_stats and daily_stats periodically.

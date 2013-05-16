@@ -3,19 +3,12 @@ require 'spec_helper'
 describe DailyStat do
   it { should belong_to :group }
 
-  let(:group1) { create :group }
-  let(:group2) { create :group }
-  let(:panel) {
-    panel = create(:panel).tap do |panel|
-      panel.groups << group1
-      panel.groups << group2
-    end
-  }
-  let(:other_panel) { create(:panel) }
+  let(:group) { create :group }
+  let(:other_group) { create :group }
 
   before do
     Timecop.freeze(Time.now.change(day: 10))
-    prepare_daily_stats(panel)
+    prepare_daily_stats(group)
   end
 
   after do
@@ -82,7 +75,7 @@ describe DailyStat do
 
   describe ".word_stats" do
     it "returns 中国, 日本 and 美国 stats" do
-      stats = DailyStat.words_stats(group1.id, current_time: Time.now, start_time: 7.days.ago)
+      stats = DailyStat.words_stats(group.id, current_time: Time.now, start_time: 7.days.ago)
       expect(stats).to eq({
         history_stats: {
           "中国" => [30, 40, 50, 60, 70, 80, 90],
@@ -95,13 +88,13 @@ describe DailyStat do
       })
     end
 
-    it "returns nothing for non existent group" do
-      stats = DailyStat.words_stats(-1, current_time: Time.now, start_time: 7.days.ago)
+    it "returns nothing for other group" do
+      stats = DailyStat.words_stats(other_group.id, current_time: Time.now, start_time: 7.days.ago)
       expect(stats).to eq({history_stats: {}, current_stats: {}})
     end
 
     it "returns stats for only 1 day" do
-      stats = DailyStat.words_stats(group1.id, current_time: Time.now, start_time: 1.day.ago)
+      stats = DailyStat.words_stats(group.id, current_time: Time.now, start_time: 1.day.ago)
       expect(stats).to eq({
         history_stats: {
           "中国" => [90], "美国" => [9], "日本" => [108]

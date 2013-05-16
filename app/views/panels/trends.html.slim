@@ -7,5 +7,8 @@ h3 Trends for panel #{@panel} #{current_period}
   = link_to '1 week', period: 'week'
   = link_to '1 day', period: 'day'
 
+input type='checkbox' name='live' id='live'
+label for='live' Live
+
 #trends_job_id.hide data-job-id=@job_id
 #trends= image_tag "loading.gif"

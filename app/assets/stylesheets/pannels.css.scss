@@ -1,3 +1,11 @@
 .periods a {
   margin: 0 10px
 }
+.periods, .live, .spinner {
+  float: left;
+  margin: 0 20px
+}
+
+.clear {
+  clear: both;
+}

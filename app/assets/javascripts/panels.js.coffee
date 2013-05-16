@@ -8,6 +8,7 @@ class Job
 
   checkJobStatus: (jobId)->
     self = this
+    $('.spinner').show()
     $.poll (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         if data["status"] == "complete"
@@ -17,6 +18,7 @@ class Job
             $('#trends').html $('<table><thead><tr><th>Keyword</th><th>Z-score</th></tr></thead><tbody><tbody></table>')
             $.each data["payload"], (index, row)->
               $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td></tr>")
+          $('.spinner').hide()
           if $('#live').prop("checked")
             self.liveCheck()
         else

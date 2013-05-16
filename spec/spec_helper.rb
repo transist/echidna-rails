@@ -9,7 +9,7 @@ require 'sidekiq/testing/inline'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
-RMMSeg::Dictionary.load_dictionaries
+Rseg.load
 
 RSpec.configure do |config|
   config.include EmailSpec::Helpers

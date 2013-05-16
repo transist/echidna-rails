@@ -22,7 +22,7 @@ gem 'sinatra', '>= 1.3.0', require: nil
 
 gem 'hiredis'
 gem 'redis-namespace'
-gem 'rmmseg-cpp', require: 'rmmseg'
+gem 'rseg', git: 'git://github.com/SaitoWu/rseg.git'
 gem 'yajl-ruby', require: 'yajl'
 gem 'msworddoc-extractor', require: false
 

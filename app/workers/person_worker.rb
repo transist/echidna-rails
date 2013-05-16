@@ -12,6 +12,9 @@ class PersonWorker
       Group.all_for_person(person).each do |group|
         group.add_person(person)
       end
+
+      #Batch added to list supported
+      TrackingPersonWorker.perform_async(person.id)
     end
   end
 end

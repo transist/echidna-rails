@@ -5,7 +5,7 @@ class Job
   checkJobStatus: ->
     jobId = $('#trends_job_id').data('job-id')
     if jobId
-      $.poll (retry) ->
+      $.poll 1000, (retry) ->
         $.getJSON "/jobs/" + jobId + "/status.json", (data)->
           if data["status"] == "complete"
             if data["payload"].length == 0

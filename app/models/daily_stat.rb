@@ -1,6 +1,5 @@
 class DailyStat
   include Mongoid::Document
-  include Aggregateable
 
   field :word
   field :date, type: Date

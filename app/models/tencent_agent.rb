@@ -22,7 +22,7 @@ class TencentAgent
     if Time.at(expires_at.to_i) - Time.now <= 1.day
       $spider_logger.info log('Refreshing access token...')
       new_token = access_token.refresh!
-      TencentAgent.create(new_token.to_hash.symbolize_keys)
+      update_attributes(new_token.to_hash.symbolize_keys)
       $spider_logger.info log('Finished access token refreshing')
     end
   rescue => e

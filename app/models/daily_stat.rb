@@ -2,10 +2,20 @@ class DailyStat
   include Mongoid::Document
 
   field :word
-  field :date, type: Date
-  field :stats, type: Array # [{day: 0, count: 1}, {day: 1, count: 2}, {day: 10, count: 0}]
+  field :date, type: Date # Must be the first day of the month.
+  field :stats, type: Array
 
   belongs_to :group
+
+  validates :word, uniqueness: {scope: [:group, :date]}
+
+  before_save :set_default_stats
+
+  def self.record(word, group, date)
+    daily_stat = DailyStat.find_or_create_by(word: word, group: group, date: date.beginning_of_month)
+    DailyStat.collection.find(:_id => daily_stat.id, 'stats.day' => date.mday).
+      update('$inc' => {'stats.$.count' => 1})
+  end
 
   def self.top_trends(panel, options={})
     current_time = Time.now.beginning_of_day
@@ -34,5 +44,12 @@ class DailyStat
     current_stats.map { |word, current_stat|
       {word: word, z_score: FAZScore.new(0.5, history_stats[word]).score(current_stat)}
     }.sort_by { |stat| -stat[:z_score] }
+  end
+
+  private
+
+  def set_default_stats
+    days_in_month = Time.days_in_month(date.month, date.year)
+    self.stats = (1..days_in_month).map {|n| {'day' => n, 'count' => 0} }
   end
 end

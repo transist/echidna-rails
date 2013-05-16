@@ -6,8 +6,9 @@ describe PersonWorker do
   end
 
   let(:person_attrs) { {
-    target_id: 1234567890,
     target_source: 'tencent',
+    target_id: '5a67a4b2818d0651ad5b70091ad6c73a',
+    target_name: 'Lolita',
     birth_year: 1999,
     gender: 'female',
     city: '上海'
@@ -31,6 +32,24 @@ describe PersonWorker do
       groups.each do |group|
         person.groups.should include(group)
         group.people.should include(person)
+      end
+    end
+
+    context 'the person already exists' do
+      before do
+        PersonWorker.perform_async(person_attrs)
+      end
+
+      it 'should not save duplicate person' do
+        expect {
+          PersonWorker.perform_async(person_attrs)
+        }.to_not change(Person, :count)
+      end
+
+      it 'should not raise error' do
+        expect {
+          PersonWorker.perform_async(person_attrs)
+        }.to_not raise_error
       end
     end
   end

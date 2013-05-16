@@ -1,0 +1,3 @@
+[submodule "dicts"]
+	path = dicts
+	url = git@github.com:transist/echidna-dicts-data.git

@@ -34,9 +34,15 @@ set :branch, 'master'
 set :rails_env, 'production'
 set :deploy_to, '/home/echidna/echidna.transi.st'
 
+after 'deploy:update_code', 'deploy:symbolic_links'
 after 'deploy:restart', 'deploy:cleanup'
 
 namespace :deploy do
+  desc 'Symbolic links'
+  task :symbolic_links do
+    run "ln -nfs #{shared_path}/config/application.yml #{release_path}/config/application.yml"
+  end
+
   desc 'Restart unicorn'
   task :restart do
     run <<-BASH

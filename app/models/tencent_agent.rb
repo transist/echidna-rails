@@ -16,6 +16,8 @@ class TencentAgent
   field :list_last_timestamp_map, type: Hash, default: {}
   field :full_with_lists, type: Boolean, default: false
 
+  field :api_calls_count, type: Integer, default: 0
+
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed
   end

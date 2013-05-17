@@ -14,6 +14,10 @@ set :bundle_flags, '--deployment --quiet --binstubs'
 set :bundle_without, [:development, :test]
 require 'bundler/capistrano'
 
+require 'sidekiq/capistrano'
+set :sidekiq_role, :sidekiq
+role :sidekiq, 'echidna.transi.st'
+
 # Use HTTP proxy from Transist server to help bundler cross the GFW
 set :default_environment, {
   http_proxy: 'http://192.168.1.42:8123'

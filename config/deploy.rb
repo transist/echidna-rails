@@ -36,6 +36,7 @@ set :deploy_to, '/home/echidna/echidna.transi.st'
 
 after 'deploy:update_code', 'deploy:symbolic_links'
 after 'deploy:restart', 'deploy:cleanup'
+after 'deploy:restart', 'deploy:start_spider'
 
 namespace :deploy do
   desc 'Symbolic links'
@@ -63,5 +64,10 @@ namespace :deploy do
     run <<-BASH
       kill -QUIT `cat /home/echidna/echidna.transi.st/shared/pids/unicorn.pid`
     BASH
+  end
+
+  desc 'Start spider'
+  task :start_spider, roles: :app do
+    run "cd #{current_release}; nohup bundle exec rake RAILS_ENV=production spider_scheduler > /dev/null 2>&1 &"
   end
 end

@@ -69,7 +69,8 @@ class TencentAgent
           target_source: 'tencent',
           target_person_id: tweet['openid'],
           content: tweet['text'],
-          url: "http://t.qq.com/p/t/#{tweet['id']}"
+          url: "http://t.qq.com/p/t/#{tweet['id']}",
+          posted_at: Time.at(tweet['timestamp'].to_i)
         }
         TweetWorker.perform_async(tweet_attrs)
       end

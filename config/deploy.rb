@@ -30,7 +30,7 @@ role :app, 'echidna.transi.st'
 role :web, 'echidna.transi.st'
 role :db,  'echidna.transi.st', primary: true
 set :port, 2220
-set :branch, 'master'
+set :branch, 'develop'
 set :rails_env, 'production'
 set :deploy_to, '/home/echidna/echidna.transi.st'
 

@@ -5,9 +5,11 @@ class DailyStat
   field :date, type: Date # Must be the first day of the month.
   field :stats, type: Array
 
-  belongs_to :group
-
   validates :word, uniqueness: {scope: [:group, :date]}
+
+  index({group_id: 1, date: 1})
+
+  belongs_to :group
 
   before_save :set_default_stats
 

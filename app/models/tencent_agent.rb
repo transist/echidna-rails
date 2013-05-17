@@ -2,6 +2,7 @@ class TencentAgent
   include Mongoid::Document
   include UsersSampling
   include UsersTracking
+  include TweetsGathering
   include ApiResponseCacher
 
   field :openid, type: String
@@ -12,7 +13,10 @@ class TencentAgent
   field :expires_at, type: Integer
 
   field :list_ids, type: Array, default: []
+  field :list_last_timestamp_map, type: Hash, default: {}
   field :full_with_lists, type: Boolean, default: false
+
+  field :api_calls_count, type: Integer, default: 0
 
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed

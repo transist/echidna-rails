@@ -61,6 +61,7 @@ group :test do
   gem 'capybara', '>= 2.0.3'
   gem 'timecop'
   gem 'mocha', require: 'mocha/api'
+  gem 'webmock'
 end
 
 group :development, :test do

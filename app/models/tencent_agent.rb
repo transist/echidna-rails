@@ -1,6 +1,8 @@
 class TencentAgent
   include Mongoid::Document
   include UsersSampling
+  include UsersTracking
+  include ApiResponseCacher
 
   field :openid, type: String
   field :name, type: String
@@ -8,6 +10,9 @@ class TencentAgent
   field :access_token, type: String
   field :refresh_token, type: String
   field :expires_at, type: Integer
+
+  field :list_ids, type: Array, default: []
+  field :full_with_lists, type: Boolean, default: false
 
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed
@@ -19,13 +24,17 @@ class TencentAgent
 
   def refresh_access_token
     if Time.at(expires_at.to_i) - Time.now <= 1.day
-      puts log('Refreshing access token...')
-      new_token = access_token.refresh!
-      TencentAgent.create(new_token.to_hash.symbolize_keys)
-      puts log('Finished access token refreshing')
+      refresh_access_token!
     end
   rescue => e
     log_unexpected_error(e)
+  end
+
+  def refresh_access_token!
+    $spider_logger.info log('Refreshing access token...')
+    new_token = access_token.refresh!
+    update_attributes(new_token.to_hash.symbolize_keys)
+    $spider_logger.info log('Finished access token refreshing')
   end
 
   def self.weibo_client
@@ -65,8 +74,8 @@ class TencentAgent
       error[:response] = faraday_response
     end
 
-    puts log(error)
-    puts log(exception.inspect)
+    $spider_logger.error log(error)
+    $spider_logger.info log(exception.inspect)
   end
 
 end

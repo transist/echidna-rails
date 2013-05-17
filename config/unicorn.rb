@@ -1,4 +1,4 @@
-app_dir = File.expand_path '../../', __FILE__
+app_dir = "/home/echidna/echidna.transi.st/current"
 worker_processes 2
 working_directory app_dir
 

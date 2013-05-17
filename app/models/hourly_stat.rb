@@ -5,9 +5,11 @@ class HourlyStat
   field :date, type: Date
   field :stats, type: Array, default: (0..23).map {|n| {hour: n, count: 0} }
 
-  belongs_to :group
-
   validates :word, uniqueness: {scope: [:group, :date]}
+
+  index({group_id: 1, date: 1})
+
+  belongs_to :group
 
   def self.record(word, group, time)
     houly_stat = HourlyStat.find_or_create_by(word: word, group: group, date: time.to_date)

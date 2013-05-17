@@ -7,7 +7,7 @@ class SpiderScheduler
     schedule_refresh_access_token
     schedule_sample_users
     # schedule_track_users
-    # schedule_gather_tweets
+    schedule_gather_tweets
     # schedule_reset_api_calls_count
   end
 

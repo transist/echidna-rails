@@ -1,11 +1,12 @@
 class TencentAgent
   module TweetsGathering
     extend ActiveSupport::Concern
-    include UsersTracking
+
+    GATHER_TWEET_SLEEP = 5
 
     def gather_tweets
-      users_tracking_lists.each do |list_id, latest_tweet_timestamp|
-        gather_tweets_from_list(list_id, latest_tweet_timestamp)
+      list_ids.each do |list_id|
+        gather_tweets_from_list(list_id, list_last_timestamp_map[list_id])
       end
 
       $spider_logger.info log('Finished tweets gathering')
@@ -35,6 +36,7 @@ class TencentAgent
             break
           end
 
+          $spider_logger.info log('Gathered tweets...')
           latest_tweet_timestamp = publish_tweets(result['data']['info'], list_id, latest_tweet_timestamp)
           break if result['data']['hasnext'].zero?
 
@@ -48,7 +50,7 @@ class TencentAgent
           break
         end
 
-        sleep 5
+        sleep GATHER_TWEET_SLEEP
       end
     end
 
@@ -61,21 +63,19 @@ class TencentAgent
       return latest_tweet_timestamp if tweets.blank?
 
       $spider_logger.info log("Publishing tweets since #{Time.at(latest_tweet_timestamp.to_i)}")
+      
       tweets.each do |tweet|
-        $redis.lpush "streaming/messages", {
-          type: "add_tweet",
-          body: {
-            user_id: tweet['name'],
-            user_type: :tencent,
-            text: tweet['text'],
-            id: tweet['id'],
-            url: "http://t.qq.com/p/t/#{tweet['id']}",
-          timestamp: tweet['timestamp']
-          }
-        }.to_json
+        tweet_attrs = {
+          target_source: 'tencent',
+          target_person_id: tweet['openid'],
+          content: tweet['text'],
+          url: "http://t.qq.com/p/t/#{tweet['id']}"
+        }
+        TweetWorker.perform_async(tweet_attrs)
       end
 
-      $redis.hset users_tracking_lists_key, list_id, tweets.first['timestamp']
+      list_last_timestamp_map[list_id] = tweets.first['timestamp']
+      save
       tweets.first['timestamp']
     end
   end

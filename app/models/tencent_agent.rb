@@ -24,13 +24,17 @@ class TencentAgent
 
   def refresh_access_token
     if Time.at(expires_at.to_i) - Time.now <= 1.day
-      $spider_logger.info log('Refreshing access token...')
-      new_token = access_token.refresh!
-      update_attributes(new_token.to_hash.symbolize_keys)
-      $spider_logger.info log('Finished access token refreshing')
+      refresh_access_token!
     end
   rescue => e
     log_unexpected_error(e)
+  end
+
+  def refresh_access_token!
+    $spider_logger.info log('Refreshing access token...')
+    new_token = access_token.refresh!
+    update_attributes(new_token.to_hash.symbolize_keys)
+    $spider_logger.info log('Finished access token refreshing')
   end
 
   def self.weibo_client

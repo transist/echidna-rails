@@ -20,7 +20,7 @@ class TencentAgent
 
     def cache_path(cache_key)
       sha1_hash = Digest::SHA1.hexdigest(cache_key)
-      $app_root.join('cache', 'tencent_api', sha1_hash[0..3], sha1_hash)
+      Rails.root.join('cache', 'tencent_api', sha1_hash[0..3], sha1_hash)
     end
 
     def cache_exists?(cache_path)

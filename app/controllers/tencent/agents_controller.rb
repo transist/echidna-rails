@@ -1,4 +1,4 @@
-class AgentsController < ApplicationController
+class Tencent::AgentsController < ApplicationController
 
   def new
     redirect_to TencentAgent.weibo_client.auth_code.authorize_url

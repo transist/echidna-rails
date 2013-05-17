@@ -52,5 +52,12 @@ describe Group do
     it 'add the group to person' do
       person.groups.should include(group)
     end
+
+    it 'should not produce duplicate relation' do
+      group.add_person(person)
+      group.add_person(person)
+      group.people.size.should == 1
+      person.groups.size.should == 1
+    end
   end
 end

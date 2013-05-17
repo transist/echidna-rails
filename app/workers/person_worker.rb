@@ -14,7 +14,7 @@ class PersonWorker
       end
 
       #Batch added to list supported
-      TrackingPersonWorker.perform_async(person.id)
+      TrackingPersonWorker.perform_async(person._id.to_s)
     end
   end
 end

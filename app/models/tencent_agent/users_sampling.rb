@@ -2,7 +2,7 @@ class TencentAgent
   module UsersSampling
     extend ActiveSupport::Concern
 
-    SLEEP_WAIT = 5
+    SAMPLE_WAIT = 5
 
     def sample_users
       $spider_logger.info log('Sampling Users...')
@@ -27,7 +27,7 @@ class TencentAgent
           break
         end
 
-        sleep SLEEP_WAIT
+        sleep SAMPLE_WAIT
       end
 
       $spider_logger.warn log('No more keywords in queue for users gathering') if @keywords.count.zero?

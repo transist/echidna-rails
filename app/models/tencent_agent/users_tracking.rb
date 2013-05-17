@@ -3,6 +3,13 @@ class TencentAgent
     extend ActiveSupport::Concern
 
     USERS_TRACKING_LIST_PREFIX = 'UTL'
+    TRACK_WAIT = 5
+
+    included do
+      def self.get_agent_with_capacity
+        TencentAgent.all.each{|agent| break agent unless agent[:full_with_lists]}
+      end
+    end
 
     def track_users(user_names)
       $spider_logger.info log('Tracking users...')
@@ -19,10 +26,10 @@ class TencentAgent
           track_users_by_list(user_names)
         rescue
           # TODO: figure out a better way to rescue track user failure.
-          $spider_logger.error "Added to list fail"
+          $spider_logger.error log("Added to list fail")
         end
 
-        sleep SLEEP_WAIT
+        sleep TRACK_WAIT
       end
 
       $spider_logger.info log('Finished users tracking')
@@ -45,6 +52,7 @@ class TencentAgent
 
     def create_list(list_name)
       result = post('api/list/create', name: list_name, access: 1)
+      $spider_logger.info log("Create list result #{result}")
       if result['ret'].to_i.zero?
         add_list_to_users_tracking_lists(result['data'])
         $spider_logger.info log(%{Created list "#{list_name}"})
@@ -79,8 +87,5 @@ class TencentAgent
       end
     end
 
-    def self.get_agent_with_capacity
-      TencentAgent.all.each{|agent| break agent unless agent[:full_with_lists]}
-    end
   end
 end

@@ -17,10 +17,14 @@ class Person
 
   field :target_source, type: String
   field :target_id, type: String
+  field :target_name, type: String
   field :birth_year, type: Integer
   field :gender, type: String
 
   validates :gender, inclusion: { in: GENDERS }
+  validates :target_id, uniqueness: {scope: :target_source}
+
+  index({ target_source: 1, target_id: 1}, { unique: true })
 
   has_many :tweets
   belongs_to :city

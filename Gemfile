@@ -61,11 +61,12 @@ group :test do
   gem 'capybara', '>= 2.0.3'
   gem 'timecop'
   gem 'mocha', require: 'mocha/api'
+  gem 'webmock'
 end
 
 group :development, :test do
   gem 'awesome_print'
-  gem 'pry'
+  gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'pry-nav'
   gem 'rspec-rails', '>= 2.12.2'

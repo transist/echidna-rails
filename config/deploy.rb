@@ -14,6 +14,10 @@ set :bundle_flags, '--deployment --quiet --binstubs'
 set :bundle_without, [:development, :test]
 require 'bundler/capistrano'
 
+require 'sidekiq/capistrano'
+set :sidekiq_role, :sidekiq
+role :sidekiq, 'echidna.transi.st'
+
 # Use HTTP proxy from Transist server to help bundler cross the GFW
 set :default_environment, {
   http_proxy: 'http://192.168.1.42:8123'
@@ -26,13 +30,20 @@ role :app, 'echidna.transi.st'
 role :web, 'echidna.transi.st'
 role :db,  'echidna.transi.st', primary: true
 set :port, 2220
-set :branch, 'master'
+set :branch, 'develop'
 set :rails_env, 'production'
 set :deploy_to, '/home/echidna/echidna.transi.st'
 
+after 'deploy:update_code', 'deploy:symbolic_links'
 after 'deploy:restart', 'deploy:cleanup'
+after 'deploy:restart', 'deploy:start_spider'
 
 namespace :deploy do
+  desc 'Symbolic links'
+  task :symbolic_links do
+    run "ln -nfs #{shared_path}/config/application.yml #{release_path}/config/application.yml"
+  end
+
   desc 'Restart unicorn'
   task :restart do
     run <<-BASH
@@ -53,5 +64,10 @@ namespace :deploy do
     run <<-BASH
       kill -QUIT `cat /home/echidna/echidna.transi.st/shared/pids/unicorn.pid`
     BASH
+  end
+
+  desc 'Start spider'
+  task :start_spider, roles: :app do
+    run "cd #{current_release}; nohup bundle exec rake RAILS_ENV=production spider_scheduler > /dev/null 2>&1 &"
   end
 end

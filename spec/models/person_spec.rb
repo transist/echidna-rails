@@ -5,4 +5,5 @@ describe Person do
   it { should have_many :tweets }
   it { should belong_to :city }
   it { should have_and_belong_to_many :groups }
+  it { should validate_uniqueness_of(:target_id).scoped_to(:target_source) }
 end

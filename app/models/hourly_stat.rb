@@ -3,9 +3,19 @@ class HourlyStat
 
   field :word
   field :date, type: Date
-  field :stats, type: Array # [{hour: 0, count: 1}, {hour: 1, count: 2}, {hour: 10, count: 0}]
+  field :stats, type: Array, default: (0..23).map {|n| {hour: n, count: 0} }
+
+  validates :word, uniqueness: {scope: [:group, :date]}
+
+  index({group_id: 1, date: 1})
 
   belongs_to :group
+
+  def self.record(word, group, time)
+    houly_stat = HourlyStat.find_or_create_by(word: word, group: group, date: time.to_date)
+    HourlyStat.collection.find(:_id => houly_stat.id, 'stats.hour' => time.hour).
+      update({'$inc' => {'stats.$.count' => 1}})
+  end
 
   def self.top_trends(panel, options={})
     current_time = Time.now.beginning_of_hour

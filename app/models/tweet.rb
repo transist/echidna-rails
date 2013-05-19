@@ -12,7 +12,7 @@ class Tweet
   after_create :update_stats
 
   def extract_words
-    Stopword.filter(Segment.get(content))
+    Echidna::Stopwords.reject(Rseg.segment(content))
   end
 
   private

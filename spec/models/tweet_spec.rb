@@ -9,15 +9,15 @@ describe Tweet do
   describe '#extract_words' do
     it 'segement the content to words' do
       tweet
-      Segment.expects(:get).with(tweet.content).
+      Rseg.expects(:segment).with(tweet.content).
         returns(%w(We sense a soul in search of answers))
 
       tweet.extract_words
     end
 
-    it 'filter the stop words' do
-      words = Segment.get(tweet.content)
-      Stopword.expects(:filter).with(words).
+    it 'rejct the stop words' do
+      words = Rseg.segment(tweet.content)
+      Echidna::Stopwords.expects(:reject).with(words).
         returns(%w(We sense soul search answers))
 
       tweet.extract_words
@@ -26,7 +26,7 @@ describe Tweet do
 
   describe '#update_stats' do
     before do
-      Stopword.stubs(:filter).returns(%w(We sense soul search answers))
+      Echidna::Stopwords.stubs(:reject).returns(%w(We sense soul search answers))
     end
 
     it 'update daily stats of all words for all groups of the author' do

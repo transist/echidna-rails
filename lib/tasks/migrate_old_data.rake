@@ -10,9 +10,11 @@ task migrate_old_data: :environment do
   data = MultiJson.load(File.read(Rails.root.join('data.json')))
 
   data['agents'].each do |key, agent|
+    # Reset timestamp to nil
+    list_last_timestamp_map = Hash[agent['lists'].keys.map {|k| [k, nil] }]
     TencentAgent.create(agent['attributes'].merge(
       list_ids: agent['lists'].keys,
-      list_last_timestamp_map: agent['lists']
+      list_last_timestamp_map: list_last_timestamp_map
     ))
   end
 

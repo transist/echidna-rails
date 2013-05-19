@@ -395,6 +395,7 @@ DEPENDENCIES
   mocha
   mongoid (>= 3.1.2)
   mongoid-rspec (>= 1.7.0)
+  nokogiri
   oauth2!
   pry-nav
   pry-rails

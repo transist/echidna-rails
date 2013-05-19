@@ -1,5 +1,12 @@
 desc 'Migrate data from old system'
 task migrate_old_data: :environment do
+  TencentAgent.delete_all
+  Person.delete_all
+  Group.all.unset :person_ids
+  Tweet.delete_all
+  DailyStat.delete_all
+  HourlyStat.delete_all
+
   data = MultiJson.load(File.read(Rails.root.join('data.json')))
 
   data['agents'].each do |key, agent|

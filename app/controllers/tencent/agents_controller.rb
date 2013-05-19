@@ -6,7 +6,9 @@ class Tencent::AgentsController < ApplicationController
 
   def callback
     begin
-      TencentAgent.create(TencentAgent.weibo_client.auth_code.get_token(params[:code]).to_hash.symbolize_keys)
+      token = TencentAgent.weibo_client.auth_code.get_token(params[:code]).to_hash.symbolize_keys
+      agent = TencentAgent.find_or_initialize_by(openid: token[:openid])
+      agent.update_attributes(token)
       render json: {success: true}
     rescue => e
       render json: {success: false, error: e.message}

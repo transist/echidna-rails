@@ -12,7 +12,8 @@ module Support
         City.all.each do |city|
           Person::BIRTH_YEARS.each do |birth_year|
             Group.create!(
-              gender: gender, city: city,
+              gender: gender,
+              city: city,
               start_birth_year: birth_year.first,
               end_birth_year: birth_year.last
             )

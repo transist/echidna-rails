@@ -22,9 +22,9 @@ gem 'sinatra', '>= 1.3.0', require: nil
 
 gem 'hiredis'
 gem 'redis-namespace'
-gem 'rmmseg-cpp', require: 'rmmseg'
+gem 'rseg', git: 'git://github.com/SaitoWu/rseg.git'
+gem 'echidna-stopwords', git: 'git@github.com:transist/echidna-stopwords.git'
 gem 'yajl-ruby', require: 'yajl'
-gem 'msworddoc-extractor', require: false
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

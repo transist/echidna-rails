@@ -7,6 +7,8 @@ task :spider_scheduler => :environment do
   system("kill -QUIT `cat #{pid_file}`") if File.exists? pid_file
   File.open(pid_file, 'w') { |f| f.puts Process.pid }
 
+  Rseg.load
+  Echidna::Stopwords.load
   scheduler = SpiderScheduler.new
   scheduler.run
   scheduler.join

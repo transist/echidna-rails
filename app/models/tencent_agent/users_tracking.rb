@@ -7,7 +7,7 @@ class TencentAgent
 
     included do
       def self.get_agent_with_capacity
-        TencentAgent.all.each{|agent| break agent unless agent[:full_with_lists]}
+        TencentAgent.where(full_with_lists: false).first
       end
     end
 
@@ -15,10 +15,10 @@ class TencentAgent
       $spider_logger.info log('Tracking users...')
 
       # Tencent Weibo's add_to_list API accept at most 8 user names per request.
-      
+
       if user_names.count > 8
         user_names.slice!(8)
-        $spider_logger.warn log("Tencent Weibo's add_to_list API accept at most 8 user names per request.") 
+        $spider_logger.warn log("Tencent Weibo's add_to_list API accept at most 8 user names per request.")
       end
 
       unless user_names.empty?
@@ -68,7 +68,7 @@ class TencentAgent
     end
 
     def add_list_to_users_tracking_lists(list)
-      list_ids << list['listid'] 
+      list_ids << list['listid']
       save
     end
 

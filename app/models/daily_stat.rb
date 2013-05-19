@@ -51,7 +51,9 @@ class DailyStat
   private
 
   def set_default_stats
-    days_in_month = Time.days_in_month(date.month, date.year)
-    self.stats = (1..days_in_month).map {|n| {'day' => n, 'count' => 0} }
+    self.stats ||= begin
+                     days_in_month = Time.days_in_month(date.month, date.year)
+                     (1..days_in_month).map {|n| {'day' => n, 'count' => 0} }
+                   end
   end
 end

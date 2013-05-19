@@ -26,6 +26,8 @@ gem 'rseg', git: 'git://github.com/SaitoWu/rseg.git'
 gem 'echidna-stopwords', git: 'git@github.com:transist/echidna-stopwords.git'
 gem 'yajl-ruby', require: 'yajl'
 
+gem 'nokogiri', require: 'nokogiri'
+
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'

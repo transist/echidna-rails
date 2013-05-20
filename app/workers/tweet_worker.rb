@@ -10,6 +10,9 @@ class TweetWorker
     ).first
 
     if person.nil?
+      # In this case actually this job will still failed, since sample_user
+      # need PersonWorker to persist the person, this make us can't load person
+      # here. But this job will finally successed in the future retries.
       TencentAgent.first.sample_user(target_id)
     end
 

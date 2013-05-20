@@ -55,7 +55,7 @@ class TencentAgent
     private
 
     def random_keyword
-      @keywords ||= ["公知", "淘宝", "皮鞋", "大象", "豆瓣", "楼主", "萨摩耶", "卤煮", "乌鸦", "瓶子"]
+      @keywords ||= MultiJson.load(File.read(ENV['DICT_DATA_JSON_PATH']))['keywords_queue']
       word = @keywords.sample
       @keywords.delete(word)
     end

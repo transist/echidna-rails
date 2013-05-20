@@ -22,3 +22,5 @@ ECHIDNA_SPIDER_TENCENT_REDIRECT_URI: http://localhost:3000/agents/tencent/create
 
 ECHIDNA_REDIS_HOST: 127.0.0.1
 ECHIDNA_REDIS_PORT: 6379
+
+DICT_DATA_JSON_PATH: /home/echidna/echidna.transi.st/shared/data.json

@@ -6,6 +6,11 @@ class TweetWorker
       target_source: tweet_attrs.delete('target_source'),
       target_id: tweet_attrs.delete('target_person_id')
     ).first
-    person.tweets.create(tweet_attrs)
+
+    if person.nil?
+      TencentAgent.all.first.sample_user(target_id, query_type: :fopenid)
+    else
+      person.tweets.create(tweet_attrs)
+    end
   end
 end

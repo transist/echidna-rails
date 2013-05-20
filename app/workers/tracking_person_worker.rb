@@ -1,5 +1,6 @@
 class TrackingPersonWorker
   include Sidekiq::Worker
+  sidekiq_options :queue => :spider
 
   def perform(person_id)
     person = Person.find person_id

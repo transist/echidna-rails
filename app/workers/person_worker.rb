@@ -1,5 +1,6 @@
 class PersonWorker
   include Sidekiq::Worker
+  sidekiq_options :queue => :spider
 
   def perform(person_attrs)
     unless Person.where(

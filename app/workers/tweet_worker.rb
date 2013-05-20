@@ -1,5 +1,6 @@
 class TweetWorker
   include Sidekiq::Worker
+  sidekiq_options :queue => :spider
 
   def perform(tweet_attrs)
     person = Person.where(

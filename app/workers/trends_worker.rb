@@ -1,5 +1,6 @@
 class TrendsWorker
   include SidekiqStatus::Worker
+  sidekiq_options :queue => :trends
 
   def perform(panel_id, length, period)
     Sidekiq.logger.info "panel_id: #{panel_id}, length: #{length}, period: #{period}"

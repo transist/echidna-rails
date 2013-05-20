@@ -1,0 +1,4 @@
+- current_user.panels.each do |panel|
+  p
+    = link_to "Panel: #{panel.name}", trends_panel_path(panel)
+    = link_to "Edit", edit_panel_path(panel), class: 'btn'

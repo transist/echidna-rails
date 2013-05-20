@@ -62,7 +62,14 @@ class TencentAgent
 
     def publish_user(user)
       $spider_logger.info log(%{Publishing user "#{user['name']}" openid: #{user['openid']}})
-      PersonWorker.perform_async(user)
+      PersonWorker.perform_async(
+        target_source: 'tencent',
+        target_id: user['openid'],
+        target_name: user['name'],
+        birth_year: user['birth_year'],
+        gender: user['gender'],
+        city: user['city']
+      )
     end
   end
 end

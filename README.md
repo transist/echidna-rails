@@ -20,6 +20,11 @@ Load Rails Development Environment
 Guard will run Rails server and tests for you, plus automatically restart them
 when related files change. Check `Guardfile` for details.
 
+Run Sidekiq
+-----------
+
+    bundle exec sidekiq -q trends,10 -q default -q spider,1
+
 Deploy to Production
 --------------------
 

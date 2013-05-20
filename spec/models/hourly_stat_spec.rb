@@ -66,6 +66,7 @@ describe HourlyStat do
       end
     }
     let(:other_panel) { create(:panel) }
+    let(:user) { create(:user) }
 
     before do
       Timecop.freeze(Time.now.change(hour: 10))
@@ -77,7 +78,7 @@ describe HourlyStat do
     end
 
     it "returns 中国, 日本 and 美国" do
-      expect(HourlyStat.top_trends(panel)).to eq [
+      expect(HourlyStat.top_trends(panel, user)).to eq [
         {word: "美国", z_score: 1.4804519606800843},
         {word: "中国", z_score: 1.4804519606800841},
         {word: "日本", z_score: 1.4804519606800841}
@@ -85,11 +86,11 @@ describe HourlyStat do
     end
 
     it "returns nothing for other panel" do
-      expect(HourlyStat.top_trends(other_panel)).to be_empty
+      expect(HourlyStat.top_trends(other_panel, user)).to be_empty
     end
 
     it "checks history for only 1 hour" do
-      expect(HourlyStat.top_trends(panel, hours: 1)).to eq [
+      expect(HourlyStat.top_trends(panel, user, hours: 1)).to eq [
         {word: "中国", z_score: 0},
         {word: "美国", z_score: 0},
         {word: "日本", z_score: 0}
@@ -97,14 +98,22 @@ describe HourlyStat do
     end
 
     it "returns only 2 words" do
-      expect(HourlyStat.top_trends(panel, limit: 2)).to eq [
+      expect(HourlyStat.top_trends(panel, user, limit: 2)).to eq [
         {word: "美国", z_score: 1.4804519606800843},
         {word: "中国", z_score: 1.4804519606800841}
       ]
     end
 
+    it "filter 中国 as stopword" do
+      user.add_stopword '中国'
+      expect(HourlyStat.top_trends(panel, user)).to eq [
+        {word: "美国", z_score: 1.4804519606800843},
+        {word: "日本", z_score: 1.4804519606800841}
+      ]
+    end
+
     it "query 2 days data" do
-      expect(HourlyStat.top_trends(panel, hours: 20)).to eq [
+      expect(HourlyStat.top_trends(panel, user, hours: 20)).to eq [
         {word: "中国", z_score: 1.429954466009161},
         {word: "日本", z_score: 1.4226184910682367},
         {word: "美国", z_score: 1.3661642830588334}

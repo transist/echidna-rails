@@ -49,4 +49,20 @@ class User
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me, :created_at, :updated_at
 
   has_many :panels
+
+  def add_stopword(word)
+    $redis.sadd stopwords_key, word
+  end
+
+  def has_stopword?(word)
+    $redis.sismember stopwords_key, word
+  end
+
+  def stopwords
+    $redis.smembers stopwords_key
+  end
+
+  def stopwords_key
+    "users/#{self.id}/stopwords"
+  end
 end

@@ -27,6 +27,7 @@ describe Tweet do
   describe '#update_stats' do
     before do
       Echidna::Stopwords.stubs(:reject).returns(%w(We sense soul search answers))
+      expect(tweet.person).to have(5).groups
     end
 
     it 'update daily stats of all words for all groups of the author' do

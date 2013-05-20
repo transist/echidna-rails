@@ -5,6 +5,10 @@ FactoryGirl.define do
     gender 'female'
   end
 
+  factory :person_with_groups, parent: :person do
+    groups { create_list(:group, 5) }
+  end
+
   factory :person_shanghai_female_1999, parent: :person do
     birth_year 1999
     city { City.where(name: '上海').first || create(:city_shanghai) }

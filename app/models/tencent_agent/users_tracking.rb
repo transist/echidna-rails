@@ -11,19 +11,19 @@ class TencentAgent
       end
     end
 
-    def track_users(user_names)
+    def track_users(tracking_ids, tracking_type = :fopenids)
       $spider_logger.info log('Tracking users...')
 
       # Tencent Weibo's add_to_list API accept at most 8 user names per request.
 
-      if user_names.count > 8
-        user_names.slice!(8)
+      if tracking_ids.count > 8
+        tracking_ids.slice!(8)
         $spider_logger.warn log("Tencent Weibo's add_to_list API accept at most 8 user names per request.")
       end
 
-      unless user_names.empty?
+      unless tracking_ids.empty?
         begin
-          track_users_by_list(user_names)
+          track_users_by_list(tracking_ids, tracking_type)
         rescue
           # TODO: figure out a better way to rescue track user failure.
           $spider_logger.error log("Added to list fail")
@@ -72,10 +72,11 @@ class TencentAgent
       save
     end
 
-    def track_users_by_list(user_names)
-      result = post('api/list/add_to_list', names: user_names.join(','), listid: latest_users_tracking_list_id)
+    def track_users_by_list(tracking_ids, tracking_type)
+      join_tracking_ids = tracking_type == :fopenids ? tracking_ids.join('_') : tracking_ids.join(',')
+      result = post('api/list/add_to_list', tracking_type => join_tracking_ids, listid: latest_users_tracking_list_id)
       if result['ret'].to_i.zero?
-        $spider_logger.info log(%{Tracked users "#{user_names.join(',')}" by list})
+        $spider_logger.info log(%{Tracked users "#{tracking_ids.join(',')}" by list})
 
       else
         # List limitation of maximized members reached

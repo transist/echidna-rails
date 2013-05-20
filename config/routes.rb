@@ -9,6 +9,7 @@ Echidna::Application.routes.draw do
 
   authenticated :user do
     root to: 'home#dashboard'
+    post 'add_stopword' => 'users#add_stopword'
   end
   root to: 'home#index'
   devise_for :users

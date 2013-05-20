@@ -9,4 +9,8 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  def add_stopword
+    current_user.add_stopword params[:word]
+    render json: {}
+  end
 end

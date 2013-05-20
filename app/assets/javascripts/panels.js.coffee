@@ -3,8 +3,11 @@ class Job
     self = this
     $('#live').on 'change', (event)->
       self.liveCheck()
+
     jobId = $('#trends_job_id').data('job-id')
     @checkJobStatus(jobId)
+
+    @addStopword()
 
   checkJobStatus: (jobId)->
     self = this
@@ -15,14 +18,26 @@ class Job
           if data["payload"].length == 0
             $('#trends').html $('<p>Not available</p>')
           else
-            $('#trends').html $('<table><thead><tr><th>Keyword</th><th>Z-score</th></tr></thead><tbody><tbody></table>')
+            $('#trends').html $('<table><thead><tr><th>Keyword</th><th>Z-score</th><th></th></tr></thead><tbody><tbody></table>')
             $.each data["payload"], (index, row)->
-              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td></tr>")
+              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
           $('.spinner').hide()
           if $('#live').prop("checked")
             self.liveCheck()
         else
           retry()
+
+  addStopword: ->
+    $(document).on 'click', '.stopword', ->
+      word_row = $(this).parents('tr')
+      word = word_row.children().first().text()
+      $.ajax '/add_stopword',
+        data : JSON.stringify({word: word}),
+        contentType : 'application/json',
+        type : 'POST',
+        success: ->
+          word_row.remove()
+      false
 
   liveCheck: ->
     self = this

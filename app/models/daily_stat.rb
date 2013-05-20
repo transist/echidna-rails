@@ -19,7 +19,7 @@ class DailyStat
       update('$inc' => {'stats.$.count' => 1})
   end
 
-  def self.top_trends(panel, options={})
+  def self.top_trends(panel, user, options={})
     current_time = Time.now.beginning_of_day
     days = options[:days] || 7
     limit = options[:limit] || 100
@@ -46,7 +46,7 @@ class DailyStat
     end
     current_stats.map { |word, current_stat|
       {word: word, z_score: FAZScore.new(0.5, history_stats[word]).score(current_stat)}
-    }.sort_by { |stat| -stat[:z_score] }[0...limit]
+    }.reject { |stat| user.has_stopword? stat[:word] }.sort_by { |stat| -stat[:z_score] }[0...limit]
   end
 
   private

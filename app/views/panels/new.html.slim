@@ -1,6 +1,7 @@
 h3 New panel
 
 = simple_form_for @panel do |f|
+  = f.input :name
   = f.select :city_ids, cities_options_for_select, {}, multiple: true, size: 10
   = f.select :age_ranges, age_ranges_options_for_select, {}, multiple: true, size: 10
   = f.select :gender, gender_options_for_select

@@ -1,7 +1,7 @@
 module PanelsHelper
   def panels_links
     current_user.panels.each { |panel|
-      concat content_tag('p', link_to("Panel: #{panel.to_s}", trends_panel_path(panel)))
+      concat content_tag('p', link_to("Panel: #{panel.name}", trends_panel_path(panel)))
     }
     nil
   end

@@ -1,8 +1,11 @@
 class Panel
   include Mongoid::Document
 
+  field :name
   field :age_ranges, type: Array
   field :gender
+
+  validates :name, presence: true
 
   belongs_to :user
   has_and_belongs_to_many :cities

@@ -20,7 +20,7 @@ class TencentAgent
 
           user_name = result['data']['info'].first['name']
 
-          sample_user(user_name, keyword)
+          sample_user(user_name)
 
         else
           $spider_logger.error log("Failed to gather user: #{result['msg']}")
@@ -40,14 +40,15 @@ class TencentAgent
       log_unexpected_error(e)
     end
 
-    def sample_user(user_name, keyword = nil)
-      result = cached_get('api/user/other_info', name: user_name)
+    def sample_user(query_value, opts={})
+      query_type = opts.delete(:query_type) || :name
+      result = cached_get('api/user/other_info', query_type => query_value)
 
       if result['ret'].to_i.zero? && result['data']
         user = UserDecorator.decorate(result['data'])
         publish_user(user)
       else
-        $spider_logger.error log(%{Failed to gather profile of user "#{user_name}"})
+        $spider_logger.error log(%{Failed to gather profile of user "#{query_type}:#{query_value}"})
       end
       false
     end

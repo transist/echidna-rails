@@ -104,9 +104,9 @@ describe DailyStat do
 
     it "returns 中国, 日本 and 美国" do
       expect(DailyStat.top_trends(panel, user)).to eq [
-        {word: "美国", z_score: 1.4804519606800843},
-        {word: "中国", z_score: 1.4804519606800841},
-        {word: "日本", z_score: 1.4804519606800841}
+        {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
+        {word: "中国", z_score: 1.4804519606800841, current_stat: 200},
+        {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
       ]
     end
 
@@ -116,32 +116,32 @@ describe DailyStat do
 
     it "checks history for only 1 day" do
       expect(DailyStat.top_trends(panel, user, days: 1)).to eq [
-        {word: "中国", z_score: 0},
-        {word: "美国", z_score: 0},
-        {word: "日本", z_score: 0}
+        {word: "中国", z_score: 0, current_stat: 200},
+        {word: "美国", z_score: 0, current_stat: 20},
+        {word: "日本", z_score: 0, current_stat: 240}
       ]
     end
 
     it "returns only 2 words" do
       expect(DailyStat.top_trends(panel, user, limit: 2)).to eq [
-        {word: "美国", z_score: 1.4804519606800843},
-        {word: "中国", z_score: 1.4804519606800841}
+        {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
+        {word: "中国", z_score: 1.4804519606800841, current_stat: 200}
       ]
     end
 
     it "filter 中国 as stopword" do
       user.add_stopword '中国'
       expect(DailyStat.top_trends(panel, user)).to eq [
-        {word: "美国", z_score: 1.4804519606800843},
-        {word: "日本", z_score: 1.4804519606800841}
+        {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
+        {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
       ]
     end
 
     it "query 2 days data" do
       expect(DailyStat.top_trends(panel, user, days: 20)).to eq [
-        {word: "中国", z_score: 1.3851386144545532},
-        {word: "日本", z_score: 1.356305321707554},
-        {word: "美国", z_score: 1.1815597860975298}
+        {word: "中国", z_score: 1.3851386144545532, current_stat: 200},
+        {word: "日本", z_score: 1.356305321707554, current_stat: 240},
+        {word: "美国", z_score: 1.1815597860975298, current_stat: 20}
       ]
     end
   end

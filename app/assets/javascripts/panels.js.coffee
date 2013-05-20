@@ -18,9 +18,9 @@ class Job
           if data["payload"].length == 0
             $('#trends').html $('<p>Not available</p>')
           else
-            $('#trends').html $('<table><thead><tr><th>Keyword</th><th>Z-score</th><th></th></tr></thead><tbody><tbody></table>')
+            $('#trends').html $('<table><thead><tr><th>Keyword</th><th>Z-score</th><th>Current Frequency</th><th></th></tr></thead><tbody><tbody></table>')
             $.each data["payload"], (index, row)->
-              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
+              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td>"+row['current_stat']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
           $('.spinner').hide()
           if $('#live').prop("checked")
             self.liveCheck()

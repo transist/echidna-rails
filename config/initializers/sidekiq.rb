@@ -5,6 +5,9 @@ Sidekiq.configure_server do |config|
   end
 
   config.redis = { namespace: "e:sidekiq:#{Rails.env[0]}" }
+
+  Rseg.load
+  Echidna::Stopwords.load
 end
 
 Sidekiq.configure_client do |config|

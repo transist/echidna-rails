@@ -101,4 +101,13 @@ describe User do
 
   end
 
+  describe "#add_stopword" do
+    let(:user) { create :user }
+
+    it "should add stopword for that user" do
+      user.add_stopword '世界'
+      expect(user).to have_stopword '世界'
+    end
+  end
+
 end

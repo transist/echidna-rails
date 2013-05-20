@@ -10,7 +10,7 @@ class TweetWorker
     ).first
 
     if person.nil?
-      TencentAgent.all.first.sample_user(target_id, query_type: :fopenid)
+      TencentAgent.first.sample_user(target_id, query_type: :fopenid)
     end
 
     person.tweets.create(tweet_attrs)

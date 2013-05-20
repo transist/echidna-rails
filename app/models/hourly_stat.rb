@@ -20,6 +20,7 @@ class HourlyStat
   def self.top_trends(panel, options={})
     current_time = Time.now.beginning_of_hour
     hours = options[:hours] || 7
+    limit = options[:limit] || 100
     start_time = current_time.ago(hours.hours)
 
     history_stats = {}
@@ -43,6 +44,6 @@ class HourlyStat
     end
     current_stats.map { |word, current_stat|
       {word: word, z_score: FAZScore.new(0.5, history_stats[word]).score(current_stat)}
-    }.sort_by { |stat| -stat[:z_score] }
+    }.sort_by { |stat| -stat[:z_score] }[0...limit]
   end
 end

@@ -96,6 +96,13 @@ describe HourlyStat do
       ]
     end
 
+    it "returns only 2 words" do
+      expect(HourlyStat.top_trends(panel, limit: 2)).to eq [
+        {word: "美国", z_score: 1.4804519606800843},
+        {word: "中国", z_score: 1.4804519606800841}
+      ]
+    end
+
     it "query 2 days data" do
       expect(HourlyStat.top_trends(panel, hours: 20)).to eq [
         {word: "中国", z_score: 1.429954466009161},

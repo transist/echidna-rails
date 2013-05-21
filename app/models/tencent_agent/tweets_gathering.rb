@@ -63,13 +63,13 @@ class TencentAgent
       return latest_tweet_timestamp if tweets.blank?
 
       $spider_logger.info log("Publishing tweets since #{Time.at(latest_tweet_timestamp.to_i)}")
-      
+
       tweets.each do |tweet|
         tweet_attrs = {
           target_source: 'tencent',
+          target_id: tweet['id'],
           target_person_id: tweet['openid'],
           content: tweet['text'],
-          url: "http://t.qq.com/p/t/#{tweet['id']}",
           posted_at: Time.at(tweet['timestamp'].to_i)
         }
         TweetWorker.perform_async(tweet_attrs)

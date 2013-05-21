@@ -12,14 +12,24 @@ class Job
   checkJobStatus: (jobId)->
     self = this
     $('.spinner').show()
-    $.poll (retry) ->
+    $.poll 5000, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         if data["status"] == "complete"
           if data["payload"].length == 0
             $('#trends').html $('<p>Not available</p>')
           else
-            $('#trends').html $('<table><thead><tr><th>Keyword</th><th>Z-score</th><th>Current Frequency</th><th></th></tr></thead><tbody><tbody></table>')
-            $.each data["payload"], (index, row)->
+            $('#trends').html ''
+            positive_stats = data["payload"]["positive_stats"]
+            $('#trends').append $('<table class="stats"><caption>Positive Trends</caption><thead><tr><th>Keyword</th><th>Z-score</th><th>Current Frequency</th><th></th></tr></thead><tbody><tbody></table>')
+            $.each positive_stats, (index, row)->
+              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td>"+row['current_stat']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
+            zero_stats = data["payload"]["zero_stats"]
+            $('#trends').append $('<table class="stats"><caption>Zero Trends</caption><thead><tr><th>Keyword</th><th>Z-score</th><th>Current Frequency</th><th></th></tr></thead><tbody><tbody></table>')
+            $.each zero_stats, (index, row)->
+              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td>"+row['current_stat']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
+            negative_stats = data["payload"]["negative_stats"]
+            $('#trends').append $('<table class="stats"><caption>Negative Trends</caption><thead><tr><th>Keyword</th><th>Z-score</th><th>Current Frequency</th><th></th></tr></thead><tbody><tbody></table>')
+            $.each negative_stats, (index, row)->
               $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td>"+row['current_stat']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
           $('.spinner').hide()
           if $('#live').prop("checked")

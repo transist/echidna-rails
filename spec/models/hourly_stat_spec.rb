@@ -78,46 +78,88 @@ describe HourlyStat do
     end
 
     it "returns 中国, 日本 and 美国" do
-      expect(HourlyStat.top_trends(panel, user)).to eq [
-        {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-        {word: "中国", z_score: 1.4804519606800841, current_stat: 200},
-        {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
-      ]
+      expect(HourlyStat.top_trends(panel, user)).to eq({
+        positive_stats: [
+          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
+          {word: "中国", z_score: 1.4804519606800841, current_stat: 200},
+          {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
+        ],
+        zero_stats: [
+          {word: "韩国", z_score: 0, current_stat: 2}
+        ],
+        negative_stats: [
+          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+        ]
+      })
     end
 
     it "returns nothing for other panel" do
-      expect(HourlyStat.top_trends(other_panel, user)).to be_empty
+      expect(HourlyStat.top_trends(other_panel, user)).to eq({
+        positive_stats: [],
+        zero_stats: [],
+        negative_stats: []
+      })
     end
 
     it "checks history for only 1 hour" do
-      expect(HourlyStat.top_trends(panel, user, hours: 1)).to eq [
-        {word: "中国", z_score: 0, current_stat: 200},
-        {word: "美国", z_score: 0, current_stat: 20},
-        {word: "日本", z_score: 0, current_stat: 240}
-      ]
+      expect(HourlyStat.top_trends(panel, user, hours: 1)).to eq({
+        positive_stats: [],
+        zero_stats: [
+          {word: "日本", z_score: 0, current_stat: 240},
+          {word: "中国", z_score: 0, current_stat: 200},
+          {word: "朝鲜", z_score: 0, current_stat: 120},
+          {word: "美国", z_score: 0, current_stat: 20},
+          {word: "韩国", z_score: 0, current_stat: 2}
+        ],
+        negative_stats: []
+      })
     end
 
     it "returns only 2 words" do
-      expect(HourlyStat.top_trends(panel, user, limit: 2)).to eq [
-        {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-        {word: "中国", z_score: 1.4804519606800841, current_stat: 200}
-      ]
+      expect(HourlyStat.top_trends(panel, user, limit: 2)).to eq({
+        positive_stats: [
+          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
+          {word: "中国", z_score: 1.4804519606800841, current_stat: 200}
+        ],
+        zero_stats: [
+          {word: "韩国", z_score: 0, current_stat: 2}
+        ],
+        negative_stats: [
+          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+        ]
+      })
     end
 
     it "filter 中国 as stopword" do
       user.add_stopword '中国'
-      expect(HourlyStat.top_trends(panel, user)).to eq [
-        {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-        {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
-      ]
+      expect(HourlyStat.top_trends(panel, user)).to eq({
+        positive_stats: [
+          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
+          {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
+        ],
+        zero_stats: [
+          {word: "韩国", z_score: 0, current_stat: 2}
+        ],
+        negative_stats: [
+          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+        ]
+      })
     end
 
-    it "query 2 days data" do
-      expect(HourlyStat.top_trends(panel, user, hours: 20)).to eq [
-        {word: "中国", z_score: 1.429954466009161, current_stat: 200},
-        {word: "日本", z_score: 1.4226184910682367, current_stat: 240},
-        {word: "美国", z_score: 1.3661642830588334, current_stat: 20}
-      ]
+    it "query 20 hours data" do
+      expect(HourlyStat.top_trends(panel, user, hours: 20)).to eq({
+        positive_stats: [
+          {word: "中国", z_score: 1.429954466009161, current_stat: 200},
+          {word: "日本", z_score: 1.4226184910682367, current_stat: 240},
+          {word: "美国", z_score: 1.3661642830588334, current_stat: 20}
+        ],
+        zero_stats: [
+          {word: "韩国", z_score: 0, current_stat: 2}
+        ],
+        negative_stats: [
+          {word: "朝鲜", z_score: -1.4114509547749945, current_stat: 120}
+        ]
+      })
     end
   end
 end

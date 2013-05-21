@@ -4,6 +4,69 @@ class Job
     $('#live').on 'change', (event)->
       self.liveCheck()
 
+    @trends_template = "<table class='stats'>
+                         <caption>Positive Trends</caption>
+                         <thead>
+                           <tr>
+                             <th>Keyword</th>
+                             <th>Score</th>
+                             <th>Current</th>
+                             <th></th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                         {{#positive_stats}}
+                           <tr>
+                             <td>{{word}}</td>
+                             <td>{{z_score}}</td>
+                             <td>{{current_stat}}</td>
+                             <td><a href='#' class='stopword'>Ignore</a></td>
+                           </tr>
+                         {{/positive_stats}}
+                         </tbody>
+                        </table>
+                        <table class='stats'>
+                         <caption>Negative Trends</caption>
+                         <thead>
+                           <tr>
+                             <th>Keyword</th>
+                             <th>Score</th>
+                             <th>Current</th>
+                             <th></th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                         {{#negative_stats}}
+                           <tr>
+                             <td>{{word}}</td>
+                             <td>{{z_score}}</td>
+                             <td>{{current_stat}}</td>
+                             <td><a href='#' class='stopword'>Ignore</a></td>
+                           </tr>
+                         {{/negative_stats}}
+                         </tbody>
+                        </table>
+                        <table class='stats'>
+                         <caption>Zero Trends</caption>
+                         <thead>
+                           <tr>
+                             <th>Keyword</th>
+                             <th>Score</th>
+                             <th>Current</th>
+                             <th></th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                         {{#zero_stats}}
+                           <tr>
+                             <td>{{word}}</td>
+                             <td>{{z_score}}</td>
+                             <td>{{current_stat}}</td>
+                             <td><a href='#' class='stopword'>Ignore</a></td>
+                           </tr>
+                         {{/zero_stats}}
+                         </tbody>
+                        </table>"
     jobId = $('#trends_job_id').data('job-id')
     @checkJobStatus(jobId)
 
@@ -18,19 +81,7 @@ class Job
           if data["payload"].length == 0
             $('#trends').html $('<p>Not available</p>')
           else
-            $('#trends').html ''
-            positive_stats = data["payload"]["positive_stats"]
-            $('#trends').append $('<table class="stats"><caption>Positive Trends</caption><thead><tr><th>Keyword</th><th>Z-score</th><th>Current Frequency</th><th></th></tr></thead><tbody><tbody></table>')
-            $.each positive_stats, (index, row)->
-              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td>"+row['current_stat']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
-            zero_stats = data["payload"]["zero_stats"]
-            $('#trends').append $('<table class="stats"><caption>Zero Trends</caption><thead><tr><th>Keyword</th><th>Z-score</th><th>Current Frequency</th><th></th></tr></thead><tbody><tbody></table>')
-            $.each zero_stats, (index, row)->
-              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td>"+row['current_stat']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
-            negative_stats = data["payload"]["negative_stats"]
-            $('#trends').append $('<table class="stats"><caption>Negative Trends</caption><thead><tr><th>Keyword</th><th>Z-score</th><th>Current Frequency</th><th></th></tr></thead><tbody><tbody></table>')
-            $.each negative_stats, (index, row)->
-              $('#trends tbody').append("<tr><td>"+row['word']+"</td><td>"+row['z_score']+"</td><td>"+row['current_stat']+"</td><td><a href='#' class='stopword'>Ignore</a></td></tr>")
+            $('#trends').html $.mustache(self.trends_template, data["payload"])
           $('.spinner').hide()
           if $('#live').prop("checked")
             self.liveCheck()

@@ -16,7 +16,11 @@ class Tweet
   private
 
   def init_words
-    self.words = Echidna::Stopwords.reject(Rseg.segment(Nokogiri::HTML(content).text))
+    self.words = Echidna::Stopwords.reject(Rseg.segment(filter_at_username(Nokogiri::HTML(content).text)))
+  end
+
+  def filter_at_username(content)
+    content.gsub(/@[^ ]*/, '')
   end
 
   def update_stats

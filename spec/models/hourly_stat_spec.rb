@@ -80,7 +80,7 @@ describe HourlyStat do
     let(:group1) { create :group }
     let(:group2) { create :group }
     let(:panel) {
-      panel = create(:panel).tap do |panel|
+      create(:panel).tap do |panel|
         panel.groups << group1
         panel.groups << group2
       end
@@ -180,6 +180,57 @@ describe HourlyStat do
           {word: "朝鲜", z_score: -1.4114509547749945, current_stat: 120}
         ]
       })
+    end
+  end
+
+  describe '.tweets' do
+    let(:group1) { create :group }
+    let(:group2) { create :group }
+    let(:panel) {
+      create(:panel).tap do |panel|
+        panel.groups << group1
+        panel.groups << group2
+      end
+    }
+    let(:other_group) { create :group }
+    let(:other_panel) {
+      create(:panel).tap { |panel| panel.groups << other_group }
+    }
+    let(:tweet1) { create :tweet, posted_at: Time.parse('2013-05-14 00:20:12') }
+    let(:tweet2) { create :tweet, posted_at: Time.parse('2013-05-15 12:50:02') }
+    let(:tweet3) { create :tweet, posted_at: Time.parse('2013-05-16 23:32:55') }
+
+    before do
+      Tweet.skip_callback(:create, :after, :update_stats)
+
+      HourlyStat.record('foo', group1, tweet1)
+      HourlyStat.record('foo', group2, tweet2)
+      HourlyStat.record('foo', group1, tweet3)
+      HourlyStat.record('foo', other_group, tweet1)
+      HourlyStat.record('bar', other_group, tweet2)
+    end
+
+    it "returns all tweets" do
+      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-01 00:00:00'))).to have(3).tweets
+      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet1
+      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet2
+      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet3
+    end
+
+    it "returns tweets only contain word" do
+      expect(HourlyStat.tweets('bar', other_panel, Time.parse('2013-05-01 00:00:00'))).to have(1).tweets
+      expect(HourlyStat.tweets('bar', other_panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet2
+    end
+
+    it "returns tweets only belong to a panel" do
+      expect(HourlyStat.tweets('foo', other_panel, Time.parse('2013-05-01 00:00:00'))).to have(1).tweets
+      expect(HourlyStat.tweets('foo', other_panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet1
+    end
+
+    it "returns tweets only after time" do
+      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-15 00:00:00'))).to have(2).tweets
+      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-15 00:00:00'))).to be_include tweet2
+      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-15 00:00:00'))).to be_include tweet3
     end
   end
 end

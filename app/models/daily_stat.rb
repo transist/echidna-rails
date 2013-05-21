@@ -48,6 +48,22 @@ class DailyStat < BaseStat
     aggregate(history_stats, current_stats, user, limit)
   end
 
+  def self.tweets(word, panel, start_time)
+    tweets = []
+    panel.groups.each do |group|
+      self.where(word: word, group_id: group.id).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
+        time = daily_stat.date.to_time
+        daily_stat.stats.each do |stat|
+          time = time.change(day: stat["day"])
+          if time >= start_time && stat["tweet_ids"]
+            tweets += Tweet.find(stat["tweet_ids"])
+          end
+        end
+      end
+    end
+    tweets
+  end
+
   private
 
   def set_default_stats

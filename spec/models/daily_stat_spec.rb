@@ -210,4 +210,55 @@ describe DailyStat do
       })
     end
   end
+
+  describe '.tweets' do
+    let(:group1) { create :group }
+    let(:group2) { create :group }
+    let(:panel) {
+      create(:panel).tap do |panel|
+        panel.groups << group1
+        panel.groups << group2
+      end
+    }
+    let(:other_group) { create :group }
+    let(:other_panel) {
+      create(:panel).tap { |panel| panel.groups << other_group }
+    }
+    let(:tweet1) { create :tweet, posted_at: Time.parse('2013-03-14 00:20:12') }
+    let(:tweet2) { create :tweet, posted_at: Time.parse('2013-04-15 12:50:02') }
+    let(:tweet3) { create :tweet, posted_at: Time.parse('2013-05-16 23:32:55') }
+
+    before do
+      Tweet.skip_callback(:create, :after, :update_stats)
+
+      DailyStat.record('foo', group1, tweet1)
+      DailyStat.record('foo', group2, tweet2)
+      DailyStat.record('foo', group1, tweet3)
+      DailyStat.record('foo', other_group, tweet1)
+      DailyStat.record('bar', other_group, tweet2)
+    end
+
+    it "returns all tweets" do
+      expect(DailyStat.tweets('foo', panel, Time.parse('2013-03-01 00:00:00'))).to have(3).tweets
+      expect(DailyStat.tweets('foo', panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet1
+      expect(DailyStat.tweets('foo', panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet2
+      expect(DailyStat.tweets('foo', panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet3
+    end
+
+    it "returns tweets only contain word" do
+      expect(DailyStat.tweets('bar', other_panel, Time.parse('2013-03-01 00:00:00'))).to have(1).tweets
+      expect(DailyStat.tweets('bar', other_panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet2
+    end
+
+    it "returns tweets only belong to a panel" do
+      expect(DailyStat.tweets('foo', other_panel, Time.parse('2013-03-01 00:00:00'))).to have(1).tweets
+      expect(DailyStat.tweets('foo', other_panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet1
+    end
+
+    it "returns tweets only after time" do
+      expect(DailyStat.tweets('foo', panel, Time.parse('2013-04-15 00:00:00'))).to have(2).tweets
+      expect(DailyStat.tweets('foo', panel, Time.parse('2013-04-15 00:00:00'))).to be_include tweet2
+      expect(DailyStat.tweets('foo', panel, Time.parse('2013-04-15 00:00:00'))).to be_include tweet3
+    end
+  end
 end

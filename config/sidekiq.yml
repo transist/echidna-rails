@@ -1,6 +1,10 @@
 ---
 :concurrency: 25
 :pidfile: tmp/pids/sidekiq.pid
+:queues:
+  - [trends, 10]
+  - [default, 2]
+  - [spider, 1]
 
 production:
-  :concurrency: 50
+  :concurrency: 200

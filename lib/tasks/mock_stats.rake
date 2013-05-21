@@ -7,6 +7,14 @@ task :mock_stats => :environment do
     panel = Panel.find(panel_id)
     DailyStat.where(:group_id.in => panel.group_ids).destroy_all
     HourlyStat.where(:group_id.in => panel.group_ids).destroy_all
+    Tweet.destroy_all
+
+    Tweet.skip_callback(:create, :after, :update_stats)
+    100.times do |i|
+      Tweet.create target_id: rand(10000), content: words.sample(5).join(' '), posted_at: rand(24).hours.ago
+    end
+    tweet_ids = Tweet.all.map(&:id)
+
     panel.group_ids.each do |group_id|
       (0..1).each do |i|
         daily_date = i.months.ago.beginning_of_month
@@ -16,12 +24,12 @@ task :mock_stats => :environment do
           DailyStat.create word: word,
                            date: daily_date,
                            group_id: group_id,
-                           stats: (1..month_distance).map { |day| { day: day, count: rand(100)  } }
+                           stats: (1..month_distance).map { |day| { day: day, count: rand(100), tweet_ids: tweet_ids.sample(10) } }
 
           HourlyStat.create word: word,
                             date: hourly_date,
                             group_id: group_id,
-                            stats: (0..23).map { |hour| { hour: hour, count: rand(100)  } }
+                            stats: (0..23).map { |hour| { hour: hour, count: rand(100), tweet_ids: tweet_ids.sample(10)  } }
         end
       end
     end

@@ -7,7 +7,7 @@ class HourlyStat < BaseStat
 
   validates :word, uniqueness: {scope: [:group, :date]}
 
-  index({group_id: 1, date: 1})
+  index({group_id: 1, date: 1, word: 1})
 
   belongs_to :group
 

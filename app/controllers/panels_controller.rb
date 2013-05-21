@@ -3,6 +3,10 @@ class PanelsController < InheritedResources::Base
     create! { root_url }
   end
 
+  def update
+    update! { root_url }
+  end
+
   def trends
     length, period = parse_period(params[:period])
     @job_id = TrendsWorker.perform_async(params[:id], current_user.id.to_s, length, period)

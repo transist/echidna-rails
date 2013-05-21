@@ -1,0 +1,13 @@
+h3 Tencent Agents
+
+- collection.each do |tecent_agent|
+  h4= tecent_agent.name
+  table
+    thead
+      th List ID
+      th Timestamp of latest known tweet
+    tbody
+      - tecent_agent.list_last_timestamp_map.each do |list_id, timestamp|
+        tr
+          td(style='width: 40%')= list_id
+          td= Time.at(timestamp.to_i)

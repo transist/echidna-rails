@@ -33,7 +33,7 @@ describe Tweet do
     it 'update daily stats of all words for all groups of the author' do
       %w(We sense soul search answers).each do |word|
         tweet.person.groups.each do |group|
-          HourlyStat.expects(:record).with(word, group, tweet.posted_at)
+          HourlyStat.expects(:record).with(word, group, tweet)
         end
       end
 
@@ -43,7 +43,7 @@ describe Tweet do
     it 'update hourly stats of all words for all groups of the author' do
       %w(We sense soul search answers).each do |word|
         tweet.person.groups.each do |group|
-          DailyStat.expects(:record).with(word, group, tweet.posted_at.to_date)
+          DailyStat.expects(:record).with(word, group, tweet)
         end
       end
 

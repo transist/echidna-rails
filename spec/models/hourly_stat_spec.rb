@@ -8,49 +8,69 @@ describe HourlyStat do
   it { should validate_uniqueness_of(:word).scoped_to([:group, :date]) }
 
   describe '.record' do
+    before { Tweet.skip_callback(:create, :after, :update_stats) }
     let(:word) { 'Zerg' }
-    let(:group) { create(:group) }
-    let(:times) { [
-      Time.parse('2013-05-14 00:20:12'), Time.parse('2013-05-15 12:50:02'),
-      Time.parse('2013-05-16 23:32:55')
+    let(:group) { create :group }
+    let(:tweets) { [
+      create(:tweet, posted_at: Time.parse('2013-05-14 00:20:12')),
+      create(:tweet, posted_at: Time.parse('2013-05-15 12:50:02')),
+      create(:tweet, posted_at: Time.parse('2013-05-16 23:32:55'))
     ] }
 
     context 'when the HourlyStat instance not exists' do
       it 'create an instance' do
-        times.each do |time|
+        tweets.each do |tweet|
           expect {
-            HourlyStat.record(word, group, time)
+            HourlyStat.record(word, group, tweet)
           }.to change(HourlyStat, :count).by(1)
         end
       end
 
       it 'increment count for the hour' do
-        times.each do |time|
-          HourlyStat.record(word, group, time)
-          hourly_stat = HourlyStat.where(date: time.to_date).first
-          expect(hourly_stat.stats.find {|stat| stat['hour'] == time.hour }['count']).to eq(1)
+        tweets.each do |tweet|
+          HourlyStat.record(word, group, tweet)
+          hourly_stat = HourlyStat.where(date: tweet.posted_at.to_date).first
+          expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['count']).to eq(1)
+        end
+      end
+
+      it 'add tweet_id' do
+        tweets.each do |tweet|
+          HourlyStat.record(word, group, tweet)
+          hourly_stat = HourlyStat.where(date: tweet.posted_at.to_date).first
+          expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['tweet_ids']).to have(1).tweet_ids
+          expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['tweet_ids']).to be_include tweet.id
         end
       end
     end
 
     context 'when the HourlyStat instance already exists' do
       before do
-        times.each {|time| HourlyStat.record(word, group, time) }
+        tweets.each { |tweet| HourlyStat.record(word, group, tweet) }
       end
 
       it 'do not create new instance' do
-        times.each do |time|
+        tweets.each do |tweet|
           expect {
-            HourlyStat.record(word, group, time)
+            HourlyStat.record(word, group, tweet)
           }.to_not change(HourlyStat, :count)
         end
       end
 
       it 'increment count for the hour' do
-        times.each do |time|
-          HourlyStat.record(word, group, time)
-          hourly_stat = HourlyStat.where(date: time.to_date).first
-          expect(hourly_stat.stats.find {|stat| stat['hour'] == time.hour }['count']).to eq(2)
+        tweets.each do |tweet|
+          HourlyStat.record(word, group, tweet)
+          hourly_stat = HourlyStat.where(date: tweet.posted_at.to_date).first
+          expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['count']).to eq(2)
+        end
+      end
+
+      it 'add tweet_id' do
+        tweets.each do |tweet|
+          HourlyStat.record(word, group, tweet)
+          hourly_stat = HourlyStat.where(date: tweet.posted_at.to_date).first
+          expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['tweet_ids']).to have(2).tweet_ids
+          expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['tweet_ids']).to be_include tweet.id
         end
       end
     end

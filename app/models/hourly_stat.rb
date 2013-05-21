@@ -11,10 +11,11 @@ class HourlyStat < BaseStat
 
   belongs_to :group
 
-  def self.record(word, group, time)
-    houly_stat = HourlyStat.find_or_create_by(word: word, group: group, date: time.to_date)
-    HourlyStat.collection.find(:_id => houly_stat.id, 'stats.hour' => time.hour).
-      update({'$inc' => {'stats.$.count' => 1}})
+  def self.record(word, group, tweet)
+    time = tweet.posted_at
+    houly_stat = self.find_or_create_by(word: word, group: group, date: time.to_date)
+    self.collection.find(:_id => houly_stat.id, 'stats.hour' => time.hour).
+      update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
   end
 
   def self.top_trends(panel, user, options={})

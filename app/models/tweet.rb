@@ -20,8 +20,8 @@ class Tweet
   def update_stats
     extract_words.each do |word|
       person.groups.each do |group|
-        DailyStat.record(word, group, posted_at.to_date)
-        HourlyStat.record(word, group, posted_at)
+        DailyStat.record(word, group, self)
+        HourlyStat.record(word, group, self)
       end
     end
   end

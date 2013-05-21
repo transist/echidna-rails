@@ -13,10 +13,11 @@ class DailyStat < BaseStat
 
   before_save :set_default_stats
 
-  def self.record(word, group, date)
-    daily_stat = DailyStat.find_or_create_by(word: word, group: group, date: date.beginning_of_month)
-    DailyStat.collection.find(:_id => daily_stat.id, 'stats.day' => date.mday).
-      update('$inc' => {'stats.$.count' => 1})
+  def self.record(word, group, tweet)
+    date = tweet.posted_at.to_date
+    daily_stat = self.find_or_create_by(word: word, group: group, date: date.beginning_of_month)
+    self.collection.find(:_id => daily_stat.id, 'stats.day' => date.mday).
+      update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
   end
 
   def self.top_trends(panel, user, options={})

@@ -92,7 +92,6 @@ class Job
 
   checkJobStatus: (jobId)->
     self = this
-    $('.spinner').show()
     $.poll 5000, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         if data["status"] == "complete"
@@ -108,7 +107,6 @@ class Job
 
   checkTweetsJobStatus: (jobId) ->
     self = this
-    $('.spinner').show()
     $.poll 5000, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         if data["status"] == "complete"
@@ -125,6 +123,7 @@ class Job
 
   addStopword: ->
     $(document).on 'click', '.stopword', ->
+      $('.spinner').show()
       word_row = $(this).parents('tr')
       word = word_row.children().first().text()
       $.ajax '/add_stopword',
@@ -138,10 +137,8 @@ class Job
   readTweets: ->
     self = this
     $(document).on 'click', '.word', ->
-      console.log $(this)
-      console.log $(this).text()
+      $('.spinner').show()
       tweets_url = '/panels/' + self.getPanelId() + '/tweets.json?period=' + self.getPeriod() + '&word=' + $(this).text()
-      console.log tweets_url
       $.getJSON tweets_url, (data)->
         setTimeout ->
           self.checkTweetsJobStatus data["job_id"]
@@ -151,6 +148,7 @@ class Job
   liveCheck: ->
     self = this
     if $('#live').prop("checked")
+      $('.spinner').show()
       check_url = '/panels/' + @getPanelId() + '/trends.json?period=' + @getPeriod()
       $.getJSON check_url, (data)->
         setTimeout ->

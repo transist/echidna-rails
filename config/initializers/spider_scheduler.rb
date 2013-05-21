@@ -27,7 +27,7 @@ class SpiderScheduler
 
   def schedule_sample_users
     @scheduler.every '10m', first_in: '0s', mutex: :sample_users do
-      TencentAgent.all.first.sample_users
+      TencentAgent.first.sample_users
     end
   end
 

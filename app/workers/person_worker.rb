@@ -8,6 +8,10 @@ class PersonWorker
       target_id: person_attrs['target_id']
     ).exists?
 
+      # Hotfix for the existing failed jobs, the real fix is in UserDecorator,
+      # should remove this eventually.
+      person_attrs['gender'] ||= 'both'
+
       city = City.where(name: person_attrs.delete('city')).first
       person = Person.create!(person_attrs.merge(city: city))
 

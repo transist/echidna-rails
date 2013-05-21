@@ -33,12 +33,12 @@ class TencentAgent
 
     def decorate_gender(user)
       case user['sex']
-      when 0
-        user['gender'] = 'both'
       when 1
         user['gender'] = 'male'
       when 2
         user['gender'] = 'female'
+      else
+        user['gender'] = 'both'
       end
       user
     end

@@ -2,6 +2,7 @@
 
 FactoryGirl.define do
   factory :person do
+    sequence(:target_id)
     gender 'female'
   end
 

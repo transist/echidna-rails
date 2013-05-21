@@ -13,10 +13,11 @@ class DailyStat < BaseStat
 
   before_save :set_default_stats
 
-  def self.record(word, group, date)
-    daily_stat = DailyStat.find_or_create_by(word: word, group: group, date: date.beginning_of_month)
-    DailyStat.collection.find(:_id => daily_stat.id, 'stats.day' => date.mday).
-      update('$inc' => {'stats.$.count' => 1})
+  def self.record(word, group, tweet)
+    date = tweet.posted_at.to_date
+    daily_stat = self.find_or_create_by(word: word, group: group, date: date.beginning_of_month)
+    self.collection.find(:_id => daily_stat.id, 'stats.day' => date.mday).
+      update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
   end
 
   def self.top_trends(panel, user, options={})
@@ -45,6 +46,25 @@ class DailyStat < BaseStat
       end
     end
     aggregate(history_stats, current_stats, user, limit)
+  end
+
+  def self.tweets(panel, word, options={})
+    tweets = []
+    current_time = Time.now.beginning_of_day
+    days = options[:days] || 7
+    start_time = current_time.ago(days.days)
+    panel.groups.each do |group|
+      self.where(word: word, group_id: group.id).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
+        time = daily_stat.date.to_time
+        daily_stat.stats.each do |stat|
+          time = time.change(day: stat["day"])
+          if time >= start_time && stat["tweet_ids"]
+            tweets += Tweet.find(stat["tweet_ids"]).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
+          end
+        end
+      end
+    end
+    tweets
   end
 
   private

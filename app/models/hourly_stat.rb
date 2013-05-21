@@ -11,10 +11,11 @@ class HourlyStat < BaseStat
 
   belongs_to :group
 
-  def self.record(word, group, time)
-    houly_stat = HourlyStat.find_or_create_by(word: word, group: group, date: time.to_date)
-    HourlyStat.collection.find(:_id => houly_stat.id, 'stats.hour' => time.hour).
-      update({'$inc' => {'stats.$.count' => 1}})
+  def self.record(word, group, tweet)
+    time = tweet.posted_at
+    houly_stat = self.find_or_create_by(word: word, group: group, date: time.to_date)
+    self.collection.find(:_id => houly_stat.id, 'stats.hour' => time.hour).
+      update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
   end
 
   def self.top_trends(panel, user, options={})
@@ -43,5 +44,24 @@ class HourlyStat < BaseStat
       end
     end
     aggregate(history_stats, current_stats, user, limit)
+  end
+
+  def self.tweets(panel, word, options={})
+    tweets = []
+    current_time = Time.now.beginning_of_hour
+    hours = options[:hours] || 7
+    start_time = current_time.ago(hours.hours)
+    panel.groups.each do |group|
+      self.where(word: word, group_id: group.id).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
+        time = hourly_stat.date.to_time
+        hourly_stat.stats.each do |stat|
+          time = time.change(hour: stat["hour"])
+          if time >= start_time && stat["tweet_ids"]
+            tweets += Tweet.find(stat["tweet_ids"]).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
+          end
+        end
+      end
+    end
+    tweets
   end
 end

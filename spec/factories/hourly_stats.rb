@@ -2,5 +2,6 @@
 
 FactoryGirl.define do
   factory :hourly_stat do
+    sequence(:word) { |n| "word_#{n}" }
   end
 end

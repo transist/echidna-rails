@@ -224,9 +224,9 @@ describe DailyStat do
     let(:other_panel) {
       create(:panel).tap { |panel| panel.groups << other_group }
     }
-    let(:tweet1) { create :tweet, posted_at: Time.parse('2013-03-14 00:20:12') }
-    let(:tweet2) { create :tweet, posted_at: Time.parse('2013-04-15 12:50:02') }
-    let(:tweet3) { create :tweet, posted_at: Time.parse('2013-05-16 23:32:55') }
+    let(:tweet1) { create :tweet, posted_at: 1.day.ago }
+    let(:tweet2) { create :tweet, posted_at: 2.days.ago }
+    let(:tweet3) { create :tweet, posted_at: 3.days.ago }
 
     before do
       Tweet.skip_callback(:create, :after, :update_stats)
@@ -239,26 +239,23 @@ describe DailyStat do
     end
 
     it "returns all tweets" do
-      expect(DailyStat.tweets('foo', panel, Time.parse('2013-03-01 00:00:00'))).to have(3).tweets
-      expect(DailyStat.tweets('foo', panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet1
-      expect(DailyStat.tweets('foo', panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet2
-      expect(DailyStat.tweets('foo', panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet3
+      expect(DailyStat.tweets(panel, 'foo')).to have(3).tweets
+      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to eq [tweet3.target_id, tweet1.target_id, tweet2.target_id]
     end
 
     it "returns tweets only contain word" do
-      expect(DailyStat.tweets('bar', other_panel, Time.parse('2013-03-01 00:00:00'))).to have(1).tweets
-      expect(DailyStat.tweets('bar', other_panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet2
+      expect(DailyStat.tweets(other_panel, 'bar')).to have(1).tweets
+      expect(DailyStat.tweets(other_panel, 'bar').map { |stat| stat[:target_id] }).to eq [tweet2.target_id]
     end
 
     it "returns tweets only belong to a panel" do
-      expect(DailyStat.tweets('foo', other_panel, Time.parse('2013-03-01 00:00:00'))).to have(1).tweets
-      expect(DailyStat.tweets('foo', other_panel, Time.parse('2013-03-01 00:00:00'))).to be_include tweet1
+      expect(DailyStat.tweets(other_panel, 'foo')).to have(1).tweets
+      expect(DailyStat.tweets(other_panel, 'foo').map { |stat| stat[:target_id] }).to eq [tweet1.target_id]
     end
 
     it "returns tweets only after time" do
-      expect(DailyStat.tweets('foo', panel, Time.parse('2013-04-15 00:00:00'))).to have(2).tweets
-      expect(DailyStat.tweets('foo', panel, Time.parse('2013-04-15 00:00:00'))).to be_include tweet2
-      expect(DailyStat.tweets('foo', panel, Time.parse('2013-04-15 00:00:00'))).to be_include tweet3
+      expect(DailyStat.tweets(panel, 'foo', days: 2)).to have(2).tweets
+      expect(DailyStat.tweets(panel, 'foo', days: 2).map { |stat| stat[:target_id] }).to eq [tweet1.target_id, tweet2.target_id]
     end
   end
 end

@@ -2,6 +2,6 @@
 
 FactoryGirl.define do
   factory :daily_stat do
-    sequence(:word) {|n| "word_#{n}" }
+    sequence(:word) { |n| "word_#{n}" }
   end
 end

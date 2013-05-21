@@ -2,6 +2,7 @@ Echidna::Application.routes.draw do
   resources :panels do
     member do
       get :trends
+      get :tweets
     end
   end
 

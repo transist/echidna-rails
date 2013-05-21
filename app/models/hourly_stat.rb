@@ -46,15 +46,18 @@ class HourlyStat < BaseStat
     aggregate(history_stats, current_stats, user, limit)
   end
 
-  def self.tweets(word, panel, start_time)
+  def self.tweets(panel, word, options={})
     tweets = []
+    current_time = Time.now.beginning_of_hour
+    hours = options[:hours] || 7
+    start_time = current_time.ago(hours.hours)
     panel.groups.each do |group|
       self.where(word: word, group_id: group.id).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
         time = hourly_stat.date.to_time
         hourly_stat.stats.each do |stat|
           time = time.change(hour: stat["hour"])
           if time >= start_time && stat["tweet_ids"]
-            tweets += Tweet.find(stat["tweet_ids"])
+            tweets += Tweet.find(stat["tweet_ids"]).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
           end
         end
       end

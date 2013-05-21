@@ -196,9 +196,9 @@ describe HourlyStat do
     let(:other_panel) {
       create(:panel).tap { |panel| panel.groups << other_group }
     }
-    let(:tweet1) { create :tweet, posted_at: Time.parse('2013-05-14 00:20:12') }
-    let(:tweet2) { create :tweet, posted_at: Time.parse('2013-05-15 12:50:02') }
-    let(:tweet3) { create :tweet, posted_at: Time.parse('2013-05-16 23:32:55') }
+    let(:tweet1) { create :tweet, posted_at: 1.hour.ago }
+    let(:tweet2) { create :tweet, posted_at: 2.hours.ago }
+    let(:tweet3) { create :tweet, posted_at: 3.hours.ago }
 
     before do
       Tweet.skip_callback(:create, :after, :update_stats)
@@ -211,26 +211,23 @@ describe HourlyStat do
     end
 
     it "returns all tweets" do
-      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-01 00:00:00'))).to have(3).tweets
-      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet1
-      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet2
-      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet3
+      expect(HourlyStat.tweets(panel, 'foo')).to have(3).tweets
+      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to eq [tweet3.target_id, tweet1.target_id, tweet2.target_id]
     end
 
     it "returns tweets only contain word" do
-      expect(HourlyStat.tweets('bar', other_panel, Time.parse('2013-05-01 00:00:00'))).to have(1).tweets
-      expect(HourlyStat.tweets('bar', other_panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet2
+      expect(HourlyStat.tweets(other_panel, 'bar')).to have(1).tweets
+      expect(HourlyStat.tweets(other_panel, 'bar').map { |stat| stat[:target_id] }).to eq [tweet2.target_id]
     end
 
     it "returns tweets only belong to a panel" do
-      expect(HourlyStat.tweets('foo', other_panel, Time.parse('2013-05-01 00:00:00'))).to have(1).tweets
-      expect(HourlyStat.tweets('foo', other_panel, Time.parse('2013-05-01 00:00:00'))).to be_include tweet1
+      expect(HourlyStat.tweets(other_panel, 'foo')).to have(1).tweets
+      expect(HourlyStat.tweets(other_panel, 'foo').map { |stat| stat[:target_id] }).to eq [tweet1.target_id]
     end
 
     it "returns tweets only after time" do
-      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-15 00:00:00'))).to have(2).tweets
-      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-15 00:00:00'))).to be_include tweet2
-      expect(HourlyStat.tweets('foo', panel, Time.parse('2013-05-15 00:00:00'))).to be_include tweet3
+      expect(HourlyStat.tweets(panel, 'foo', hours: 2)).to have(2).tweets
+      expect(HourlyStat.tweets(panel, 'foo', hours: 2).map { |stat| stat[:target_id] }).to eq [tweet1.target_id, tweet2.target_id]
     end
   end
 end

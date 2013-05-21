@@ -4,21 +4,23 @@ class Tweet
   field :target_id
   field :content
   field :posted_at, type: Time
+  field :words, type: Array
 
   validates :content, presence: true
 
   belongs_to :person
 
+  before_create :init_words
   after_create :update_stats
-
-  def extract_words
-    Echidna::Stopwords.reject(Rseg.segment(Nokogiri::HTML(content).text))
-  end
 
   private
 
+  def init_words
+    self.words = Echidna::Stopwords.reject(Rseg.segment(Nokogiri::HTML(content).text))
+  end
+
   def update_stats
-    extract_words.each do |word|
+    self.words.each do |word|
       person.groups.each do |group|
         DailyStat.record(word, group, self)
         HourlyStat.record(word, group, self)

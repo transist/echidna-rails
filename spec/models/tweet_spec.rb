@@ -6,13 +6,13 @@ describe Tweet do
 
   let(:tweet) { create(:tweet) }
 
-  describe '#extract_words' do
+  describe '#init_words' do
     it 'segement the content to words' do
       tweet
       Rseg.expects(:segment).with(tweet.content).
         returns(%w(We sense a soul in search of answers))
 
-      tweet.extract_words
+      tweet.send :init_words
     end
 
     it 'rejct the stop words' do
@@ -20,7 +20,7 @@ describe Tweet do
       Echidna::Stopwords.expects(:reject).with(words).
         returns(%w(We sense soul search answers))
 
-      tweet.extract_words
+      tweet.send :init_words
     end
   end
 

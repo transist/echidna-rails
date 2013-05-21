@@ -15,14 +15,14 @@ class Job
                            </tr>
                          </thead>
                          <tbody>
-                         {{#positive_stats}}
+                         {{#payload.positive_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'>Ignore</a></td>
                            </tr>
-                         {{/positive_stats}}
+                         {{/payload.positive_stats}}
                          </tbody>
                         </table>
                         <table class='stats'>
@@ -36,14 +36,14 @@ class Job
                            </tr>
                          </thead>
                          <tbody>
-                         {{#negative_stats}}
+                         {{#payload.negative_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'>Ignore</a></td>
                            </tr>
-                         {{/negative_stats}}
+                         {{/payload.negative_stats}}
                          </tbody>
                         </table>
                         <table class='stats'>
@@ -57,17 +57,33 @@ class Job
                            </tr>
                          </thead>
                          <tbody>
-                         {{#zero_stats}}
+                         {{#payload.zero_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'>Ignore</a></td>
                            </tr>
-                         {{/zero_stats}}
+                         {{/payload.zero_stats}}
                          </tbody>
                         </table>"
-    @tweets_template = "<table></table>"
+    @tweets_template = "<table>
+                          <caption>Tweets</caption>
+                          <thead>
+                            <tr>
+                              <th>Content</th>
+                              <th>Posted At</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {{#payload}}
+                            <tr>
+                              <td>{{content}}</td>
+                              <td><a href='http://t.qq.com/p/t/{{target_id}}' target='_blank'>{{posted_at}}</a></td>
+                            </tr>
+                          {{/payload}}
+                          </tbody>
+                        </table>"
     jobId = $('#trends_job_id').data('job-id')
     @checkJobStatus(jobId)
 
@@ -83,7 +99,7 @@ class Job
           if data["payload"].length == 0
             $('#trends').html $('<p>Not available</p>')
           else
-            $('#trends').html $.mustache(self.trends_template, data["payload"])
+            $('#trends').html $.mustache(self.trends_template, data)
           $('.spinner').hide()
           if $('#live').prop("checked")
             self.liveCheck()
@@ -99,7 +115,7 @@ class Job
           if data["payload"].length == 0
             $('#tweets').html $('<p>Not available</p>')
           else
-            $('#tweets').html $.mustache(self.tweets_template, data["payload"])
+            $('#tweets').html $.mustache(self.tweets_template, data)
           $('.spinner').hide()
           if $('#live').prop("checked")
             self.liveCheck()

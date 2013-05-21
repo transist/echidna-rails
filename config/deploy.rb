@@ -16,7 +16,7 @@ require 'bundler/capistrano'
 
 require 'sidekiq/capistrano'
 set :sidekiq_role, :sidekiq
-set :sidekiq_cmd, "bundle exec sidekiq -q trends,10 -q default -q spider,1 -c 200"
+set :sidekiq_cmd, "bundle exec sidekiq -q trends,10 -q default -q spider,1 -c 100"
 set :sidekiq_processes, 2
 role :sidekiq, 'echidna.transi.st'
 

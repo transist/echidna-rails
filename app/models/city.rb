@@ -8,4 +8,6 @@ class City
   field :tier
 
   validates :name, presence: true, uniqueness: true
+
+  index({ name: 1 })
 end

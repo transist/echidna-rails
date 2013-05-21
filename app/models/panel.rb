@@ -7,7 +7,7 @@ class Panel
 
   validates :name, presence: true
 
-  belongs_to :user
+  belongs_to :user, index: true
   has_and_belongs_to_many :cities
   has_and_belongs_to_many :groups
 

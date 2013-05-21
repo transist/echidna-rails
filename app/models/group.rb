@@ -12,6 +12,8 @@ class Group
   has_and_belongs_to_many :people
   has_and_belongs_to_many :panels
 
+  index({ start_birth_year: 1, end_birth_year: 1, gender: 1, city_id: 1 })
+
   def self.all_for_person(person)
     where(
       :start_birth_year.lte => person.birth_year,

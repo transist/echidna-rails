@@ -18,7 +18,7 @@ class Job
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
-                             <td><a href='#' class='stopword'>Ignore</a></td>
+                             <td><a href='#' class='stopword'><span class='icon-remove'></span></a></td>
                            </tr>
                          {{/positive_stats}}
                          </tbody>
@@ -39,7 +39,7 @@ class Job
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
-                             <td><a href='#' class='stopword'>Ignore</a></td>
+                             <td><a href='#' class='stopword'><span class='icon-remove'></span></a></td>
                            </tr>
                          {{/negative_stats}}
                          </tbody>
@@ -60,7 +60,7 @@ class Job
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
-                             <td><a href='#' class='stopword'>Ignore</a></td>
+                             <td><a href='#' class='stopword'><span class='icon-remove'></span></a></td>
                            </tr>
                          {{/zero_stats}}
                          </tbody>

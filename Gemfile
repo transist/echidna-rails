@@ -29,6 +29,7 @@ gem 'yajl-ruby', require: 'yajl'
 gem 'nokogiri', require: 'nokogiri'
 
 gem 'twitter-bootstrap-rails'
+gem 'font-awesome-rails'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

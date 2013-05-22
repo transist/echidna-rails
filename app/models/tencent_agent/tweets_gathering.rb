@@ -2,7 +2,7 @@ class TencentAgent
   module TweetsGathering
     extend ActiveSupport::Concern
 
-    GATHER_TWEET_SLEEP = 5
+    GATHER_TWEET_SLEEP = 3.6
 
     def gather_tweets
       list_ids.each do |list_id|

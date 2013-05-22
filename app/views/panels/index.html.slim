@@ -1,0 +1,32 @@
+h2 Panels
+
+= link_to 'New Panel', new_panel_path, class: 'btn btn-primary new-panel-btn'
+
+.tabbable
+  ul.nav.nav-tabs.panels-tabs
+    - @panels.each_with_index do |panel, index|
+      li class=(index == 0 ? "active" : "")
+        = link_to panel.name, "#panel-#{panel.id}", "data-toggle" => "tab"
+  .tab-content
+    - @panels.each_with_index do |panel, index|
+      div class=(index == 0 ? "tab-pane active" : "tab-pane") id="panel-#{panel.id}"
+        .panel data-panel-id=panel.id
+          .header
+            .info
+              span.cities= panel.cities.map(&:name).join(', ')
+              span.ages= panel.age_ranges.join(', ')
+              span.gender= panel.gender
+            .check-live
+              input.live type='checkbox' name='live'
+              label for='live' Live
+            .spinner
+            .commands
+              = link_to 'Edit', edit_panel_path(panel), class: 'btn btn-primary'
+              = link_to 'Delete', panel_path(panel), method: :delete, class: 'btn btn-danger', confirm: 'Are you sure to delete?'
+            ul.nav.nav-pills.periods
+              li= link_to '1 month', '#', "data-period" => "month"
+              li.active= link_to '1 week', '#', "data-period" => "week"
+              li= link_to '1 day', '#', "data-period" => "day"
+          .body
+            .trends
+            .tweets

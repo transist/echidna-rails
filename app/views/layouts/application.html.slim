@@ -1,19 +1,34 @@
 doctype
 html
   head
-    meta content='width=device-width, initial-scale=1.0' name='viewport'
-      title= content_for?(:title) ? yield(:title) : 'Echidna'
-      meta content=(content_for?(:description) ? yield(:description) : 'Echidna') name='description'
-        = stylesheet_link_tag 'application', media: 'all'
-        = javascript_include_tag 'application'
-        = csrf_meta_tags
-        = yield(:head)
-  body class ="#{controller_name} #{action_name}"
-    #container.container
-      header
-        = render 'layouts/navigation'
-        = render 'layouts/messages'
-      #main role='main'
-        = yield
+    meta charset="utf-8"
+    meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
+    title= content_for?(:title) ? yield(:title) : "Echidna"
+    = csrf_meta_tags
+
+    <!--[if lt IE 9]>
+      = javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js"
+    <![endif]-->
+
+    = stylesheet_link_tag "application", media: "all"
+
+    = favicon_link_tag 'images/apple-touch-icon-144x144-precomposed.png', rel: 'apple-touch-icon-precomposed', type: 'image/png', sizes: '144x144'
+    = favicon_link_tag 'images/apple-touch-icon-114x114-precomposed.png', rel: 'apple-touch-icon-precomposed', type: 'image/png', sizes: '114x114'
+    = favicon_link_tag 'images/apple-touch-icon-72x72-precomposed.png', rel: 'apple-touch-icon-precomposed', type: 'image/png', sizes: '72x72'
+    = favicon_link_tag 'images/apple-touch-icon-precomposed.png', rel: 'apple-touch-icon-precomposed', type: 'image/png'
+    = favicon_link_tag 'favicon.ico', rel: 'shortcut icon'
+
+  body
+    .navbar.navbar-fixed-top= render 'layouts/header'
+
+    .container
+      .row
+        .span12
+          = bootstrap_flash
+          = yield
+
       footer
-    /! ! end of #container
+        p &copy; Transist 2013
+
+    = javascript_include_tag "application"

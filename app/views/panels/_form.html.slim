@@ -1,0 +1,6 @@
+= simple_form_for panel, html: {class: 'form-horizontal'} do |f|
+  = f.input :name
+  = f.input :city_ids, collection: cities_options_for_select, input_html: {multiple: true, size: 10}
+  = f.input :age_ranges, collection: age_ranges_options_for_select, input_html: {multiple: true, size: 10}
+  = f.input :gender, collection: gender_options_for_select, include_blank: false
+  = f.button :submit

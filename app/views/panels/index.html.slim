@@ -1,5 +1,7 @@
 h2 Panels
 
+= link_to 'New Panel', new_panel_path, class: 'btn btn-primary new-panel-btn'
+
 .tabbable
   ul.nav.nav-tabs
     - @panels.each_with_index do |panel, index|

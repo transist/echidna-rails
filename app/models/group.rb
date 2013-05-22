@@ -1,9 +1,6 @@
 class Group
   include Mongoid::Document
 
-  GET_GROUP_ID_URL = 'http://echidna.transi.st:62300/group_id'
-  Z_SCORES_URL = 'http://echidna.transi.st:62300/z-scores'
-
   field :start_birth_year, type: Integer
   field :end_birth_year, type: Integer
   field :gender, type: String
@@ -14,6 +11,8 @@ class Group
   belongs_to :city
   has_and_belongs_to_many :people
   has_and_belongs_to_many :panels
+
+  index({ start_birth_year: 1, end_birth_year: 1, gender: 1, city_id: 1 })
 
   def self.all_for_person(person)
     where(
@@ -35,22 +34,6 @@ class Group
 
   def add_person(person)
     people << person
-  end
-
-  def tier
-    Tier.find(tier_id)
-  end
-
-  def get_group_id
-    @group_id ||= begin
-                    response = Faraday.get(
-                      GET_GROUP_ID_URL,
-                      tier_id: tier_id,
-                      age_range: age_range,
-                      gender: gender
-                    )
-                    MultiJson.load(response.body)['id']
-                  end
   end
 
   def z_scores(time)

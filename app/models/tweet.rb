@@ -1,12 +1,14 @@
 class Tweet
   include Mongoid::Document
 
+  field :target_source
   field :target_id
   field :content
   field :posted_at, type: Time
   field :words, type: Array
 
   validates :content, presence: true
+  validates :target_id, uniqueness: {scope: :target_source}
 
   belongs_to :person
 

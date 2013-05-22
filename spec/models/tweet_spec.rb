@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Tweet do
   it { should validate_presence_of :content }
+  it { should validate_uniqueness_of(:target_id).scoped_to(:target_source) }
   it { should belong_to :person }
 
   let(:tweet) { create(:tweet) }

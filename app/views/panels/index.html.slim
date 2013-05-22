@@ -1,0 +1,23 @@
+h2 Panels
+
+.tabbable
+  ul.nav.nav-tabs
+    - @panels.each_with_index do |panel, index|
+      li class=(index == 0 ? "active" : "")
+        = link_to panel.name, "#panel-#{panel.id}", "data-toggle" => "tab"
+  .tab-content
+    - @panels.each_with_index do |panel, index|
+      div class=(index == 0 ? "tab-pane active" : "tab-pane") id="panel-#{panel.id}"
+        .panel data-panel-id=panel.id
+          .header
+            .check-live
+              input.live type='checkbox' name='live'
+              label for='live' Live
+            .spinner
+            ul.nav.nav-pills.periods
+              li= link_to '1 month', '#', "data-period" => "month"
+              li.active= link_to '1 week', '#', "data-period" => "week"
+              li= link_to '1 day', '#', "data-period" => "day"
+          .body
+            .trends
+            .tweets

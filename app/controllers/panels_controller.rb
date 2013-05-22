@@ -11,7 +11,6 @@ class PanelsController < InheritedResources::Base
     length, period = parse_period(params[:period])
     @job_id = TrendsWorker.perform_async(params[:id], current_user.id.to_s, length, period)
     respond_to do |format|
-      format.html { show! }
       format.json { render json: {job_id: @job_id} }
     end
   end

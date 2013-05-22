@@ -22,7 +22,6 @@ class Person
   field :gender, type: String
 
   validates :gender, inclusion: { in: GENDERS }
-  validates :target_id, uniqueness: {scope: :target_source}
 
   index({ target_source: 1, target_id: 1}, { unique: true })
 

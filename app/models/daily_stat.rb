@@ -5,9 +5,7 @@ class DailyStat < BaseStat
   field :date, type: Date # Must be the first day of the month.
   field :stats, type: Array
 
-  validates :word, uniqueness: {scope: [:group, :date]}
-
-  index({group_id: 1, date: 1, word: 1})
+  index({group_id: 1, date: 1, word: 1}, {unique: true})
 
   belongs_to :group
 

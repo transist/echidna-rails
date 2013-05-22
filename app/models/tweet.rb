@@ -8,12 +8,13 @@ class Tweet
   field :words, type: Array
 
   validates :content, presence: true
-  validates :target_id, uniqueness: {scope: :target_source}
 
   belongs_to :person
 
   before_create :init_words
   after_create :update_stats
+
+  index({ target_source: 1, target_id: 1 }, { unique: true })
 
   private
 

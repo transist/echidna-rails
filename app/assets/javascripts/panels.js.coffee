@@ -123,7 +123,7 @@ class Job
       $.getJSON tweets_url, (data)->
         setTimeout ->
           self.checkTweetsJobStatus panelWidget, data["job_id"]
-        , 2000
+        , 5000
       false
 
   initIgnoreLinks: (panelWidget)->
@@ -139,19 +139,9 @@ class Job
           word_row.remove()
       false
 
-  sendTrendsRequest: (panelWidget)->
-    self = this
-    panelId = $(panelWidget).data('panel-id')
-    trendsUrl = "/panels/" + panelId + "/trends.json?period=" + self.period
-    $.getJSON trendsUrl, (data)->
-      setTimeout ->
-        self.checkJobStatus(panelWidget, data["job_id"])
-      , 2000
-
-
   checkJobStatus: (panelWidget, jobId)->
     self = this
-    $.poll 2000, (retry) ->
+    $.poll 5000, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         if data["status"] == "complete"
           if data["payload"].length == 0
@@ -166,7 +156,7 @@ class Job
 
   checkTweetsJobStatus: (panelWidget, jobId) ->
     self = this
-    $.poll 2000, (retry) ->
+    $.poll 5000, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         if data["status"] == "complete"
           if data["payload"].length == 0
@@ -177,6 +167,15 @@ class Job
         else
           retry()
 
+  sendTrendsRequest: (panelWidget)->
+    self = this
+    panelId = $(panelWidget).data('panel-id')
+    trendsUrl = "/panels/" + panelId + "/trends.json?period=" + self.period
+    $.getJSON trendsUrl, (data)->
+      setTimeout ->
+        self.checkJobStatus(panelWidget, data["job_id"])
+      , 5000
+
   readTweets: ->
     self = this
     $(document).on 'click', '.word', ->
@@ -185,7 +184,7 @@ class Job
       $.getJSON tweets_url, (data)->
         setTimeout ->
           self.checkTweetsJobStatus data["job_id"]
-        , 2000
+        , 5000
       false
 
   liveCheck: (panelWidget)->
@@ -197,7 +196,7 @@ class Job
       $.getJSON check_url, (data)->
         setTimeout ->
           self.checkJobStatus(panelWidget, data["job_id"])
-        , 2000
+        , 10000
 
 $ ->
   new Job()

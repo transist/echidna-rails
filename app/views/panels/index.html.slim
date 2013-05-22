@@ -13,9 +13,9 @@ h2 Panels
         .panel data-panel-id=panel.id
           .header
             .info
-              span.cities= panel.cities.map(&:name).join(', ')
-              span.ages= panel.age_ranges.join(', ')
-              span.gender= panel.gender
+              span.cities.label.label-info= panel.cities.map(&:name).join(', ')
+              span.ages.label.label-info= panel.age_ranges.join(', ')
+              span.gender.label.label-info= panel.gender
             .check-live
               input.live type='checkbox' name='live'
               label for='live' Live

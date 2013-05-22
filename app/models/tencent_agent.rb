@@ -57,7 +57,7 @@ class TencentAgent
   end
 
   def log(message)
-    "Tencent Weibo agent #{name}: #{message}"
+    "Tencent Weibo agent #{Time.now.to_s} #{name}: #{message}"
   end
 
   # Log unexpected errors to a redis list

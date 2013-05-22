@@ -8,7 +8,7 @@ class Job
                            <tr>
                              <th>Keyword</th>
                              <th>Score</th>
-                             <th>Current</th>
+                             <th class='current-frequency'>Current Frequency</th>
                              <th></th>
                            </tr>
                          </thead>
@@ -29,7 +29,7 @@ class Job
                            <tr>
                              <th>Keyword</th>
                              <th>Score</th>
-                             <th>Current</th>
+                             <th class='current-frequency'>Current Frequency</th>
                              <th></th>
                            </tr>
                          </thead>
@@ -50,7 +50,7 @@ class Job
                            <tr>
                              <th>Keyword</th>
                              <th>Score</th>
-                             <th>Current</th>
+                             <th class='current-frequency'>Current Frequency</th>
                              <th></th>
                            </tr>
                          </thead>

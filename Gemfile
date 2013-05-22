@@ -28,6 +28,8 @@ gem 'yajl-ruby', require: 'yajl'
 
 gem 'nokogiri', require: 'nokogiri'
 
+gem 'twitter-bootstrap-rails'
+
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'

@@ -7,7 +7,7 @@ class BaseStat
     current_stats.each { |word, current_stat|
       unless user.has_stopword? word
         z_score = FAZScore.new(0.5, history_stats[word]).score(current_stat)
-        stat = {word: word, z_score: z_score, current_stat: current_stat}
+        stat = {word: word, z_score: z_score.round(2), current_stat: current_stat}
         if z_score > 0
           positive_stats << stat
         elsif z_score < 0

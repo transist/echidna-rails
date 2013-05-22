@@ -1,10 +1,8 @@
 class Job
   constructor: ->
     self = this
-    $('#live').on 'change', (event)->
-      self.liveCheck()
 
-    @trends_template = "<table class='stats'>
+    @trends_template = "<table class='stats table table-striped'>
                          <caption>Positive Trends</caption>
                          <thead>
                            <tr>
@@ -15,17 +13,17 @@ class Job
                            </tr>
                          </thead>
                          <tbody>
-                         {{#payload.positive_stats}}
+                         {{#positive_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'>Ignore</a></td>
                            </tr>
-                         {{/payload.positive_stats}}
+                         {{/positive_stats}}
                          </tbody>
                         </table>
-                        <table class='stats'>
+                        <table class='stats table table-striped'>
                          <caption>Negative Trends</caption>
                          <thead>
                            <tr>
@@ -36,17 +34,17 @@ class Job
                            </tr>
                          </thead>
                          <tbody>
-                         {{#payload.negative_stats}}
+                         {{#negative_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'>Ignore</a></td>
                            </tr>
-                         {{/payload.negative_stats}}
+                         {{/negative_stats}}
                          </tbody>
                         </table>
-                        <table class='stats'>
+                        <table class='stats table table-striped'>
                          <caption>Zero Trends</caption>
                          <thead>
                            <tr>
@@ -57,75 +55,82 @@ class Job
                            </tr>
                          </thead>
                          <tbody>
-                         {{#payload.zero_stats}}
+                         {{#zero_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{z_score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'>Ignore</a></td>
                            </tr>
-                         {{/payload.zero_stats}}
+                         {{/zero_stats}}
                          </tbody>
                         </table>"
-    @tweets_template = "<table>
+    @tweets_template = "<table class='stats table table-striped'>
                           <caption>Tweets</caption>
                           <thead>
                             <tr>
-                              <th>Content</th>
-                              <th>Posted At</th>
+                              <th>{{word}}</th>
                             </tr>
                           </thead>
                           <tbody>
-                          {{#payload}}
+                          {{#tweets}}
                             <tr>
-                              <td>{{content}}</td>
-                              <td><a href='http://t.qq.com/p/t/{{target_id}}' target='_blank'>{{posted_at}}</a></td>
+                              <td>
+                                <p>{{content}}</p>
+                                <p><a href='http://t.qq.com/p/t/{{target_id}}' target='_blank'>{{posted_at}}</a></p>
+                              </td>
                             </tr>
-                          {{/payload}}
+                          {{/tweets}}
                           </tbody>
                         </table>"
-    jobId = $('#trends_job_id').data('job-id')
-    @checkJobStatus(jobId)
 
-    @addStopword()
-    @readTweets()
+    @period = "week"
+    @initPanelWidgets()
 
-  checkJobStatus: (jobId)->
+  initPanelWidgets: ->
     self = this
-    $.poll 5000, (retry) ->
-      $.getJSON "/jobs/" + jobId + "/status.json", (data)->
-        if data["status"] == "complete"
-          if data["payload"].length == 0
-            $('#trends').html $('<p>Not available</p>')
-          else
-            $('#trends').html $.mustache(self.trends_template, data)
-          $('.spinner').hide()
-          if $('#live').prop("checked")
-            self.liveCheck()
-        else
-          retry()
+    $.each $('.panel'), (index, panelWidget) ->
+      self.initLiveCheck(panelWidget)
+      self.initPeriodLinks(panelWidget)
+      self.sendTrendsRequest(panelWidget)
+      self.initWordLinks(panelWidget)
+      self.initIgnoreLinks(panelWidget)
 
-  checkTweetsJobStatus: (jobId) ->
+  initLiveCheck: (panelWidget)->
     self = this
-    $.poll 5000, (retry) ->
-      $.getJSON "/jobs/" + jobId + "/status.json", (data)->
-        if data["status"] == "complete"
-          if data["payload"].length == 0
-            $('#tweets').html $('<p>Not available</p>')
-          else
-            $('#tweets').html $.mustache(self.tweets_template, data)
-          $('.spinner').hide()
-          if $('#live').prop("checked")
-            self.liveCheck()
-        else
-          retry()
+    $(panelWidget).find('.live').on 'change', ->
+      self.liveCheck(panelWidget)
+      false
 
+  initPeriodLinks: (panelWidget)->
+    self = this
+    $(panelWidget).find('.periods').on 'click', 'a', (event)->
+      $(panelWidget).find('.spinner').show()
+      $(panelWidget).find('.trends').html ''
+      $(panelWidget).find('.periods li').removeClass('active')
+      $(event.target).parent().addClass('active')
+      self.period = $(event.target).data('period')
+      self.sendTrendsRequest(panelWidget)
+      false
 
-  addStopword: ->
-    $(document).on 'click', '.stopword', ->
-      $('.spinner').show()
+  initWordLinks: (panelWidget)->
+    self = this
+    $(panelWidget).on 'click', '.word', (event)->
+      $(panelWidget).find('.spinner').show()
+      panelId = $(panelWidget).data('panel-id')
+      word = $(event.target).text()
+      tweets_url = '/panels/' + panelId + '/tweets.json?period=' + self.period + '&word=' + word
+      $.getJSON tweets_url, (data)->
+        setTimeout ->
+          self.checkTweetsJobStatus panelWidget, data["job_id"]
+        , 2000
+      false
+
+  initIgnoreLinks: (panelWidget)->
+    $(panelWidget).on 'click', '.stopword', ->
+      $(panelWidget).find('.spinner').show()
       word_row = $(this).parents('tr')
-      word = word_row.children().first().text()
+      word = word_row.find('.word').text()
       $.ajax '/add_stopword',
         data: JSON.stringify({word: word}),
         contentType: 'application/json',
@@ -133,6 +138,44 @@ class Job
         success: ->
           word_row.remove()
       false
+
+  sendTrendsRequest: (panelWidget)->
+    self = this
+    panelId = $(panelWidget).data('panel-id')
+    trendsUrl = "/panels/" + panelId + "/trends.json?period=" + self.period
+    $.getJSON trendsUrl, (data)->
+      setTimeout ->
+        self.checkJobStatus(panelWidget, data["job_id"])
+      , 2000
+
+
+  checkJobStatus: (panelWidget, jobId)->
+    self = this
+    $.poll 2000, (retry) ->
+      $.getJSON "/jobs/" + jobId + "/status.json", (data)->
+        if data["status"] == "complete"
+          if data["payload"].length == 0
+            $(panelWidget).find('.trends').html $('<p>Not available</p>')
+          else
+            $(panelWidget).find('.trends').html $.mustache(self.trends_template, data["payload"])
+          $(panelWidget).find('.spinner').hide()
+          if $(panelWidget).find('.live').prop("checked")
+            self.liveCheck(panelWidget)
+        else
+          retry()
+
+  checkTweetsJobStatus: (panelWidget, jobId) ->
+    self = this
+    $.poll 2000, (retry) ->
+      $.getJSON "/jobs/" + jobId + "/status.json", (data)->
+        if data["status"] == "complete"
+          if data["payload"].length == 0
+            $(panelWidget).find('.tweets').html $('<p>Not available</p>')
+          else
+            $(panelWidget).find('.tweets').html $.mustache(self.tweets_template, data["payload"])
+          $(panelWidget).find('.spinner').hide()
+        else
+          retry()
 
   readTweets: ->
     self = this
@@ -142,30 +185,19 @@ class Job
       $.getJSON tweets_url, (data)->
         setTimeout ->
           self.checkTweetsJobStatus data["job_id"]
-        , 5000
+        , 2000
       false
 
-  liveCheck: ->
+  liveCheck: (panelWidget)->
     self = this
-    if $('#live').prop("checked")
-      $('.spinner').show()
-      check_url = '/panels/' + @getPanelId() + '/trends.json?period=' + @getPeriod()
+    if $(panelWidget).find('.live').prop("checked")
+      $(panelWidget).find('.spinner').show()
+      panelId = $(panelWidget).data('panel-id')
+      check_url = '/panels/' + panelId + '/trends.json?period=' + self.period
       $.getJSON check_url, (data)->
         setTimeout ->
-          self.checkJobStatus(data["job_id"])
-        , 5000
-
-  getPanelId: ->
-    window.location.pathname.split('/')[2]
-
-  getPeriod: ->
-    url = window.location.href
-    period_check = /[?&]period=([^&]+)/i
-    match = period_check.exec(url)
-    if match != null
-      match[1]
-    else
-      "day"
+          self.checkJobStatus(panelWidget, data["job_id"])
+        , 2000
 
 $ ->
   new Job()

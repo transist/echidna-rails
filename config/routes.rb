@@ -11,7 +11,7 @@ Echidna::Application.routes.draw do
   get '/jobs/:id/status', to: 'jobs#status'
 
   authenticated :user do
-    root to: 'home#dashboard'
+    root to: 'panels#index'
     post 'add_stopword' => 'users#add_stopword'
   end
   root to: 'home#index'

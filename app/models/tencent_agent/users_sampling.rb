@@ -5,16 +5,16 @@ class TencentAgent
     SAMPLE_WAIT = 5
 
     def sample_users
-      $spider_logger.info log('Sampling Users...')
+      info 'Sampling Users...'
 
       while keyword = random_keyword
-        $spider_logger.info log(%{Gathering first user from tweets of keyword "#{keyword}"...})
+        info %{Gathering first user from tweets of keyword "#{keyword}"...}
         result = cached_get('api/search/t', keyword: keyword, pagesize: 30)
 
         if result['ret'].to_i.zero?
 
           unless result['data']
-            $spider_logger.info log(%{No results for keyword "#{keyword}"})
+            info %{No results for keyword "#{keyword}"}
             next
           end
 
@@ -22,19 +22,19 @@ class TencentAgent
           sample_user(user_openid)
 
         else
-          $spider_logger.error log("Failed to gather user: #{result['msg']}")
+          error "Failed to gather user: #{result['msg']}"
           break
         end
 
         sleep SAMPLE_WAIT
       end
 
-      $spider_logger.warn log('No more keywords in queue for users gathering') if @keywords.count.zero?
+      warn 'No more keywords in queue for users gathering' if @keywords.count.zero?
 
-      $spider_logger.info log('Finished users gathering')
+      info 'Finished users gathering'
 
     rescue Error => e
-      $spider_logger.error log("Aborted users gathering: #{e.message}")
+      error "Aborted users gathering: #{e.message}"
     rescue => e
       log_unexpected_error(e)
     end
@@ -46,7 +46,7 @@ class TencentAgent
         user = UserDecorator.decorate(result['data'])
         publish_user(user)
       else
-        $spider_logger.error log(%{Failed to gather profile of user "#{user_openid}"})
+        error %{Failed to gather profile of user "#{user_openid}"}
       end
       false
     end
@@ -60,7 +60,7 @@ class TencentAgent
     end
 
     def publish_user(user)
-      $spider_logger.info log(%{Publishing user "#{user['name']}" openid: #{user['openid']}})
+      info %{Publishing user "#{user['name']}" openid: #{user['openid']}}
       PersonWorker.perform_async(
         target_source: 'tencent',
         target_id: user['openid'],

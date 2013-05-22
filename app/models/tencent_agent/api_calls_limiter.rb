@@ -10,7 +10,7 @@ class TencentAgent
           else
             api_calls_count = api_calls_count + 1
             save
-            $spider_logger.info "Tencent Weibo API calls count: #{api_calls_count}"
+            info "Tencent Weibo API calls count: #{api_calls_count}"
             request_without_conform_calls_limitation(*args, &block)
           end
         end
@@ -23,7 +23,7 @@ class TencentAgent
       def reset_api_calls_count
         api_calls_count = 0
         save
-        $spider_logger.info 'Reset Tencent Weibo API calls count'
+        info 'Reset Tencent Weibo API calls count'
       end
 
       def limitation_reached?

@@ -35,10 +35,10 @@ class TencentAgent
   end
 
   def refresh_access_token!
-    $spider_logger.info log('Refreshing access token...')
+    info 'Refreshing access token...'
     new_token = access_token.refresh!
     update_attributes(new_token.to_hash.symbolize_keys)
-    $spider_logger.info log('Finished access token refreshing')
+    info 'Finished access token refreshing'
   end
 
   def self.weibo_client
@@ -49,15 +49,31 @@ class TencentAgent
     )
   end
 
+  def info(message)
+    self.class.logger.info(log_wrapper(message))
+  end
+
+  def warn(message)
+    self.class.logger.warn(log_wrapper(message))
+  end
+
+  def error(message)
+    self.class.logger.error(log_wrapper(message))
+  end
+
   private
+
+  def self.logger
+    @logger ||= Logger.new('log/spider.log', 10, 1024000)
+  end
+
+  def log_wrapper(message)
+    "#{Time.now.to_s} Tencent Weibo agent #{name}: #{message}"
+  end
 
   def access_token
     @weibo ||= self.class.weibo_client
     @access_token ||= Tencent::Weibo::AccessToken.from_hash(@weibo, attributes)
-  end
-
-  def log(message)
-    "Tencent Weibo agent #{Time.now.to_s} #{name}: #{message}"
   end
 
   # Log unexpected errors to a redis list
@@ -78,8 +94,8 @@ class TencentAgent
       error[:response] = faraday_response
     end
 
-    $spider_logger.error log(error)
-    $spider_logger.info log(exception.inspect)
+    error(error)
+    info(exception.inspect)
   end
 
 end

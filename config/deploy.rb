@@ -48,7 +48,7 @@ namespace :deploy do
   desc 'Restart unicorn'
   task :restart do
     run <<-BASH
-      kill -USR2 `cat /home/echidna/echidna.transi.st/shared/pids/unicorn.pid`
+      kill -USR2 `cat #{shared_path}/pids/unicorn.pid`
     BASH
   end
 
@@ -56,14 +56,14 @@ namespace :deploy do
   task :start, roles: :app do
     run <<-BASH
       cd #{current_release} &&
-      bin/unicorn_rails -c #{current_release}/config/unicorn.rb -D -E #{rails_env}
+      bin/unicorn_rails -c config/unicorn.rb -D -E #{rails_env}
     BASH
   end
 
   desc 'Stop unicorn'
   task :stop, roles: :app do
     run <<-BASH
-      kill -QUIT `cat /home/echidna/echidna.transi.st/shared/pids/unicorn.pid`
+      kill -QUIT `cat #{shared_path}/pids/unicorn.pid`
     BASH
   end
 

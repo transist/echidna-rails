@@ -16,6 +16,9 @@ h2 Panels
               input.live type='checkbox' name='live'
               label for='live' Live
             .spinner
+            .commands
+              = link_to 'Edit', edit_panel_path(panel), class: 'btn btn-primary'
+              = link_to 'Delete', panel_path(panel), method: :delete, class: 'btn btn-danger', confirm: 'Are you sure to delete?'
             ul.nav.nav-pills.periods
               li= link_to '1 month', '#', "data-period" => "month"
               li.active= link_to '1 week', '#', "data-period" => "week"

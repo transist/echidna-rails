@@ -38,6 +38,7 @@ set :deploy_to, '/home/echidna/echidna.transi.st'
 after 'deploy:update_code', 'deploy:symbolic_links'
 after 'deploy:restart', 'deploy:cleanup'
 after 'deploy:restart', 'deploy:start_spider'
+after 'deploy:restart', 'deploy:create_indexes'
 
 namespace :deploy do
   desc 'Symbolic links'
@@ -70,5 +71,10 @@ namespace :deploy do
   desc 'Start spider'
   task :start_spider, roles: :app do
     run "cd #{current_release}; nohup bundle exec rake RAILS_ENV=production spider_scheduler > /dev/null 2>&1 &"
+  end
+
+  desc 'Create index'
+  task :create_indexes, roles: :db do
+    run "cd #{current_release}; rake db:mongoid:create_indexes"
   end
 end

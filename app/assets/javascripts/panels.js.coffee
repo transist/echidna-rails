@@ -90,11 +90,23 @@ class Job
   initPanelWidgets: ->
     self = this
     $.each $('.panel'), (index, panelWidget) ->
+      self.initPanelLinks()
       self.initLiveCheck(panelWidget)
       self.initPeriodLinks(panelWidget)
-      self.sendTrendsRequest(panelWidget)
       self.initWordLinks(panelWidget)
       self.initIgnoreLinks(panelWidget)
+
+    panelWidget = $('.panel:first')
+    self.sendTrendsRequest(panelWidget)
+
+  initPanelLinks: ->
+    self = this
+    $('.panels-tabs a').click (event) ->
+      panelSelector = $(event.target).attr('href')
+      panelWidget = $(panelSelector).find('.panel')
+      unless panelWidget.data('send')
+        self.sendTrendsRequest(panelWidget)
+
 
   initLiveCheck: (panelWidget)->
     self = this
@@ -171,6 +183,7 @@ class Job
     self = this
     panelId = $(panelWidget).data('panel-id')
     trendsUrl = "/panels/" + panelId + "/trends.json?period=" + self.period
+    panelWidget.data('send', true)
     $.getJSON trendsUrl, (data)->
       setTimeout ->
         self.checkJobStatus(panelWidget, data["job_id"])

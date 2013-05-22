@@ -65,7 +65,7 @@ class Job
                          {{/zero_stats}}
                          </tbody>
                         </table>"
-    @tweets_template = "<table class='stats table table-striped'>
+    @tweets_template = "<table class='tweets table table-striped'>
                           <caption>Tweets</caption>
                           <thead>
                             <tr>

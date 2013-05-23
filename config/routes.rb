@@ -29,4 +29,6 @@ Echidna::Application.routes.draw do
       get 'callback', on: :collection
     end
   end
+
+  mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
 end

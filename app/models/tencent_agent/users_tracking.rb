@@ -12,13 +12,13 @@ class TencentAgent
     end
 
     def track_users(user_openids)
-      $spider_logger.info log('Tracking users...')
+      info "Tracking users..."
 
       # Tencent Weibo's add_to_list API accept at most 8 user names per request.
 
       if user_openids.count > 8
         user_openids.slice!(8)
-        $spider_logger.warn log("Tencent Weibo's add_to_list API accept at most 8 user names per request.")
+        warn "Tencent Weibo's add_to_list API accept at most 8 user names per request."
       end
 
       unless user_openids.empty?
@@ -26,15 +26,15 @@ class TencentAgent
           track_users_by_list(user_openids)
         rescue
           # TODO: figure out a better way to rescue track user failure.
-          $spider_logger.error log("Added to list fail")
+          error "Added to list fail"
         end
 
         sleep TRACK_WAIT
       end
 
-      $spider_logger.info log('Finished users tracking')
+      info "Finished users tracking"
     rescue Error => e
-      $spider_logger.error log("Aborted users tracking: #{e.message}")
+      error "Aborted users tracking: #{e.message}"
     rescue => e
       log_unexpected_error(e)
     end
@@ -52,10 +52,10 @@ class TencentAgent
 
     def create_list(list_name)
       result = post('api/list/create', name: list_name, access: 1)
-      $spider_logger.info log("Create list result #{result}")
+      info "Create list result #{result}"
       if result['ret'].to_i.zero?
         add_list_to_users_tracking_lists(result['data'])
-        $spider_logger.info log(%{Created list "#{list_name}"})
+        info %{Created list "#{list_name}"}
         result['data']
 
       elsif result['ret'].to_i == 4 and result['errcode'].to_i == 98
@@ -75,7 +75,7 @@ class TencentAgent
     def track_users_by_list(user_openids)
       result = post('api/list/add_to_list', fopenid: user_openids.join('_'), listid: latest_users_tracking_list_id)
       if result['ret'].to_i.zero?
-        $spider_logger.info log(%{Tracked users "#{user_openids.join(',')}" by list})
+        info %{Tracked users "#{user_openids.join(',')}" by list}
 
       else
         # List limitation of maximized members reached

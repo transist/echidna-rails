@@ -1,5 +1,6 @@
 class TencentAgent
   include Mongoid::Document
+  include TencentLogger
   include UsersSampling
   include UsersTracking
   include TweetsGathering
@@ -35,10 +36,10 @@ class TencentAgent
   end
 
   def refresh_access_token!
-    $spider_logger.info log('Refreshing access token...')
+    info 'Refreshing access token...'
     new_token = access_token.refresh!
     update_attributes(new_token.to_hash.symbolize_keys)
-    $spider_logger.info log('Finished access token refreshing')
+    info 'Finished access token refreshing'
   end
 
   def self.weibo_client
@@ -55,31 +56,4 @@ class TencentAgent
     @weibo ||= self.class.weibo_client
     @access_token ||= Tencent::Weibo::AccessToken.from_hash(@weibo, attributes)
   end
-
-  def log(message)
-    "Tencent Weibo agent #{Time.now.to_s} #{name}: #{message}"
-  end
-
-  # Log unexpected errors to a redis list
-  def log_unexpected_error(exception)
-    error = {
-      class: exception.class.name,
-      message: exception.message,
-      backtrace: exception.backtrace,
-      raised_at: Time.now
-    }
-    if exception.respond_to?(:response)
-      faraday_response = exception.response.response.to_hash
-      # Delete self-reference
-      faraday_response.delete(:response)
-      faraday_response[:url] = faraday_response[:url].to_s
-      faraday_response[:body] = MultiJson.load(faraday_response[:body]) rescue faraday_response[:body]
-
-      error[:response] = faraday_response
-    end
-
-    $spider_logger.error log(error)
-    $spider_logger.info log(exception.inspect)
-  end
-
 end

@@ -20,7 +20,7 @@ class SpiderScheduler
 
   def schedule_gather_tweets
     @scheduler.every '30s', first_in: '0s', mutex: :gather_tweets do
-      TencentAgent.all.each do |agent|
+      TencentAgent.all.sort(created_at: :desc).each do |agent|
         agent.gather_tweets
       end
     end

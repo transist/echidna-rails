@@ -183,7 +183,7 @@ class Job
     self = this
     panelId = $(panelWidget).data('panel-id')
     trendsUrl = "/panels/" + panelId + "/trends.json?period=" + self.period
-    panelWidget.data('send', true)
+    $(panelWidget).data('send', true)
     $.getJSON trendsUrl, (data)->
       setTimeout ->
         self.checkJobStatus(panelWidget, data["job_id"])

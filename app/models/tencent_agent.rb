@@ -1,6 +1,7 @@
 class TencentAgent
   include Mongoid::Document
   include TencentLogger
+  include FamousUsersSampling
   include UsersSampling
   include UsersTracking
   include TweetsGathering

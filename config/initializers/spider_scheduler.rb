@@ -38,15 +38,13 @@ class SpiderScheduler
     end
   end
 
-  # Switch to triggered by sample user
-  # def schedule_track_users
-  #   @scheduler.every '5m', first_in: '0s', mutex: :track_users do
-  #     TencentAgent.all.each do |agent|
-  #       next if agent[:full_with_lists]
-  #       agent.track_users
-  #     end
-  #   end
-  # end
+  def schedule_track_users
+    @scheduler.every '1y', first_in: '0s', mutex: :track_users do
+      TencentAgent.with_available_lists.each do |agent|
+        agent.track_users
+      end
+    end
+  end
 
   def schedule_refresh_access_token
     @scheduler.every '1d', first_in: '0s', mutex:

@@ -3,7 +3,7 @@ class TencentAgent
     extend ActiveSupport::Concern
 
     USERS_TRACKING_LIST_PREFIX = 'UTL'
-    TRACK_WAIT = 5
+    TRACK_WAIT = 0.1
 
     included do
       def self.get_agent_with_capacity
@@ -11,24 +11,12 @@ class TencentAgent
       end
     end
 
-    def track_users(user_openids)
+    def track_users
       info "Tracking users..."
 
-      # Tencent Weibo's add_to_list API accept at most 8 user names per request.
-
-      if user_openids.count > 8
-        user_openids.slice!(8)
-        warn "Tencent Weibo's add_to_list API accept at most 8 user names per request."
-      end
-
-      unless user_openids.empty?
-        begin
-          track_users_by_list(user_openids)
-        rescue
-          # TODO: figure out a better way to rescue track user failure.
-          error "Added to list fail"
-        end
-
+      # Temporarily only track famous users for the demo
+      Person.where(famous: true).each_slice(8) do |people|
+        track_users_by_list(people.map(&:target_id))
         sleep TRACK_WAIT
       end
 
@@ -40,6 +28,7 @@ class TencentAgent
     end
 
     private
+
     def latest_users_tracking_list_id
       list_ids.last || create_list(next_users_tracking_list_name)['listid']
     end
@@ -73,7 +62,7 @@ class TencentAgent
     end
 
     def track_users_by_list(user_openids)
-      result = post('api/list/add_to_list', fopenid: user_openids.join('_'), listid: latest_users_tracking_list_id)
+      result = post('api/list/add_to_list', fopenids: user_openids.join('_'), listid: latest_users_tracking_list_id)
       if result['ret'].to_i.zero?
         info %{Tracked users "#{user_openids.join(',')}" by list}
 
@@ -81,11 +70,11 @@ class TencentAgent
         # List limitation of maximized members reached
         if result['ret'].to_i == 5 and result['errcode'].to_i == 98
           create_list(next_users_tracking_list_name)
+          track_users_by_list(user_openids)
+        else
+          raise Error.new(%{Failed to track users "#{user_openids.join(',')}" by list}, result)
         end
-
-        raise Error.new(%{Failed to track users "#{user_openids.join(',')}" by list}, result)
       end
     end
-
   end
 end

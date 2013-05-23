@@ -20,6 +20,8 @@ class TencentAgent
 
   field :api_calls_count, type: Integer, default: 0
 
+  scope :with_available_lists, where(full_with_lists: false)
+
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed
   end

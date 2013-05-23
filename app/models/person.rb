@@ -25,6 +25,7 @@ class Person
   validates :gender, inclusion: { in: GENDERS }
 
   index({ target_source: 1, target_id: 1}, { unique: true })
+  index({ famous: 1 })
 
   has_many :tweets
   belongs_to :city

@@ -25,8 +25,8 @@ h2 Panels
               = link_to 'Delete', panel_path(panel), method: :delete, class: 'btn btn-danger', confirm: 'Are you sure to delete?'
             ul.nav.nav-pills.periods
               li= link_to '1 month', '#', "data-period" => "month"
-              li.active= link_to '1 week', '#', "data-period" => "week"
-              li= link_to '1 day', '#', "data-period" => "day"
+              li= link_to '1 week', '#', "data-period" => "week"
+              li.active= link_to '1 day', '#', "data-period" => "day"
           .body
             .trends
             .tweets

@@ -84,7 +84,7 @@ class Job
                           </tbody>
                         </table>"
 
-    @period = "week"
+    @period = "day"
     @initPanelWidgets()
 
   initPanelWidgets: ->

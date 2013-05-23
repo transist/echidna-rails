@@ -20,6 +20,7 @@ Echidna::Application.routes.draw do
 
   authenticated :user do
     require 'sidekiq/web'
+    require 'sidekiq_status/web'
     mount Sidekiq::Web => '/sidekiq'
   end
 

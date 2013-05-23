@@ -31,6 +31,8 @@ gem 'nokogiri', require: 'nokogiri'
 gem 'twitter-bootstrap-rails'
 gem 'font-awesome-rails'
 
+gem 'rails_admin'
+
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'

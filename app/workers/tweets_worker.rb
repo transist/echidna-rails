@@ -1,6 +1,6 @@
 class TweetsWorker
   include SidekiqStatus::Worker
-  sidekiq_options :enqueu => :trends
+  sidekiq_options queue: :trends, retry: false
 
   def perform(panel_id, word, length, period)
     Sidekiq.logger.info "panel_id: #{panel_id}, word: #{word}, length: #{length}, period: #{period}"

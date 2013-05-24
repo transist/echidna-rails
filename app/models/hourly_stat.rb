@@ -45,7 +45,7 @@ class HourlyStat < BaseStat
   end
 
   def self.tweets(panel, word, options={})
-    tweets = []
+    tweet_ids = []
     current_time = Time.now.beginning_of_hour
     hours = options[:hours] || 7
     start_time = current_time.ago(hours.hours)
@@ -55,11 +55,11 @@ class HourlyStat < BaseStat
         hourly_stat.stats.each do |stat|
           time = time.change(hour: stat["hour"])
           if time >= start_time && stat["tweet_ids"]
-            tweets += Tweet.find(stat["tweet_ids"]).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
+            tweet_ids += stat["tweet_ids"]
           end
         end
       end
     end
-    tweets
+    Tweet.find(tweet_ids.uniq).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
   end
 end

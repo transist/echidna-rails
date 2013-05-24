@@ -6,14 +6,16 @@ class TencentAgent
 
     def gather_tweets
       list_ids.each do |list_id|
-        gather_tweets_from_list(list_id, list_last_timestamp_map[list_id])
+        begin
+          gather_tweets_from_list(list_id, list_last_timestamp_map[list_id])
+        rescue Error => e
+          error "Aborted tweets gathering: #{e.message}"
+        rescue => e
+          log_unexpected_error(e)
+        end
       end
 
       info 'Finished tweets gathering'
-    rescue Error => e
-      error "Aborted tweets gathering: #{e.message}"
-    rescue => e
-      log_unexpected_error(e)
     end
 
     private

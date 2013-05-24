@@ -72,7 +72,13 @@ class TencentAgent
           content: tweet['text'],
           posted_at: Time.at(tweet['timestamp'].to_i)
         }
-        TweetWorker.perform_async(tweet_attrs)
+        begin
+          TweetWorker.perform_async(tweet_attrs)
+        rescue JSON::GeneratorError => e
+          unless e.message.include?('source sequence is illegal/malformed utf-8')
+            raise
+          end
+        end
       end
 
       list_last_timestamp_map[list_id] = tweets.first['timestamp']

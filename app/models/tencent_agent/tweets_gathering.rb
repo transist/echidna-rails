@@ -52,6 +52,7 @@ class TencentAgent
 
         sleep GATHER_TWEET_SLEEP
       end
+      sleep GATHER_TWEET_SLEEP
     end
 
     def gather_tweets_since_latest_known_tweet(list_id, latest_tweet_timestamp)

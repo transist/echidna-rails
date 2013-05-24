@@ -19,10 +19,9 @@ class DailyStat < BaseStat
   end
 
   def self.top_trends(panel, user, options={})
-    current_time = Time.now.beginning_of_day
-    days = options[:days] || 7
     limit = options[:limit] || 100
-    start_time = current_time.ago(days.days)
+    current_time = get_current_time(options)
+    start_time = get_start_time(options)
 
     history_stats = {}
     current_stats = {}
@@ -48,15 +47,15 @@ class DailyStat < BaseStat
 
   def self.tweets(panel, word, options={})
     tweet_ids = []
-    current_time = Time.now.beginning_of_day
-    days = options[:days] || 7
-    start_time = current_time.ago(days.days)
+    current_time = get_current_time(options)
+    start_time = get_start_time(options)
+
     panel.groups.each do |group|
       self.where(word: word, group_id: group.id).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
         time = daily_stat.date.to_time
         daily_stat.stats.each do |stat|
           time = time.change(day: stat["day"])
-          if time >= start_time && stat["tweet_ids"]
+          if time >= start_time && time <= current_time && stat["tweet_ids"]
             tweet_ids += stat["tweet_ids"]
           end
         end
@@ -66,6 +65,16 @@ class DailyStat < BaseStat
   end
 
   private
+
+  def self.get_current_time(options)
+    live = options[:live] || false
+    (live ? Time.now : 1.day.ago).beginning_of_day
+  end
+
+  def self.get_start_time(options)
+    days = options[:days] || 7
+    days.days.ago.beginning_of_day
+  end
 
   def set_default_stats
     self.stats ||= begin

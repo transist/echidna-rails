@@ -23,20 +23,18 @@ class HourlyStat < BaseStat
 
     history_stats = {}
     current_stats = {}
-    panel.groups.each do |group|
-      self.where(group_id: group.id).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
-        word = hourly_stat.word
-        time = hourly_stat.date.to_time
-        hourly_stat.stats.each do |stat|
-          time = time.change(hour: stat["hour"])
-          stat_count = stat["count"]
-          if time >= start_time && time < current_time
-            history_stats[word] ||= Array.new((current_time - start_time) / 1.hour.to_i, 0)
-            history_stats[word][(time - start_time) / 1.hour.to_i] += stat_count
-          elsif time == current_time
-            current_stats[word] ||= 0
-            current_stats[word] += stat_count
-          end
+    self.where(:group_id.in => panel.group_ids).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
+      word = hourly_stat.word
+      time = hourly_stat.date.to_time
+      hourly_stat.stats.each do |stat|
+        time = time.change(hour: stat["hour"])
+        stat_count = stat["count"]
+        if time >= start_time && time < current_time
+          history_stats[word] ||= Array.new((current_time - start_time) / 1.hour.to_i, 0)
+          history_stats[word][(time - start_time) / 1.hour.to_i] += stat_count
+        elsif time == current_time
+          current_stats[word] ||= 0
+          current_stats[word] += stat_count
         end
       end
     end
@@ -47,14 +45,12 @@ class HourlyStat < BaseStat
     tweet_ids = []
     current_time = get_current_time(options)
     start_time = get_start_time(options)
-    panel.groups.each do |group|
-      self.where(word: word, group_id: group.id).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
-        time = hourly_stat.date.to_time
-        hourly_stat.stats.each do |stat|
-          time = time.change(hour: stat["hour"])
-          if time >= start_time && time <= current_time && stat["tweet_ids"]
-            tweet_ids += stat["tweet_ids"]
-          end
+    self.where(:word => word, :group_id.in => panel.group_ids).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
+      time = hourly_stat.date.to_time
+      hourly_stat.stats.each do |stat|
+        time = time.change(hour: stat["hour"])
+        if time >= start_time && time <= current_time && stat["tweet_ids"]
+          tweet_ids += stat["tweet_ids"]
         end
       end
     end

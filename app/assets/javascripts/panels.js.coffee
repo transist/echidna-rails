@@ -155,29 +155,37 @@ class Job
     self = this
     $.poll 5000, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
-        if data["status"] == "complete"
-          if data["payload"].length == 0
-            $(panelWidget).find('.trends').html $('<p>Not available</p>')
+        switch data["status"]
+          when "complete"
+            if data["payload"].length == 0
+              $(panelWidget).find('.trends').html $('<p>Not available</p>')
+            else
+              $(panelWidget).find('.trends').html $.mustache(self.trends_template, data["payload"])
+            $(panelWidget).find('.spinner').hide()
+            if $(panelWidget).find('.live').prop("checked")
+              self.liveCheck(panelWidget)
+          when "failed"
+            $(panelWidget).find('.spinner').hide()
+            $(panelWidget).find('.trends').html $('<p>Something wrong in our system, please try again later!</p>')
           else
-            $(panelWidget).find('.trends').html $.mustache(self.trends_template, data["payload"])
-          $(panelWidget).find('.spinner').hide()
-          if $(panelWidget).find('.live').prop("checked")
-            self.liveCheck(panelWidget)
-        else
-          retry()
+            retry()
 
   checkTweetsJobStatus: (panelWidget, jobId) ->
     self = this
     $.poll 5000, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
-        if data["status"] == "complete"
-          if data["payload"].length == 0
-            $(panelWidget).find('.tweets').html $('<p>Not available</p>')
+        switch data["status"]
+          when "complete"
+            if data["payload"].length == 0
+              $(panelWidget).find('.tweets').html $('<p>Not available</p>')
+            else
+              $(panelWidget).find('.tweets').html $.mustache(self.tweets_template, data["payload"])
+            $(panelWidget).find('.spinner').hide()
+          when "failed"
+            $(panelWidget).find('.spinner').hide()
+            $(panelWidget).find('.tweets').html $('<p>Something wrong in our system, please try again later!</p>')
           else
-            $(panelWidget).find('.tweets').html $.mustache(self.tweets_template, data["payload"])
-          $(panelWidget).find('.spinner').hide()
-        else
-          retry()
+            retry()
 
   sendTrendsRequest: (panelWidget)->
     self = this

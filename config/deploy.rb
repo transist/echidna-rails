@@ -44,6 +44,7 @@ namespace :deploy do
   desc 'Symbolic links'
   task :symbolic_links do
     run "ln -nfs #{shared_path}/config/application.yml #{release_path}/config/application.yml"
+    run "ln -nfs #{shared_path}/cache #{release_path}/cache"
   end
 
   desc 'Restart unicorn'

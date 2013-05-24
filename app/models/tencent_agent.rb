@@ -1,6 +1,9 @@
 class TencentAgent
   include Mongoid::Document
+  include Mongoid::Timestamps
+
   include TencentLogger
+  include FamousUsersSampling
   include UsersSampling
   include UsersTracking
   include TweetsGathering
@@ -18,6 +21,8 @@ class TencentAgent
   field :full_with_lists, type: Boolean, default: false
 
   field :api_calls_count, type: Integer, default: 0
+
+  scope :with_available_lists, where(full_with_lists: false)
 
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed

@@ -59,12 +59,13 @@ class TencentAgent
       @keywords.delete(word)
     end
 
-    def publish_user(user)
+    def publish_user(user, famous: false)
       info %{Publishing user "#{user['name']}" openid: #{user['openid']}}
       PersonWorker.perform_async(
         target_source: 'tencent',
         target_id: user['openid'],
         target_name: user['name'],
+        famous: famous,
         birth_year: user['birth_year'],
         gender: user['gender'],
         city: user['city']

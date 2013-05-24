@@ -7,6 +7,7 @@ class SpiderScheduler
     schedule_refresh_access_token
     # schedule_sample_users
     # schedule_track_users
+    # schedule_sample_famous_users
     schedule_gather_tweets
     schedule_reset_api_calls_count
   end
@@ -19,9 +20,15 @@ class SpiderScheduler
 
   def schedule_gather_tweets
     @scheduler.every '30s', first_in: '0s', mutex: :gather_tweets do
-      TencentAgent.all.each do |agent|
+      TencentAgent.all.sort(created_at: :desc).each do |agent|
         agent.gather_tweets
       end
+    end
+  end
+
+  def schedule_sample_famous_users
+    @scheduler.every '4w', first_in: '0s', mutex: :sample_famous_users do
+      TencentAgent.first.sample_famous_users
     end
   end
 
@@ -31,19 +38,17 @@ class SpiderScheduler
     end
   end
 
-  # Switch to triggered by sample user
-  # def schedule_track_users
-  #   @scheduler.every '5m', first_in: '0s', mutex: :track_users do
-  #     TencentAgent.all.each do |agent|
-  #       next if agent[:full_with_lists]
-  #       agent.track_users
-  #     end
-  #   end
-  # end
+  def schedule_track_users
+    @scheduler.every '1y', first_in: '0s', mutex: :track_users do
+      TencentAgent.with_available_lists.each do |agent|
+        agent.track_users
+      end
+    end
+  end
 
   def schedule_refresh_access_token
     @scheduler.every '1d', first_in: '0s', mutex:
-      [:sample_users, :track_users, :gather_tweets] do
+      [:sample_users, :sample_famous_users, :track_users, :gather_tweets] do
       TencentAgent.all.each do |agent|
         agent.refresh_access_token
       end

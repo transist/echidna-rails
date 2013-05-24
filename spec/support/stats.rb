@@ -6,19 +6,19 @@ module Support
           word: "中国",
           group_id: group.id,
           date: 3.days.ago,
-          stats: (0..23).map { |i| {hour: i, count: i} }
+          stats: (0..23).map { |i| {hour: i, count: i + 1} }
         )
         create(:hourly_stat,
           word: "美国",
           group_id: group.id,
           date: 3.days.ago,
-          stats: (0..23).map { |i| {hour: i, count: i} }
+          stats: (0..23).map { |i| {hour: i, count: i + 1} }
         )
         create(:hourly_stat,
           word: "日本",
           group_id: group.id,
           date: 3.days.ago,
-          stats: (0..23).map { |i| {hour: i, count: i} }
+          stats: (0..23).map { |i| {hour: i, count: i + 1} }
         )
         create(:hourly_stat,
           word: "韩国",
@@ -36,19 +36,19 @@ module Support
           word: "中国",
           group_id: group.id,
           date: 2.days.ago,
-          stats: (0..23).map { |i| {hour: i, count: i * 2} }
+          stats: (0..23).map { |i| {hour: i, count: i * 2 + 1} }
         )
         create(:hourly_stat,
           word: "美国",
           group_id: group.id,
           date: 2.days.ago,
-          stats: (0..23).map { |i| {hour: i, count: i} }
+          stats: (0..23).map { |i| {hour: i, count: i + 1} }
         )
         create(:hourly_stat,
           word: "日本",
           group_id: group.id,
           date: 2.days.ago,
-          stats: (0..23).map { |i| {hour: i, count: i * 4} }
+          stats: (0..23).map { |i| {hour: i, count: i * 4 + 1} }
         )
         create(:hourly_stat,
           word: "韩国",
@@ -66,19 +66,19 @@ module Support
           word: "中国",
           group_id: group.id,
           date: 1.day.ago,
-          stats: (0..23).map { |i| {hour: i, count: i * 6} }
+          stats: (0..23).map { |i| {hour: i, count: i * 6 + 1} }
         )
         create(:hourly_stat,
           word: "美国",
           group_id: group.id,
           date: 1.day.ago,
-          stats: (0..23).map { |i| {hour: i, count: i} }
+          stats: (0..23).map { |i| {hour: i, count: i + 1} }
         )
         create(:hourly_stat,
           word: "日本",
           group_id: group.id,
           date: 1.day.ago,
-          stats: (0..23).map { |i| {hour: i, count: i * 8} }
+          stats: (0..23).map { |i| {hour: i, count: i * 8 + 1} }
         )
         create(:hourly_stat,
           word: "韩国",
@@ -96,19 +96,19 @@ module Support
           word: "中国",
           group_id: group.id,
           date: Date.today,
-          stats: (0..23).map { |i| {hour: i, count: i * 10} }
+          stats: (0..23).map { |i| {hour: i, count: i * 10 + 1} }
         )
         create(:hourly_stat,
           word: "美国",
           group_id: group.id,
           date: Date.today,
-          stats: (0..23).map { |i| {hour: i, count: i} }
+          stats: (0..23).map { |i| {hour: i, count: i + 1} }
         )
         create(:hourly_stat,
           word: "日本",
           group_id: group.id,
           date: Date.today,
-          stats: (0..23).map { |i| {hour: i, count: i * 12} }
+          stats: (0..23).map { |i| {hour: i, count: i * 12 + 1} }
         )
         create(:hourly_stat,
           word: "韩国",

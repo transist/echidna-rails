@@ -5,7 +5,7 @@ class HourlyStat < BaseStat
   field :date, type: Date
   field :stats, type: Array, default: (0..23).map {|n| {hour: n, count: 0} }
 
-  index({group_id: 1, date: 1, word: 1}, {unique: true})
+  index({date: 1, group_id: 1, word: 1}, {unique: true})
 
   belongs_to :group
 

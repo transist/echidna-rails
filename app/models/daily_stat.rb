@@ -5,7 +5,7 @@ class DailyStat < BaseStat
   field :date, type: Date # Must be the first day of the month.
   field :stats, type: Array
 
-  index({group_id: 1, date: 1, word: 1}, {unique: true})
+  index({date: 1, group_id: 1, word: 1}, {unique: true})
 
   belongs_to :group
 

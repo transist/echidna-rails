@@ -3,7 +3,6 @@ require 'spec_helper'
 describe DailyStat do
   it { should belong_to :group }
   it { should have_field(:stats).of_type(Array) }
-  it { should validate_uniqueness_of(:word).scoped_to([:group, :date]) }
 
   context 'default value of stats' do
     context 'when the month of date has 31 days' do
@@ -128,15 +127,15 @@ describe DailyStat do
     it "returns 中国, 日本 and 美国" do
       expect(DailyStat.top_trends(panel, user)).to eq({
         positive_stats: [
-          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-          {word: "中国", z_score: 1.4804519606800841, current_stat: 200},
-          {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
+          {word: "美国", z_score: 1.5302264278053699, current_stat: 20},
+          {word: "中国", z_score: 1.5302264278053697, current_stat: 182},
+          {word: "日本", z_score: 1.5302264278053697, current_stat: 218}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
         negative_stats: [
-          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+          {word: "朝鲜", z_score: -1.5302264278053699, current_stat: 128}
         ]
       })
     end
@@ -150,12 +149,12 @@ describe DailyStat do
     end
 
     it "checks history for only 1 day" do
-      expect(DailyStat.top_trends(panel, user, days: 1)).to eq({
+      expect(DailyStat.top_trends(panel, user, days: 2)).to eq({
         positive_stats: [],
         zero_stats: [
-          {word: "日本", z_score: 0, current_stat: 240},
-          {word: "中国", z_score: 0, current_stat: 200},
-          {word: "朝鲜", z_score: 0, current_stat: 120},
+          {word: "日本", z_score: 0, current_stat: 218},
+          {word: "中国", z_score: 0, current_stat: 182},
+          {word: "朝鲜", z_score: 0, current_stat: 128},
           {word: "美国", z_score: 0, current_stat: 20},
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
@@ -166,14 +165,14 @@ describe DailyStat do
     it "returns only 2 words" do
       expect(DailyStat.top_trends(panel, user, limit: 2)).to eq({
         positive_stats: [
-          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-          {word: "中国", z_score: 1.4804519606800841, current_stat: 200}
+          {word: "美国", z_score: 1.5302264278053699, current_stat: 20},
+          {word: "中国", z_score: 1.5302264278053697, current_stat: 182}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
         negative_stats: [
-          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+          {word: "朝鲜", z_score: -1.5302264278053699, current_stat: 128}
         ]
       })
     end
@@ -182,14 +181,14 @@ describe DailyStat do
       user.add_stopword '中国'
       expect(DailyStat.top_trends(panel, user)).to eq({
         positive_stats: [
-          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-          {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
+          {word: "美国", z_score: 1.5302264278053699, current_stat: 20},
+          {word: "日本", z_score: 1.5302264278053697, current_stat: 218}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
         negative_stats: [
-          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+          {word: "朝鲜", z_score: -1.5302264278053699, current_stat: 128}
         ]
       })
     end
@@ -197,15 +196,15 @@ describe DailyStat do
     it "query 20 days data" do
       expect(DailyStat.top_trends(panel, user, days: 20)).to eq({
         positive_stats: [
-          {word: "中国", z_score: 1.3851386144545532, current_stat: 200},
-          {word: "日本", z_score: 1.356305321707554, current_stat: 240},
-          {word: "美国", z_score: 1.1815597860975298, current_stat: 20}
+          {word: "中国", z_score: 1.3112075204653202, current_stat: 182},
+          {word: "日本", z_score: 1.25724689216797, current_stat: 218},
+          {word: "美国", z_score: 0.9886297529124048, current_stat: 20}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
         negative_stats: [
-          {word: "朝鲜", z_score: -1.3162319466963037, current_stat: 120}
+          {word: "朝鲜", z_score: -1.1878447288148373, current_stat: 128}
         ]
       })
     end
@@ -240,22 +239,25 @@ describe DailyStat do
 
     it "returns all tweets" do
       expect(DailyStat.tweets(panel, 'foo')).to have(3).tweets
-      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to eq [tweet3.target_id, tweet1.target_id, tweet2.target_id]
+      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet1.target_id
+      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet2.target_id
+      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet3.target_id
     end
 
     it "returns tweets only contain word" do
       expect(DailyStat.tweets(other_panel, 'bar')).to have(1).tweets
-      expect(DailyStat.tweets(other_panel, 'bar').map { |stat| stat[:target_id] }).to eq [tweet2.target_id]
+      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet2.target_id
     end
 
     it "returns tweets only belong to a panel" do
       expect(DailyStat.tweets(other_panel, 'foo')).to have(1).tweets
-      expect(DailyStat.tweets(other_panel, 'foo').map { |stat| stat[:target_id] }).to eq [tweet1.target_id]
+      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet1.target_id
     end
 
     it "returns tweets only after time" do
       expect(DailyStat.tweets(panel, 'foo', days: 2)).to have(2).tweets
-      expect(DailyStat.tweets(panel, 'foo', days: 2).map { |stat| stat[:target_id] }).to eq [tweet1.target_id, tweet2.target_id]
+      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet1.target_id
+      expect(DailyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet2.target_id
     end
   end
 end

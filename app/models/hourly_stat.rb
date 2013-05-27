@@ -21,24 +21,26 @@ class HourlyStat < BaseStat
     current_time = get_current_time(options)
     start_time = get_start_time(options)
 
-    history_stats = {}
-    current_stats = {}
-    self.where(:group_id.in => panel.group_ids).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
-      word = hourly_stat.word
-      time = hourly_stat.date.to_time
-      hourly_stat.stats.each do |stat|
-        time = time.change(hour: stat["hour"])
-        stat_count = stat["count"]
-        if time >= start_time && time < current_time
-          history_stats[word] ||= Array.new((current_time - start_time) / 1.hour.to_i, 0)
-          history_stats[word][(time - start_time) / 1.hour.to_i] += stat_count
-        elsif time == current_time
-          current_stats[word] ||= 0
-          current_stats[word] += stat_count
+    Rails.cache.fetch "hourly_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}" do
+      history_stats = {}
+      current_stats = {}
+      self.where(:group_id.in => panel.group_ids).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
+        word = hourly_stat.word
+        time = hourly_stat.date.to_time
+        hourly_stat.stats.each do |stat|
+          time = time.change(hour: stat["hour"])
+          stat_count = stat["count"]
+          if time >= start_time && time < current_time
+            history_stats[word] ||= Array.new((current_time - start_time) / 1.hour.to_i, 0)
+            history_stats[word][(time - start_time) / 1.hour.to_i] += stat_count
+          elsif time == current_time
+            current_stats[word] ||= 0
+            current_stats[word] += stat_count
+          end
         end
       end
+      aggregate(history_stats, current_stats, user, limit)
     end
-    aggregate(history_stats, current_stats, user, limit)
   end
 
   def self.tweets(panel, word, options={})

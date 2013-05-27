@@ -16,7 +16,7 @@ class Job
                          {{#positive_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
-                             <td>{{z_score}}</td>
+                             <td>{{score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'><span class='icon-remove'></span></a></td>
                            </tr>
@@ -37,7 +37,7 @@ class Job
                          {{#negative_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
-                             <td>{{z_score}}</td>
+                             <td>{{score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'><span class='icon-remove'></span></a></td>
                            </tr>
@@ -58,7 +58,7 @@ class Job
                          {{#zero_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
-                             <td>{{z_score}}</td>
+                             <td>{{score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'><span class='icon-remove'></span></a></td>
                            </tr>
@@ -160,7 +160,10 @@ class Job
             if data["payload"].length == 0
               $(panelWidget).find('.trends').html $('<p>Not available</p>')
             else
-              $(panelWidget).find('.trends').html $.mustache(self.trends_template, data["payload"])
+              payload = data["payload"]
+              payload["score"] = ->
+                return Number(@z_score).toFixed(2)
+              $(panelWidget).find('.trends').html $.mustache(self.trends_template, payload)
             $(panelWidget).find('.spinner').hide()
             if $(panelWidget).find('.live').prop("checked")
               self.liveCheck(panelWidget)

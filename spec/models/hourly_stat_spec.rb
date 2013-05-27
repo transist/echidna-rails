@@ -5,7 +5,6 @@ describe HourlyStat do
   it { should have_field(:stats).of_type(Array).with_default_value_of(
     (0..23).map {|n| {hour: n, count: 0} }
   ) }
-  it { should validate_uniqueness_of(:word).scoped_to([:group, :date]) }
 
   describe '.record' do
     before { Tweet.skip_callback(:create, :after, :update_stats) }
@@ -100,15 +99,15 @@ describe HourlyStat do
     it "returns 中国, 日本 and 美国" do
       expect(HourlyStat.top_trends(panel, user)).to eq({
         positive_stats: [
-          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-          {word: "中国", z_score: 1.4804519606800841, current_stat: 200},
-          {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
+          {word: "美国", z_score: 1.5302264278053699, current_stat: 20},
+          {word: "中国", z_score: 1.5302264278053697, current_stat: 182},
+          {word: "日本", z_score: 1.5302264278053697, current_stat: 218}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
         negative_stats: [
-          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+          {word: "朝鲜", z_score: -1.5302264278053699, current_stat: 128}
         ]
       })
     end
@@ -122,12 +121,12 @@ describe HourlyStat do
     end
 
     it "checks history for only 1 hour" do
-      expect(HourlyStat.top_trends(panel, user, hours: 1)).to eq({
+      expect(HourlyStat.top_trends(panel, user, hours: 2)).to eq({
         positive_stats: [],
         zero_stats: [
-          {word: "日本", z_score: 0, current_stat: 240},
-          {word: "中国", z_score: 0, current_stat: 200},
-          {word: "朝鲜", z_score: 0, current_stat: 120},
+          {word: "日本", z_score: 0, current_stat: 218},
+          {word: "中国", z_score: 0, current_stat: 182},
+          {word: "朝鲜", z_score: 0, current_stat: 128},
           {word: "美国", z_score: 0, current_stat: 20},
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
@@ -138,14 +137,14 @@ describe HourlyStat do
     it "returns only 2 words" do
       expect(HourlyStat.top_trends(panel, user, limit: 2)).to eq({
         positive_stats: [
-          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-          {word: "中国", z_score: 1.4804519606800841, current_stat: 200}
+          {word: "美国", z_score: 1.5302264278053699, current_stat: 20},
+          {word: "中国", z_score: 1.5302264278053697, current_stat: 182}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
         negative_stats: [
-          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+          {word: "朝鲜", z_score: -1.5302264278053699, current_stat: 128}
         ]
       })
     end
@@ -154,14 +153,14 @@ describe HourlyStat do
       user.add_stopword '中国'
       expect(HourlyStat.top_trends(panel, user)).to eq({
         positive_stats: [
-          {word: "美国", z_score: 1.4804519606800843, current_stat: 20},
-          {word: "日本", z_score: 1.4804519606800841, current_stat: 240}
+          {word: "美国", z_score: 1.5302264278053699, current_stat: 20},
+          {word: "日本", z_score: 1.5302264278053697, current_stat: 218}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}
         ],
         negative_stats: [
-          {word: "朝鲜", z_score: -1.4804519606800843, current_stat: 120}
+          {word: "朝鲜", z_score: -1.5302264278053699, current_stat: 128}
         ]
       })
     end
@@ -169,15 +168,15 @@ describe HourlyStat do
     it "query 20 hours data" do
       expect(HourlyStat.top_trends(panel, user, hours: 20)).to eq({
         positive_stats: [
-          {word: "中国", z_score: 1.429954466009161, current_stat: 200},
-          {word: "日本", z_score: 1.4226184910682367, current_stat: 240},
-          {word: "美国", z_score: 1.3661642830588334, current_stat: 20}
+          {word: "中国", z_score: 1.424363548200698, current_stat: 182},
+          {word: "日本", z_score: 1.4076995594824548, current_stat: 218},
+          {word: "美国", z_score: 1.293743079435168, current_stat: 20}
         ],
         zero_stats: [
-          {word: "韩国", z_score: 0, current_stat: 2}
+          {word: "韩国", z_score: 0.0, current_stat: 2}
         ],
         negative_stats: [
-          {word: "朝鲜", z_score: -1.4114509547749945, current_stat: 120}
+          {word: "朝鲜", z_score: -1.3834610202106223, current_stat: 128}
         ]
       })
     end
@@ -212,22 +211,25 @@ describe HourlyStat do
 
     it "returns all tweets" do
       expect(HourlyStat.tweets(panel, 'foo')).to have(3).tweets
-      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to eq [tweet3.target_id, tweet1.target_id, tweet2.target_id]
+      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet1.target_id
+      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet2.target_id
+      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet3.target_id
     end
 
     it "returns tweets only contain word" do
       expect(HourlyStat.tweets(other_panel, 'bar')).to have(1).tweets
-      expect(HourlyStat.tweets(other_panel, 'bar').map { |stat| stat[:target_id] }).to eq [tweet2.target_id]
+      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet2.target_id
     end
 
     it "returns tweets only belong to a panel" do
       expect(HourlyStat.tweets(other_panel, 'foo')).to have(1).tweets
-      expect(HourlyStat.tweets(other_panel, 'foo').map { |stat| stat[:target_id] }).to eq [tweet1.target_id]
+      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet1.target_id
     end
 
     it "returns tweets only after time" do
       expect(HourlyStat.tweets(panel, 'foo', hours: 2)).to have(2).tweets
-      expect(HourlyStat.tweets(panel, 'foo', hours: 2).map { |stat| stat[:target_id] }).to eq [tweet1.target_id, tweet2.target_id]
+      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet1.target_id
+      expect(HourlyStat.tweets(panel, 'foo').map { |stat| stat[:target_id] }).to be_include tweet2.target_id
     end
   end
 end

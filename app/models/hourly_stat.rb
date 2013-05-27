@@ -5,7 +5,7 @@ class HourlyStat < BaseStat
   field :date, type: Date
   field :stats, type: Array, default: (0..23).map {|n| {hour: n, count: 0} }
 
-  index({group_id: 1, date: 1, word: 1}, {unique: true})
+  index({date: 1, group_id: 1, word: 1}, {unique: true})
 
   belongs_to :group
 
@@ -17,15 +17,14 @@ class HourlyStat < BaseStat
   end
 
   def self.top_trends(panel, user, options={})
-    current_time = Time.now.beginning_of_hour
-    hours = options[:hours] || 7
     limit = options[:limit] || 100
-    start_time = current_time.ago(hours.hours)
+    current_time = get_current_time(options)
+    start_time = get_start_time(options)
 
-    history_stats = {}
-    current_stats = {}
-    panel.groups.each do |group|
-      self.where(group_id: group.id).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
+    Rails.cache.fetch "hourly_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}" do
+      history_stats = {}
+      current_stats = {}
+      self.where(:group_id.in => panel.group_ids).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
         word = hourly_stat.word
         time = hourly_stat.date.to_time
         hourly_stat.stats.each do |stat|
@@ -40,26 +39,37 @@ class HourlyStat < BaseStat
           end
         end
       end
+      aggregate(history_stats, current_stats, user, limit)
     end
-    aggregate(history_stats, current_stats, user, limit)
   end
 
   def self.tweets(panel, word, options={})
     tweet_ids = []
-    current_time = Time.now.beginning_of_hour
-    hours = options[:hours] || 7
-    start_time = current_time.ago(hours.hours)
-    panel.groups.each do |group|
-      self.where(word: word, group_id: group.id).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
+    current_time = get_current_time(options)
+    start_time = get_start_time(options)
+    Rails.cache.fetch "hourly_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}" do
+      self.where(:word => word, :group_id.in => panel.group_ids).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
         time = hourly_stat.date.to_time
         hourly_stat.stats.each do |stat|
           time = time.change(hour: stat["hour"])
-          if time >= start_time && stat["tweet_ids"]
+          if time >= start_time && time <= current_time && stat["tweet_ids"]
             tweet_ids += stat["tweet_ids"]
           end
         end
       end
+      find_tweets(tweet_ids)
     end
-    Tweet.find(tweet_ids.uniq).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
+  end
+
+  private
+
+  def self.get_current_time(options)
+    live = options[:live] || false
+    (live ? Time.now : 1.hour.ago).beginning_of_hour
+  end
+
+  def self.get_start_time(options)
+    hours = options[:hours] || 7
+    hours.hours.ago.beginning_of_hour
   end
 end

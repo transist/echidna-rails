@@ -5,7 +5,7 @@ class DailyStat < BaseStat
   field :date, type: Date # Must be the first day of the month.
   field :stats, type: Array
 
-  index({group_id: 1, date: 1, word: 1}, {unique: true})
+  index({date: 1, group_id: 1, word: 1}, {unique: true})
 
   belongs_to :group
 
@@ -19,15 +19,14 @@ class DailyStat < BaseStat
   end
 
   def self.top_trends(panel, user, options={})
-    current_time = Time.now.beginning_of_day
-    days = options[:days] || 7
     limit = options[:limit] || 100
-    start_time = current_time.ago(days.days)
+    current_time = get_current_time(options)
+    start_time = get_start_time(options)
 
-    history_stats = {}
-    current_stats = {}
-    panel.groups.each do |group|
-      self.where(group_id: group.id).lte(date: current_time.to_date.beginning_of_month).gte(date: start_time.to_date.beginning_of_month).asc(:date).each do |daily_stat|
+    Rails.cache.fetch "daily_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}" do
+      history_stats = {}
+      current_stats = {}
+      self.where(:group_id.in => panel.group_ids).lte(date: current_time.to_date.beginning_of_month).gte(date: start_time.to_date.beginning_of_month).asc(:date).each do |daily_stat|
         word = daily_stat.word
         time = daily_stat.date.to_time
         daily_stat.stats.each do |stat|
@@ -42,30 +41,40 @@ class DailyStat < BaseStat
           end
         end
       end
+      aggregate(history_stats, current_stats, user, limit)
     end
-    aggregate(history_stats, current_stats, user, limit)
   end
 
   def self.tweets(panel, word, options={})
     tweet_ids = []
-    current_time = Time.now.beginning_of_day
-    days = options[:days] || 7
-    start_time = current_time.ago(days.days)
-    panel.groups.each do |group|
-      self.where(word: word, group_id: group.id).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
+    current_time = get_current_time(options)
+    start_time = get_start_time(options)
+
+    Rails.cache.fetch "daily_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}" do
+      self.where(:word => word, :group_id.in => panel.group_ids).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
         time = daily_stat.date.to_time
         daily_stat.stats.each do |stat|
           time = time.change(day: stat["day"])
-          if time >= start_time && stat["tweet_ids"]
+          if time >= start_time && time <= current_time && stat["tweet_ids"]
             tweet_ids += stat["tweet_ids"]
           end
         end
       end
+      find_tweets(tweet_ids)
     end
-    Tweet.find(tweet_ids.uniq).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
   end
 
   private
+
+  def self.get_current_time(options)
+    live = options[:live] || false
+    (live ? Time.now : 1.day.ago).beginning_of_day
+  end
+
+  def self.get_start_time(options)
+    days = options[:days] || 7
+    days.days.ago.beginning_of_day
+  end
 
   def set_default_stats
     self.stats ||= begin

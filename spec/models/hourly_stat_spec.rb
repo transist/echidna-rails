@@ -100,8 +100,8 @@ describe HourlyStat do
       expect(HourlyStat.top_trends(panel, user)).to eq({
         positive_stats: [
           {word: "美国", z_score: 1.5302264278053699, current_stat: 20},
-          {word: "中国", z_score: 1.5302264278053697, current_stat: 182},
-          {word: "日本", z_score: 1.5302264278053697, current_stat: 218}
+          {word: "日本", z_score: 1.5302264278053697, current_stat: 218},
+          {word: "中国", z_score: 1.5302264278053697, current_stat: 182}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}
@@ -138,7 +138,7 @@ describe HourlyStat do
       expect(HourlyStat.top_trends(panel, user, limit: 2)).to eq({
         positive_stats: [
           {word: "美国", z_score: 1.5302264278053699, current_stat: 20},
-          {word: "中国", z_score: 1.5302264278053697, current_stat: 182}
+          {word: "日本", z_score: 1.5302264278053697, current_stat: 218}
         ],
         zero_stats: [
           {word: "韩国", z_score: 0, current_stat: 2}

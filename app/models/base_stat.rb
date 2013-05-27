@@ -23,4 +23,8 @@ class BaseStat
       negative_stats: negative_stats.sort_by { |stat| stat[:z_score] }[0...limit]
     }
   end
+
+  def self.find_tweets(tweet_ids)
+    Tweet.find(tweet_ids.uniq).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
+  end
 end

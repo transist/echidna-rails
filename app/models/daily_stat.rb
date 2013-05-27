@@ -50,16 +50,18 @@ class DailyStat < BaseStat
     current_time = get_current_time(options)
     start_time = get_start_time(options)
 
-    self.where(:word => word, :group_id.in => panel.group_ids).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
-      time = daily_stat.date.to_time
-      daily_stat.stats.each do |stat|
-        time = time.change(day: stat["day"])
-        if time >= start_time && time <= current_time && stat["tweet_ids"]
-          tweet_ids += stat["tweet_ids"]
+    Rails.cache.fetch "daily_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}" do
+      self.where(:word => word, :group_id.in => panel.group_ids).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
+        time = daily_stat.date.to_time
+        daily_stat.stats.each do |stat|
+          time = time.change(day: stat["day"])
+          if time >= start_time && time <= current_time && stat["tweet_ids"]
+            tweet_ids += stat["tweet_ids"]
+          end
         end
       end
+      find_tweets(tweet_ids)
     end
-    Tweet.find(tweet_ids.uniq).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
   end
 
   private

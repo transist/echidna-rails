@@ -19,6 +19,9 @@ set :sidekiq_role, :sidekiq
 set :sidekiq_processes, 2
 role :sidekiq, 'echidna.transi.st'
 
+set :whenever_command, "bundle exec whenever"
+require "whenever/capistrano"
+
 # Use HTTP proxy from Transist server to help bundler cross the GFW
 set :default_environment, {
   http_proxy: 'http://192.168.1.42:8123'

@@ -5,7 +5,7 @@ namespace :cache do
   end
 
   desc "cache daily trends for all panels"
-  task :daily_trends => :environemnt do
+  task :daily_trends => :environment do
     Panel.all.each { |panel|
       DailyStat.top_trends(panel, panel.user)
       DailyStat.top_trends(panel, panel.user, days: 30)

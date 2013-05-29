@@ -11,6 +11,7 @@ class BaseStat
     Rails.cache.fetch top_trends_cache_key(panel, start_time, current_time), expires_in: expires_in, force: force do
       history_stats = {}
       current_stats = {}
+      measure_time = Time.now
       self.where(:group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
         word = period_stat.word
         time = period_stat.date.to_time
@@ -26,11 +27,12 @@ class BaseStat
           end
         end
       end
+      Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to read stats for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
 
       positive_stats = []
       negative_stats = []
       zero_stats = []
-
+      measure_time = Time.now
       current_stats.each { |word, current_stat|
         unless user.has_stopword? word
           z_score = FAZScore.new(0.5, history_stats[word]).score(current_stat)
@@ -44,6 +46,7 @@ class BaseStat
           end
         end
       }
+      Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to calc z-scores for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
       {
         positive_stats: positive_stats.sort_by { |stat| -stat[:z_score] }[0...limit],
         zero_stats: zero_stats.sort_by { |stat| -stat[:current_stat] }[0...limit],

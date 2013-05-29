@@ -18,25 +18,6 @@ class DailyStat < BaseStat
       update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
   end
 
-  def self.tweets(panel, word, options={})
-    tweet_ids = []
-    current_time = get_current_time(options)
-    start_time = get_start_time(options)
-
-    Rails.cache.fetch "daily_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}" do
-      self.where(:word => word, :group_id.in => panel.group_ids).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
-        time = daily_stat.date.to_time
-        daily_stat.stats.each do |stat|
-          time = time.change(day: stat["day"])
-          if time >= start_time && time <= current_time && stat["tweet_ids"]
-            tweet_ids += stat["tweet_ids"]
-          end
-        end
-      end
-      find_tweets(tweet_ids)
-    end
-  end
-
   private
 
   def self.get_current_time(options)
@@ -51,6 +32,10 @@ class DailyStat < BaseStat
 
   def self.top_trends_cache_key(panel, start_time, current_time)
     "daily_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}"
+  end
+
+  def self.tweets_cache_key(panel, word, start_time, current_time)
+    "daily_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}"
   end
 
   def self.expires_in

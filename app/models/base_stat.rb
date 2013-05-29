@@ -1,3 +1,5 @@
+require 'set'
+
 class BaseStat
   def self.top_trends(panel, user, options={})
     limit = options[:limit] || 100
@@ -49,7 +51,22 @@ class BaseStat
     end
   end
 
-  def self.find_tweets(tweet_ids)
-    Tweet.find(tweet_ids.uniq).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
+  def self.tweets(panel, word, options={})
+    tweet_ids = Set.new
+    current_time = get_current_time(options)
+    start_time = get_start_time(options)
+
+    Rails.cache.fetch tweets_cache_key(panel, word, start_time, current_time), expires_in: 1.day do
+      self.where(:word => word, :group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
+        time = period_stat.date.to_time
+        period_stat.stats.each do |stat|
+          time = time.change(period.to_sym => stat[period])
+          if time >= start_time && time <= current_time && stat["tweet_ids"]
+            tweet_ids += stat["tweet_ids"]
+          end
+        end
+      end
+      Tweet.find(tweet_ids.to_a).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
+    end
   end
 end

@@ -1,6 +1,6 @@
 class TweetWorker
   include Sidekiq::Worker
-  sidekiq_options :queue => :spider
+  sidekiq_options queue: :spider, backtrace: true
 
   def perform(tweet_attrs)
     target_person_id = tweet_attrs.delete('target_person_id')

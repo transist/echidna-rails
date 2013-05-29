@@ -20,8 +20,8 @@ class SpiderScheduler
   private
 
   def schedule_gather_tweets
-    TencentAgent.all.each do |agent|
-      @scheduler.every '30s', first_in: '0s', mutex: :gather_tweets do
+    @scheduler.every '30s', first_in: '0s', mutex: :gather_tweets do
+      TencentAgent.all.each do |agent|
         agent.gather_tweets
       end
     end
@@ -34,7 +34,7 @@ class SpiderScheduler
   end
 
   def schedule_sample_hot_users
-    @scheduler.every '10m', first_in: '0s', mutex: :sample_hot_users do
+    @scheduler.every '60m', first_in: '0s', mutex: :sample_hot_users do
       TencentAgent.first.sample_hot_users
     end
   end

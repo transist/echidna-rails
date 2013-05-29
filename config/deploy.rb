@@ -40,16 +40,13 @@ set :deploy_to, '/home/echidna/echidna.transi.st'
 
 after 'deploy:update_code', 'deploy:symbolic_links'
 after 'deploy:restart', 'deploy:cleanup'
-after 'deploy:restart', 'deploy:start_spider'
-after 'deploy:restart', 'deploy:create_indexes'
+after 'deploy:restart', 'unicorn:restart'
+after 'deploy:start', 'unicorn:start'
+after 'deploy:start', 'spider:start'
+after 'deploy:stop', 'unicorn:stop'
+after 'deploy:stop', 'spider:stop'
 
-namespace :deploy do
-  desc 'Symbolic links'
-  task :symbolic_links do
-    run "ln -nfs #{shared_path}/config/application.yml #{release_path}/config/application.yml"
-    run "ln -nfs #{shared_path}/cache #{release_path}/cache"
-  end
-
+namespace :unicorn do
   desc 'Restart unicorn'
   task :restart do
     run <<-BASH
@@ -71,11 +68,27 @@ namespace :deploy do
       kill -QUIT `cat #{shared_path}/pids/unicorn.pid`
     BASH
   end
+end
 
+namespace :spider do
   desc 'Start spider'
-  task :start_spider, roles: :app do
+  task :start, roles: :app do
     run "cd #{current_release}; nohup bundle exec rake RAILS_ENV=production spider_scheduler > /dev/null 2>&1 &"
   end
+
+  desc 'Stop spider'
+  task :stop, roles: :app do
+    run "kill `cat #{shared_path}/pids/spider_scheduler.pid`"
+  end
+end
+
+namespace :deploy do
+  desc 'Symbolic links'
+  task :symbolic_links do
+    run "ln -nfs #{shared_path}/config/application.yml #{release_path}/config/application.yml"
+    run "ln -nfs #{shared_path}/cache #{release_path}/cache"
+  end
+
 
   desc 'Create index'
   task :create_indexes, roles: :db do

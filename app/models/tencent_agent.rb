@@ -4,6 +4,7 @@ class TencentAgent
 
   include TencentLogger
   include FamousUsersSampling
+  include HotUsersSampling
   include UsersSampling
   include UsersTracking
   include TweetsGathering

@@ -61,12 +61,14 @@ class TencentAgent
 
     def publish_user(user, options = {})
       famous = options.fetch(:famous, false)
+      hot = options.fetch(:hot, false)
       info %{Publishing user "#{user['name']}" openid: #{user['openid']}}
       PersonWorker.perform_async(
         target_source: 'tencent',
         target_id: user['openid'],
         target_name: user['name'],
         famous: famous,
+        hot: hot,
         birth_year: user['birth_year'],
         gender: user['gender'],
         city: user['city']

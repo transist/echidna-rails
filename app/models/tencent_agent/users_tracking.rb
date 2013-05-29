@@ -3,7 +3,7 @@ class TencentAgent
     extend ActiveSupport::Concern
 
     USERS_TRACKING_LIST_PREFIX = 'UTL'
-    TRACK_WAIT = 0.1
+    TRACK_WAIT = 2
 
     included do
       def self.get_agent_with_capacity
@@ -14,9 +14,8 @@ class TencentAgent
     def track_users
       info "Tracking users..."
 
-      # Temporarily only track famous users for the demo
-      Person.where(famous: true).each_slice(8) do |people|
-        track_users_by_list(people.map(&:target_id))
+      Person.where(tracked: false).each_slice(8) do |people|
+        track_users_by_list(people)
         sleep TRACK_WAIT
       end
 
@@ -61,16 +60,21 @@ class TencentAgent
       save
     end
 
-    def track_users_by_list(user_openids)
+    def track_users_by_list(people)
+      user_openids = people.map(&:target_id)
+
       result = post('api/list/add_to_list', fopenids: user_openids.join('_'), listid: latest_users_tracking_list_id)
       if result['ret'].to_i.zero?
+        people.each do |person|
+          person.update_attribute :tracked, true
+        end
         info %{Tracked users "#{user_openids.join(',')}" by list}
 
       else
         # List limitation of maximized members reached
         if result['ret'].to_i == 5 and result['errcode'].to_i == 98
           create_list(next_users_tracking_list_name)
-          track_users_by_list(user_openids)
+          track_users_by_list(people)
         else
           raise Error.new(%{Failed to track users "#{user_openids.join(',')}" by list}, result)
         end

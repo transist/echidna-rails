@@ -42,7 +42,7 @@ class TencentAgent
         user = UserDecorator.decorate(result['data'])
         publish_user(user, hot: true)
       else
-        error %{Failed to gather profile of hot user "#{user_name}"}
+        error %{Failed to gather profile of hot user "#{user_openid}"}
       end
     end
   end

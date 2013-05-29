@@ -77,6 +77,6 @@ module Echidna
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    config.cache_store = :redis_store, "redis://localhost:6379/e:cache:p", { expires_in: 1.day }
+    config.cache_store = :redis_store
   end
 end

@@ -11,7 +11,7 @@ class TencentAgent
             raise Error, 'Tencent Weibo API calls limitation reached'
           else
             count = $redis.incr(API_CALLS_COUNT_KEY)
-            info "Tencent Weibo API calls count: #{count}"
+            TencentAgent.logger.info "Tencent Weibo API calls count: #{count}"
             request_without_conform_calls_limitation(*args, &block)
           end
         end
@@ -23,7 +23,7 @@ class TencentAgent
     module ClassMethods
       def reset_api_calls_count
         $redis.set(API_CALLS_COUNT_KEY, 0)
-        $logger.info 'Reset Tencent Weibo API calls count'
+        TencentAgent.logger.info 'Reset Tencent Weibo API calls count'
       end
 
       def limitation_reached?

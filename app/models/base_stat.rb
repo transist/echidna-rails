@@ -3,11 +3,12 @@ require 'set'
 class BaseStat
   def self.top_trends(panel, user, options={})
     limit = options[:limit] || 100
+    force = options[:force] || false
     current_time = get_current_time(options)
     start_time = get_start_time(options)
     interval = 1.send(period).to_i
 
-    Rails.cache.fetch top_trends_cache_key(panel, start_time, current_time), expires_in: expires_in do
+    Rails.cache.fetch top_trends_cache_key(panel, start_time, current_time), expires_in: expires_in, force: force do
       history_stats = {}
       current_stats = {}
       self.where(:group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
@@ -52,11 +53,12 @@ class BaseStat
   end
 
   def self.tweets(panel, word, options={})
+    force = options[:force]
     tweet_ids = Set.new
     current_time = get_current_time(options)
     start_time = get_start_time(options)
 
-    Rails.cache.fetch tweets_cache_key(panel, word, start_time, current_time), expires_in: 1.day do
+    Rails.cache.fetch tweets_cache_key(panel, word, start_time, current_time), expires_in: 1.day, force: force do
       self.where(:word => word, :group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
         time = period_stat.date.to_time
         period_stat.stats.each do |stat|

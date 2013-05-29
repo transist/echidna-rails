@@ -6,7 +6,7 @@ class SpiderScheduler
   def run
     schedule_refresh_access_token
     # schedule_sample_users
-    # schedule_track_users
+    schedule_track_users
     # schedule_sample_famous_users
     schedule_sample_hot_users
     schedule_gather_tweets
@@ -46,7 +46,7 @@ class SpiderScheduler
   end
 
   def schedule_track_users
-    @scheduler.every '1y', first_in: '0s', mutex: :track_users do
+    @scheduler.every '5m', first_in: '0s', mutex: :track_users do
       TencentAgent.with_available_lists.each do |agent|
         agent.track_users
       end

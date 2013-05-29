@@ -8,6 +8,7 @@ class TencentAgent
   include UsersSampling
   include UsersTracking
   include TweetsGathering
+  include ApiCallsLimiter
   include ApiResponseCacher
 
   field :openid, type: String
@@ -20,8 +21,6 @@ class TencentAgent
   field :list_ids, type: Array, default: []
   field :list_last_timestamp_map, type: Hash, default: {}
   field :full_with_lists, type: Boolean, default: false
-
-  field :api_calls_count, type: Integer, default: 0
 
   scope :with_available_lists, where(full_with_lists: false)
 

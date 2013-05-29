@@ -21,7 +21,8 @@ class TencentAgent
           end
 
         else
-          error "Failed to sample users from hot class: #{famous_class}"
+          error 'Failed to sample hot users'
+          break
         end
       end
 

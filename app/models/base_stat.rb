@@ -12,7 +12,7 @@ class BaseStat
       history_stats = {}
       current_stats = {}
       measure_time = Time.now
-      self.where(:group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
+      self.batch_size(1000).where(:group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
         word = period_stat.word
         time = period_stat.date.to_time
         period_stat.stats.each do |stat|
@@ -47,11 +47,15 @@ class BaseStat
         end
       }
       Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to calc z-scores for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
-      {
+
+      measure_time = Time.now
+      result = {
         positive_stats: positive_stats.sort_by { |stat| -stat[:z_score] }[0...limit],
         zero_stats: zero_stats.sort_by { |stat| -stat[:current_stat] }[0...limit],
         negative_stats: negative_stats.sort_by { |stat| stat[:z_score] }[0...limit]
       }
+      Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to sort for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
+      result
     end
   end
 
@@ -62,7 +66,7 @@ class BaseStat
     start_time = get_start_time(options)
 
     Rails.cache.fetch tweets_cache_key(panel, word, start_time, current_time), expires_in: 1.day, force: force do
-      self.where(:word => word, :group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
+      self.batch_size(1000).where(:word => word, :group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
         time = period_stat.date.to_time
         period_stat.stats.each do |stat|
           time = time.change(period.to_sym => stat[period])

@@ -23,7 +23,7 @@ class DailyStat < BaseStat
     current_time = get_current_time(options)
     start_time = get_start_time(options)
 
-    Rails.cache.fetch "daily_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}" do
+    Rails.cache.fetch "daily_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}", expires_in: 31.days do
       history_stats = {}
       current_stats = {}
       self.where(:group_id.in => panel.group_ids).lte(date: current_time.to_date.beginning_of_month).gte(date: start_time.to_date.beginning_of_month).asc(:date).each do |daily_stat|

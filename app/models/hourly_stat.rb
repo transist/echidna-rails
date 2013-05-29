@@ -47,7 +47,7 @@ class HourlyStat < BaseStat
     tweet_ids = []
     current_time = get_current_time(options)
     start_time = get_start_time(options)
-    Rails.cache.fetch "hourly_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}" do
+    Rails.cache.fetch "hourly_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}", expires_in: 1.day do
       self.where(:word => word, :group_id.in => panel.group_ids).lte(date: current_time.to_date).gte(date: start_time.to_date).asc(:date).each do |hourly_stat|
         time = hourly_stat.date.to_time
         hourly_stat.stats.each do |stat|

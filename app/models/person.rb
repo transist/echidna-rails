@@ -19,13 +19,16 @@ class Person
   field :target_id, type: String
   field :target_name, type: String
   field :famous, type: Boolean, default: false
+  field :hot, type: Boolean, default: false
   field :birth_year, type: Integer
   field :gender, type: String
+  field :tracked, type: Boolean, default: false
 
   validates :gender, inclusion: { in: GENDERS }
 
   index({ target_source: 1, target_id: 1}, { unique: true })
   index({ famous: 1 })
+  index({ tracked: 1 })
 
   has_many :tweets
   belongs_to :city

@@ -135,7 +135,7 @@ class Job
       $.getJSON tweets_url, (data)->
         setTimeout ->
           self.checkTweetsJobStatus panelWidget, data["job_id"]
-        , 5000
+        , 2000
       false
 
   initIgnoreLinks: (panelWidget)->
@@ -198,18 +198,7 @@ class Job
     $.getJSON trendsUrl, (data)->
       setTimeout ->
         self.checkJobStatus(panelWidget, data["job_id"])
-      , 5000
-
-  readTweets: ->
-    self = this
-    $(document).on 'click', '.word', ->
-      $('.spinner').show()
-      tweets_url = '/panels/' + self.getPanelId() + '/tweets.json?period=' + self.getPeriod() + '&word=' + $(this).text()
-      $.getJSON tweets_url, (data)->
-        setTimeout ->
-          self.checkTweetsJobStatus data["job_id"]
-        , 5000
-      false
+      , 2000
 
   liveCheck: (panelWidget)->
     self = this

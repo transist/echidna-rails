@@ -18,52 +18,6 @@ class DailyStat < BaseStat
       update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
   end
 
-  def self.top_trends(panel, user, options={})
-    limit = options[:limit] || 100
-    current_time = get_current_time(options)
-    start_time = get_start_time(options)
-
-    Rails.cache.fetch "daily_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}" do
-      history_stats = {}
-      current_stats = {}
-      self.where(:group_id.in => panel.group_ids).lte(date: current_time.to_date.beginning_of_month).gte(date: start_time.to_date.beginning_of_month).asc(:date).each do |daily_stat|
-        word = daily_stat.word
-        time = daily_stat.date.to_time
-        daily_stat.stats.each do |stat|
-          time = time.change(day: stat["day"])
-          stat_count = stat["count"]
-          if time >= start_time && time < current_time
-            history_stats[word] ||= Array.new((current_time - start_time) / 1.day.to_i, 0)
-            history_stats[word][(time - start_time) / 1.day.to_i] += stat_count
-          elsif time == current_time
-            current_stats[word] ||= 0
-            current_stats[word] += stat_count
-          end
-        end
-      end
-      aggregate(history_stats, current_stats, user, limit)
-    end
-  end
-
-  def self.tweets(panel, word, options={})
-    tweet_ids = []
-    current_time = get_current_time(options)
-    start_time = get_start_time(options)
-
-    Rails.cache.fetch "daily_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}" do
-      self.where(:word => word, :group_id.in => panel.group_ids).gte(date: start_time.beginning_of_month).asc(:date).each do |daily_stat|
-        time = daily_stat.date.to_time
-        daily_stat.stats.each do |stat|
-          time = time.change(day: stat["day"])
-          if time >= start_time && time <= current_time && stat["tweet_ids"]
-            tweet_ids += stat["tweet_ids"]
-          end
-        end
-      end
-      find_tweets(tweet_ids)
-    end
-  end
-
   private
 
   def self.get_current_time(options)
@@ -74,6 +28,26 @@ class DailyStat < BaseStat
   def self.get_start_time(options)
     days = options[:days] || 7
     days.days.ago.beginning_of_day
+  end
+
+  def self.top_trends_cache_key(panel, start_time, current_time)
+    "daily_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}"
+  end
+
+  def self.tweets_cache_key(panel, word, start_time, current_time)
+    "daily_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}"
+  end
+
+  def self.expires_in
+    31.day
+  end
+
+  def self.date_convert
+    :beginning_of_month
+  end
+
+  def self.period
+    "day"
   end
 
   def set_default_stats

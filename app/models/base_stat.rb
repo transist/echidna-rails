@@ -65,7 +65,7 @@ class BaseStat
     current_time = get_current_time(options)
     start_time = get_start_time(options)
 
-    Rails.cache.fetch tweets_cache_key(panel, word, start_time, current_time), expires_in: 1.day, force: force do
+    #Rails.cache.fetch tweets_cache_key(panel, word, start_time, current_time), expires_in: 1.day, force: force do
       self.batch_size(1000).where(:word => word, :group_id.in => panel.group_ids).lte(date: current_time.send(date_convert)).gte(date: start_time.send(date_convert)).asc(:date).each do |period_stat|
         time = period_stat.date.to_time
         period_stat.stats.each do |stat|
@@ -75,7 +75,7 @@ class BaseStat
           end
         end
       end
-      Tweet.find(tweet_ids.to_a).map { |tweet| { target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } }
-    end
+      Tweet.includes(:person).find(tweet_ids.to_a).map { |tweet| { id: tweet.id.to_s, person_id: tweet.person_id.to_s, target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } unless tweet.person.spam }.compact
+    #end
   end
 end

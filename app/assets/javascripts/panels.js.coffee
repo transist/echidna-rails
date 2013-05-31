@@ -74,7 +74,7 @@ class Job
                           </thead>
                           <tbody>
                           {{#tweets}}
-                            <tr>
+                            <tr class='tweet' data-tweet-id='{{id}}' data-person-id='{{person_id}}'>
                               <td>
                                 <p>{{content}}</p>
                                 <p><a href='http://t.qq.com/p/t/{{target_id}}' target='_blank'>{{posted_at}}</a></p>
@@ -96,6 +96,7 @@ class Job
       self.initPeriodLinks(panelWidget)
       self.initWordLinks(panelWidget)
       self.initIgnoreLinks(panelWidget)
+      self.initSpamUserLinks()
 
     panelWidget = $('.panel:first')
     self.sendTrendsRequest(panelWidget)
@@ -162,6 +163,20 @@ class Job
         success: ->
           word_row.remove()
       false
+
+  initSpamUserLinks: ->
+    $('.panel .tweets').on 'click', '.spam-user', (event)->
+      tweet_id = $(event.target).parents('.tweet').data('tweet-id')
+      person_id = $(event.target).parents('.tweet').data('person-id')
+      self = this
+      $.ajax '/tweets/' + tweet_id + '/spam_user',
+        contentType: 'application/json',
+        type: 'POST',
+        success: ->
+          $.each $(self).parents('.tweets').find('tr'), (index, tweetTr)->
+            if $(tweetTr).data('person-id') == person_id
+              $(tweetTr).remove()
+
 
   checkJobStatus: (panelWidget, jobId)->
     self = this

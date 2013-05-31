@@ -34,4 +34,8 @@ class Person
   has_many :tweets
   belongs_to :city
   has_and_belongs_to_many :groups
+
+  def spam!
+    update_attribute :spam, true
+  end
 end

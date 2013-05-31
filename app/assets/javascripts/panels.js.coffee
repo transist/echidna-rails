@@ -78,7 +78,10 @@ class Job
                               <td>
                                 <p>{{content}}</p>
                                 <p><a href='http://t.qq.com/p/t/{{target_id}}' target='_blank'>{{posted_at}}</a></p>
-                                <p><a href='#' class='spam-user'>Spam User</a></p>
+                                <p>
+                                  <a href='#' class='spam-tweet btn btn-danger'>Spam Tweet</a>
+                                  <a href='#' class='spam-user btn btn-danger'>Spam User</a>
+                                </p>
                               </td>
                             </tr>
                           {{/tweets}}
@@ -96,7 +99,8 @@ class Job
       self.initPeriodLinks(panelWidget)
       self.initWordLinks(panelWidget)
       self.initIgnoreLinks(panelWidget)
-      self.initSpamUserLinks()
+      self.initSpamTweetLinks(panelWidget)
+      self.initSpamUserLinks(panelWidget)
 
     panelWidget = $('.panel:first')
     self.sendTrendsRequest(panelWidget)
@@ -164,7 +168,21 @@ class Job
           word_row.remove()
       false
 
-  initSpamUserLinks: ->
+  initSpamTweetLinks: (panelWidget)->
+    $('.panel .tweets').on 'click', '.spam-tweet', (event)->
+      $(panelWidget).find('.spinner').show()
+      tweet_id = $(event.target).parents('.tweet').data('tweet-id')
+      self = this
+      $.ajax '/tweets/' + tweet_id + '/spam',
+        contentType: 'application/json',
+        type: 'POST',
+        success: ->
+          $(self).parents('tr').remove()
+          $(panelWidget).find('.spinner').hide()
+      false
+
+  initSpamUserLinks: (panelWidget)->
+    $(panelWidget).find('.spinner').show()
     $('.panel .tweets').on 'click', '.spam-user', (event)->
       tweet_id = $(event.target).parents('.tweet').data('tweet-id')
       person_id = $(event.target).parents('.tweet').data('person-id')
@@ -176,6 +194,8 @@ class Job
           $.each $(self).parents('.tweets').find('tr'), (index, tweetTr)->
             if $(tweetTr).data('person-id') == person_id
               $(tweetTr).remove()
+          $(panelWidget).find('.spinner').hide()
+      false
 
 
   checkJobStatus: (panelWidget, jobId)->

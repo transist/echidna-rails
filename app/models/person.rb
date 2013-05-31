@@ -37,5 +37,6 @@ class Person
 
   def spam!
     update_attribute :spam, true
+    self.tweets.map(&:spam!)
   end
 end

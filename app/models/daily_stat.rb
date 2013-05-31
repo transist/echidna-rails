@@ -19,6 +19,13 @@ class DailyStat < BaseStat
         update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
     end
 
+    def remove(word, group, tweet)
+      date = tweet.posted_at.to_date
+      daily_stat = self.find_or_create_by(word: word, group: group, date: date.beginning_of_month)
+      self.collection.find(:_id => daily_stat.id, 'stats.day' => date.mday).
+        update('$inc' => {'stats.$.count' => -1}, '$pull' => {'stats.$.tweet_ids' => tweet.id})
+    end
+
     private
 
     def get_current_time(options)

@@ -76,7 +76,7 @@ class BaseStat
             end
           end
         end
-        Tweet.includes(:person).find(tweet_ids.to_a).map { |tweet| { id: tweet.id.to_s, person_id: tweet.person_id.to_s, target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } unless tweet.person.spam }.compact
+        Tweet.includes(:person).find(tweet_ids.to_a).map { |tweet| { id: tweet.id.to_s, person_id: tweet.person_id.to_s, target_id: tweet.target_id, content: tweet.content, posted_at: tweet.posted_at } unless tweet.spam || tweet.person.spam }.compact
       #end
     end
   end

@@ -18,6 +18,7 @@ Echidna::Application.routes.draw do
 
     resources :tweets, only: [] do
       member do
+        post :spam
         post :spam_user
       end
     end

@@ -6,6 +6,7 @@ class Tweet
   field :content
   field :posted_at, type: Time
   field :words, type: Array
+  field :spam, type: Boolean, default: false
 
   validates :content, presence: true
 
@@ -15,6 +16,16 @@ class Tweet
   after_create :update_stats
 
   index({ target_source: 1, target_id: 1 }, { unique: true })
+
+  def spam!
+    self.update_attribute :spam, true
+    self.words.each do |word|
+      person.groups.each do |group|
+        DailyStat.remove(word, group, self)
+        HourlyStat.remove(word, group, self)
+      end
+    end
+  end
 
   private
 

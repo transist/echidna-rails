@@ -13,6 +13,13 @@ Echidna::Application.routes.draw do
         put :update_period
       end
     end
+
+    resources :tweets, only: [] do
+      member do
+        post :spam
+        post :spam_user
+      end
+    end
   end
 
   root to: 'home#index'

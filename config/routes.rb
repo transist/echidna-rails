@@ -3,6 +3,7 @@ Echidna::Application.routes.draw do
     member do
       get :trends
       get :tweets
+      put :update_period
     end
   end
 

@@ -5,6 +5,7 @@ class Panel
   field :name
   field :age_ranges, type: Array
   field :gender
+  field :period
 
   validates :name, presence: true
 

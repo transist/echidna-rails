@@ -16,9 +16,9 @@ h2 Panels
               span.cities.label.label-info= panel.cities.map(&:name).join(', ')
               span.ages.label.label-info= panel.age_ranges.join(', ')
               span.gender.label.label-info= panel.gender
-            .check-live
-              input.live type='checkbox' name='live'
-              label for='live' Live
+            /.check-live
+              /input.live type='checkbox' name='live'
+              /label for='live' Live
             .spinner
             .commands
               = link_to 'Edit', edit_panel_path(panel), class: 'btn btn-primary'

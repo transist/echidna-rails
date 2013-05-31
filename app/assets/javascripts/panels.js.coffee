@@ -78,6 +78,7 @@ class Job
                               <td>
                                 <p>{{content}}</p>
                                 <p><a href='http://t.qq.com/p/t/{{target_id}}' target='_blank'>{{posted_at}}</a></p>
+                                <p><a href='#' class='spam-user'>Spam User</a></p>
                               </td>
                             </tr>
                           {{/tweets}}
@@ -117,11 +118,10 @@ class Job
   initPeriodLinks: (panelWidget)->
     self = this
     $.each $(panelWidget).find('.periods a'), (index, periodLink)->
-      console.log $(panelWidget).data('panel-period')
-      console.log $(periodLink).data('period')
       if $(panelWidget).data('panel-period') == $(periodLink).data('period')
         $(periodLink).parent().addClass('active')
     $(panelWidget).find('.periods').on 'click', 'a', (event)->
+      $(panelWidget).find('.tweets').html ''
       $(panelWidget).find('.spinner').show()
       $(panelWidget).find('.trends').html ''
       $(panelWidget).find('.periods li').removeClass('active')

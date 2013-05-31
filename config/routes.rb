@@ -12,10 +12,11 @@ Echidna::Application.routes.draw do
       member do
         get :trends
         get :tweets
+        put :update_period
       end
     end
   end
-  
+
   root to: 'home#index'
   devise_for :users
   resources :users

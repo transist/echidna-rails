@@ -7,6 +7,11 @@ class PanelsController < InheritedResources::Base
     update! { root_url }
   end
 
+  def update_period
+    resource.update_attribute :period, params[:period]
+    render json: {}
+  end
+
   def trends
     length, period = parse_period(params[:period])
     @job_id = TrendsWorker.perform_async(params[:id], current_user.id.to_s, length, period)

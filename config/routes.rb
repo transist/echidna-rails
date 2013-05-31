@@ -1,11 +1,4 @@
 Echidna::Application.routes.draw do
-  resources :panels do
-    member do
-      get :trends
-      get :tweets
-      put :update_period
-    end
-  end
 
   resources :tencent_agents
 
@@ -14,7 +7,16 @@ Echidna::Application.routes.draw do
   authenticated :user do
     root to: 'panels#index'
     post 'add_stopword' => 'users#add_stopword'
+
+    resources :panels do
+      member do
+        get :trends
+        get :tweets
+        put :update_period
+      end
+    end
   end
+
   root to: 'home#index'
   devise_for :users
   resources :users

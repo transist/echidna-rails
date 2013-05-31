@@ -10,7 +10,7 @@ h2 Panels
   .tab-content
     - @panels.each_with_index do |panel, index|
       div class=(index == 0 ? "tab-pane active" : "tab-pane") id="panel-#{panel.id}"
-        .panel data-panel-id=panel.id
+        .panel data-panel-id=panel.id data-panel-period=(panel.period || "day")
           .header
             .info
               span.cities.label.label-info= panel.cities.map(&:name).join(', ')
@@ -26,7 +26,7 @@ h2 Panels
             ul.nav.nav-pills.periods
               li= link_to '1 month', '#', "data-period" => "month"
               li= link_to '1 week', '#', "data-period" => "week"
-              li.active= link_to '1 day', '#', "data-period" => "day"
+              li= link_to '1 day', '#', "data-period" => "day"
           .body
             .trends
             .tweets

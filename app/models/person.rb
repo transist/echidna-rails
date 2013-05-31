@@ -23,6 +23,7 @@ class Person
   field :birth_year, type: Integer
   field :gender, type: String
   field :tracked, type: Boolean, default: false
+  field :spam, type: Boolean, default: false
 
   validates :gender, inclusion: { in: GENDERS }
 

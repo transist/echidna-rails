@@ -41,6 +41,7 @@ set :deploy_to, '/home/echidna/echidna.transi.st'
 after 'deploy:update_code', 'deploy:symbolic_links'
 after 'deploy:restart', 'deploy:cleanup'
 after 'deploy:restart', 'unicorn:restart'
+after 'deploy:restart', 'spider:restart'
 after 'deploy:start', 'unicorn:start'
 after 'deploy:start', 'spider:start'
 after 'deploy:stop', 'unicorn:stop'
@@ -79,6 +80,12 @@ namespace :spider do
   desc 'Stop spider'
   task :stop, roles: :app do
     run "kill `cat #{shared_path}/pids/spider_scheduler.pid`"
+  end
+
+  desc 'Restart spider'
+  task :restart, roles: :app do
+    stop
+    start
   end
 end
 

@@ -9,41 +9,43 @@ class HourlyStat < BaseStat
 
   belongs_to :group
 
-  def self.record(word, group, tweet)
-    time = tweet.posted_at
-    houly_stat = self.find_or_create_by(word: word, group: group, date: time.to_date)
-    self.collection.find(:_id => houly_stat.id, 'stats.hour' => time.hour).
-      update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
-  end
+  class <<self
+    def record(word, group, tweet)
+      time = tweet.posted_at
+      houly_stat = self.find_or_create_by(word: word, group: group, date: time.to_date)
+      self.collection.find(:_id => houly_stat.id, 'stats.hour' => time.hour).
+        update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
+    end
 
-  private
-  def self.get_current_time(options)
-    live = options[:live] || false
-    (live ? Time.now : 1.hour.ago).beginning_of_hour
-  end
+    private
+    def get_current_time(options)
+      live = options[:live] || false
+      (live ? Time.now : 1.hour.ago).beginning_of_hour
+    end
 
-  def self.get_start_time(options)
-    hours = options[:hours] || 7
-    hours.hours.ago.beginning_of_hour
-  end
+    def get_start_time(options)
+      hours = options[:hours] || 7
+      hours.hours.ago.beginning_of_hour
+    end
 
-  def self.top_trends_cache_key(panel, start_time, current_time)
-    "hourly_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}"
-  end
+    def top_trends_cache_key(panel, start_time, current_time)
+      "hourly_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}"
+    end
 
-  def self.tweets_cache_key(panel, word, start_time, current_time)
-    "hourly_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}"
-  end
+    def tweets_cache_key(panel, word, start_time, current_time)
+      "hourly_tweets:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{word}"
+    end
 
-  def self.expires_in
-    1.day
-  end
+    def expires_in
+      1.day
+    end
 
-  def self.date_convert
-    :to_date
-  end
+    def date_convert
+      :to_date
+    end
 
-  def self.period
-    "hour"
+    def period
+      "hour"
+    end
   end
 end

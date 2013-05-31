@@ -74,10 +74,14 @@ class Job
                           </thead>
                           <tbody>
                           {{#tweets}}
-                            <tr>
+                            <tr class='tweet' data-tweet-id='{{id}}' data-person-id='{{person_id}}'>
                               <td>
                                 <p>{{content}}</p>
                                 <p><a href='http://t.qq.com/p/t/{{target_id}}' target='_blank'>{{posted_at}}</a></p>
+                                <p>
+                                  <a href='#' class='spam-tweet btn btn-danger'>Spam Tweet</a>
+                                  <a href='#' class='spam-user btn btn-danger'>Spam User</a>
+                                </p>
                               </td>
                             </tr>
                           {{/tweets}}
@@ -95,6 +99,8 @@ class Job
       self.initPeriodLinks(panelWidget)
       self.initWordLinks(panelWidget)
       self.initIgnoreLinks(panelWidget)
+      self.initSpamTweetLinks(panelWidget)
+      self.initSpamUserLinks(panelWidget)
 
     panelWidget = $('.panel:first')
     self.sendTrendsRequest(panelWidget)
@@ -117,11 +123,10 @@ class Job
   initPeriodLinks: (panelWidget)->
     self = this
     $.each $(panelWidget).find('.periods a'), (index, periodLink)->
-      console.log $(panelWidget).data('panel-period')
-      console.log $(periodLink).data('period')
       if $(panelWidget).data('panel-period') == $(periodLink).data('period')
         $(periodLink).parent().addClass('active')
     $(panelWidget).find('.periods').on 'click', 'a', (event)->
+      $(panelWidget).find('.tweets').html ''
       $(panelWidget).find('.spinner').show()
       $(panelWidget).find('.trends').html ''
       $(panelWidget).find('.periods li').removeClass('active')
@@ -162,6 +167,36 @@ class Job
         success: ->
           word_row.remove()
       false
+
+  initSpamTweetLinks: (panelWidget)->
+    $('.panel .tweets').on 'click', '.spam-tweet', (event)->
+      $(panelWidget).find('.spinner').show()
+      tweet_id = $(event.target).parents('.tweet').data('tweet-id')
+      self = this
+      $.ajax '/tweets/' + tweet_id + '/spam',
+        contentType: 'application/json',
+        type: 'POST',
+        success: ->
+          $(self).parents('tr').remove()
+          $(panelWidget).find('.spinner').hide()
+      false
+
+  initSpamUserLinks: (panelWidget)->
+    $(panelWidget).find('.spinner').show()
+    $('.panel .tweets').on 'click', '.spam-user', (event)->
+      tweet_id = $(event.target).parents('.tweet').data('tweet-id')
+      person_id = $(event.target).parents('.tweet').data('person-id')
+      self = this
+      $.ajax '/tweets/' + tweet_id + '/spam_user',
+        contentType: 'application/json',
+        type: 'POST',
+        success: ->
+          $.each $(self).parents('.tweets').find('tr'), (index, tweetTr)->
+            if $(tweetTr).data('person-id') == person_id
+              $(tweetTr).remove()
+          $(panelWidget).find('.spinner').hide()
+      false
+
 
   checkJobStatus: (panelWidget, jobId)->
     self = this

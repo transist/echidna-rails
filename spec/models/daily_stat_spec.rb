@@ -103,6 +103,38 @@ describe DailyStat do
     end
   end
 
+  describe '.remove' do
+    before { Tweet.skip_callback(:create, :after, :update_stats) }
+    let(:word) { 'Zerg' }
+    let(:group) { create(:group) }
+    let(:tweets) { [
+      create(:tweet, posted_at: Time.parse('2013-03-14 00:20:12')),
+      create(:tweet, posted_at: Time.parse('2013-04-15 12:50:02')),
+      create(:tweet, posted_at: Time.parse('2013-05-16 23:32:55'))
+    ] }
+
+    before do
+      tweets.each { |tweet| DailyStat.record(word, group, tweet) }
+    end
+
+    it 'increment count for the date' do
+      tweets.each do |tweet|
+        DailyStat.remove(word, group, tweet)
+        daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month).first
+        expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['count']).to eq(0)
+      end
+    end
+
+    it 'add tweet_id' do
+      tweets.each do |tweet|
+        DailyStat.remove(word, group, tweet)
+        daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month).first
+        expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to have(0).tweet_ids
+        expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).not_to be_include tweet.id
+      end
+    end
+  end
+
   describe ".top_trends" do
     let(:group1) { create :group }
     let(:group2) { create :group }

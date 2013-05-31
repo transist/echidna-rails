@@ -75,6 +75,38 @@ describe HourlyStat do
     end
   end
 
+  describe '.record' do
+    before { Tweet.skip_callback(:create, :after, :update_stats) }
+    let(:word) { 'Zerg' }
+    let(:group) { create :group }
+    let(:tweets) { [
+      create(:tweet, posted_at: Time.parse('2013-05-14 00:20:12')),
+      create(:tweet, posted_at: Time.parse('2013-05-15 12:50:02')),
+      create(:tweet, posted_at: Time.parse('2013-05-16 23:32:55'))
+    ] }
+
+    before do
+      tweets.each { |tweet| HourlyStat.record(word, group, tweet) }
+    end
+
+    it 'decrement count for the hour' do
+      tweets.each do |tweet|
+        HourlyStat.remove(word, group, tweet)
+        hourly_stat = HourlyStat.where(date: tweet.posted_at.to_date).first
+        expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['count']).to eq(0)
+      end
+    end
+
+    it 'remove tweet_id' do
+      tweets.each do |tweet|
+        HourlyStat.remove(word, group, tweet)
+        hourly_stat = HourlyStat.where(date: tweet.posted_at.to_date).first
+        expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['tweet_ids']).to have(0).tweet_ids
+        expect(hourly_stat.stats.find {|stat| stat['hour'] == tweet.posted_at.hour }['tweet_ids']).not_to be_include tweet.id
+      end
+    end
+  end
+
   describe ".top_trends" do
     let(:group1) { create :group }
     let(:group2) { create :group }

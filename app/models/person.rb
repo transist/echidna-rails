@@ -23,6 +23,7 @@ class Person
   field :birth_year, type: Integer
   field :gender, type: String
   field :tracked, type: Boolean, default: false
+  field :spam, type: Boolean, default: false
 
   validates :gender, inclusion: { in: GENDERS }
 
@@ -33,4 +34,9 @@ class Person
   has_many :tweets
   belongs_to :city
   has_and_belongs_to_many :groups
+
+  def spam!
+    update_attribute :spam, true
+    self.tweets.map(&:spam!)
+  end
 end

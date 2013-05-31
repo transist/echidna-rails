@@ -26,10 +26,10 @@ Echidna::Application.routes.draw do
   end
 
   namespace :tencent do
-    resources :agents do
+    resources :agents, only: [:new, :index] do
       get 'callback', on: :collection
     end
   end
 
-  mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 end

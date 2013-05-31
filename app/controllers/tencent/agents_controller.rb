@@ -1,5 +1,4 @@
-class Tencent::AgentsController < ApplicationController
-
+class Tencent::AgentsController < InheritedResources::Base
   def new
     redirect_to TencentAgent.weibo_client.auth_code.authorize_url
   end
@@ -14,5 +13,4 @@ class Tencent::AgentsController < ApplicationController
       render json: {success: false, error: e.message}
     end
   end
-
 end

@@ -1,7 +1,5 @@
 Echidna::Application.routes.draw do
 
-  resources :tencent_agents
-
   get '/jobs/:id/status', to: 'jobs#status'
 
   authenticated :user do

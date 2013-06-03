@@ -7,4 +7,4 @@
   - [spider, 1]
 
 production:
-  :concurrency: 200
+  :concurrency: 100

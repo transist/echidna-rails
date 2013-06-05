@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: git://github.com/simsicon/judge.git
-  revision: df5ebc3bf674dbac659a02f63ad9eea45a4f7a5e
+  revision: 6f737d14884a720a26012e913e42d582d87169e1
   specs:
     judge (0.0.1)
       rmmseg-cpp (~> 0.2.9)

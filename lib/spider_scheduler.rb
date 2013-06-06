@@ -21,34 +21,44 @@ class SpiderScheduler
 
   def schedule_gather_tweets
     @scheduler.every '30s', first_in: '0s', mutex: :gather_tweets do
-      TencentAgent.all.each do |agent|
-        agent.gather_tweets
+      ensure_cleanup_mongoid_session do
+        TencentAgent.all.each do |agent|
+          agent.gather_tweets
+        end
       end
     end
   end
 
   def schedule_sample_famous_users
     @scheduler.every '4w', first_in: '0s', mutex: :sample_famous_users do
-      TencentAgent.first.sample_famous_users
+      ensure_cleanup_mongoid_session do
+        TencentAgent.first.sample_famous_users
+      end
     end
   end
 
   def schedule_sample_hot_users
     @scheduler.every '60m', first_in: '0s', mutex: :sample_hot_users do
-      TencentAgent.first.sample_hot_users
+      ensure_cleanup_mongoid_session do
+        TencentAgent.first.sample_hot_users
+      end
     end
   end
 
   def schedule_sample_users
     @scheduler.every '10m', first_in: '0s', mutex: :sample_users do
-      TencentAgent.first.sample_users
+      ensure_cleanup_mongoid_session do
+        TencentAgent.first.sample_users
+      end
     end
   end
 
   def schedule_track_users
     @scheduler.every '5m', first_in: '0s', mutex: :track_users do
-      TencentAgent.with_available_lists.each do |agent|
-        agent.track_users
+      ensure_cleanup_mongoid_session do
+        TencentAgent.with_available_lists.each do |agent|
+          agent.track_users
+        end
       end
     end
   end
@@ -56,15 +66,29 @@ class SpiderScheduler
   def schedule_refresh_access_token
     @scheduler.every '1d', first_in: '0s', mutex:
       [:sample_users, :sample_famous_users, :sample_hot_users, :track_users, :gather_tweets] do
-      TencentAgent.all.each do |agent|
-        agent.refresh_access_token
+      ensure_cleanup_mongoid_session do
+        TencentAgent.all.each do |agent|
+          agent.refresh_access_token
+        end
       end
     end
   end
 
   def schedule_reset_api_calls_count
     @scheduler.cron '0 * * * *' do
-      TencentAgent.reset_api_calls_count
+      ensure_cleanup_mongoid_session do
+        TencentAgent.reset_api_calls_count
+      end
     end
+  end
+
+  # A quick & dirty way to fix the connections leak issue
+  # This should be fixed by use connection pool which will available in Moped 2.0
+  # https://github.com/mongoid/mongoid/issues/2369
+  def ensure_cleanup_mongoid_session(&block)
+    block.call
+  ensure
+    Mongoid::IdentityMap.clear
+    Mongoid.disconnect_sessions
   end
 end

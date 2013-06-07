@@ -27,7 +27,7 @@ class TencentAgent
       end
 
       def limitation_reached?
-        $redis.get(API_CALLS_COUNT_KEY).to_i >= 1000
+        $redis.get(API_CALLS_COUNT_KEY).to_i >= 20000
       end
     end
   end

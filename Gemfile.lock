@@ -180,6 +180,7 @@ GEM
     haml (4.0.3)
       tilt
     has_scope (0.5.1)
+    hashie (2.0.5)
     highline (1.6.19)
     hike (1.2.3)
     hiredis (0.4.5)
@@ -446,6 +447,7 @@ DEPENDENCIES
   guard-rspec (>= 2.5.2)
   guard-sidekiq
   guard-zeus
+  hashie
   hiredis
   inherited_resources
   jquery-rails

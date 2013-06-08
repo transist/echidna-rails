@@ -1,3 +1,5 @@
+require 'tencent_agent/error'
+
 class TencentAgent
   include Mongoid::Document
   include Mongoid::Timestamps

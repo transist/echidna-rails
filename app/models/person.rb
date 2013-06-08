@@ -37,6 +37,7 @@ class Person
 
   has_many :tweets
   belongs_to :city
+  belongs_to :seed_person, class_name: 'Person'
   has_and_belongs_to_many :groups
 
   def spam!

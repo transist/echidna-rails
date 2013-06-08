@@ -28,7 +28,10 @@ class TencentAgent
             end
 
             result['data']['info'].each do |following|
-              sample_user(following['openid'], seed_level: seed_person.seed_level + 1)
+              sample_user(following['openid'],
+                          seed_person_id: seed_person.id.to_s,
+                          seed_level: seed_person.seed_level + 1
+                          )
             end
 
             if result['data']['hasnext'].to_i == 1

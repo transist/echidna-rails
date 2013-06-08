@@ -25,12 +25,15 @@ class Person
   field :profile, type: Hash
   field :tracked, type: Boolean, default: false
   field :spam, type: Boolean, default: false
+  field :seed_level, type: Integer
+  field :all_followings_sampled, type: Boolean, default: false
 
   validates :gender, inclusion: { in: GENDERS }
 
   index({ target_source: 1, target_id: 1}, { unique: true })
   index({ famous: 1 })
   index({ tracked: 1 })
+  index({ seed_level: 1, all_followings_sampled: 1 })
 
   has_many :tweets
   belongs_to :city
@@ -39,5 +42,9 @@ class Person
   def spam!
     update_attribute :spam, true
     self.tweets.map(&:spam!)
+  end
+
+  def all_followings_sampled!
+    update_attribute :all_followings_sampled, true
   end
 end

@@ -6,6 +6,7 @@ class TencentAgent
   include FamousUsersSampling
   include HotUsersSampling
   include UsersSampling
+  include UsersSamplingFromFollowingOfFamous
   include UsersTracking
   include TweetsGathering
   include ApiCallsLimiter

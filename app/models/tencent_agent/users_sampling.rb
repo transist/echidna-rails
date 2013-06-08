@@ -39,12 +39,12 @@ class TencentAgent
       log_unexpected_error(e)
     end
 
-    def sample_user(user_openid)
+    def sample_user(user_openid, options = {})
       result = cached_get('api/user/other_info', fopenid: user_openid)
 
       if result['ret'].to_i.zero? && result['data']
         user = UserDecorator.decorate(result['data'])
-        publish_user(user)
+        publish_user(user, options)
       else
         error %{Failed to gather profile of user "#{user_openid}"}
       end
@@ -62,6 +62,7 @@ class TencentAgent
     def publish_user(user, options = {})
       famous = options.fetch(:famous, false)
       hot = options.fetch(:hot, false)
+      seed_level = options.fetch(:seed_level, nil)
 
       # It's funny Tencent Weibo API sometimes return users with empty name which is invalid
       if user['name'].blank?
@@ -76,6 +77,7 @@ class TencentAgent
         target_name: user['name'],
         famous: famous,
         hot: hot,
+        seed_level: seed_level,
         birth_year: user['birth_year'],
         gender: user['gender'],
         city: user['city'],

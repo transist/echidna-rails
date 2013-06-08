@@ -71,7 +71,8 @@ class TencentAgent
         hot: hot,
         birth_year: user['birth_year'],
         gender: user['gender'],
-        city: user['city']
+        city: user['city'],
+        profile: user
       )
     end
   end

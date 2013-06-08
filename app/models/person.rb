@@ -22,6 +22,7 @@ class Person
   field :hot, type: Boolean, default: false
   field :birth_year, type: Integer
   field :gender, type: String
+  field :profile, type: Hash
   field :tracked, type: Boolean, default: false
   field :spam, type: Boolean, default: false
 

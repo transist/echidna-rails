@@ -62,6 +62,13 @@ class TencentAgent
     def publish_user(user, options = {})
       famous = options.fetch(:famous, false)
       hot = options.fetch(:hot, false)
+
+      # It's funny Tencent Weibo API sometimes return users with empty name which is invalid
+      if user['name'].blank?
+        info 'Skip invalid user with blank name'
+        return
+      end
+
       info %{Publishing user "#{user['name']}" openid: #{user['openid']}}
       PersonWorker.perform_async(
         target_source: 'tencent',

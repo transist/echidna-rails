@@ -81,7 +81,7 @@ class TencentAgent
 
       if result['ret'].to_i.zero? && result['data']
         user = UserDecorator.decorate(result['data'])
-        publish_user(user, famous: true)
+        publish_user(user, famous: true, seed_level: 0)
       else
         error %{Failed to gather profile of famous user "#{user_name}"}
       end

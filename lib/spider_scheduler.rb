@@ -6,7 +6,7 @@ class SpiderScheduler
   def run
     schedule_refresh_access_token
     # schedule_sample_users
-    # schedule_sample_famous_users
+    schedule_sample_famous_users
     schedule_sample_users_from_following_of_famous
     schedule_track_users
     schedule_sample_hot_users
@@ -31,7 +31,7 @@ class SpiderScheduler
   end
 
   def schedule_sample_famous_users
-    @scheduler.every '4w', first_in: '0s', mutex: :sample_famous_users do
+    @scheduler.every '1d', first_in: '0s', mutex: :sample_famous_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.first.sample_famous_users
       end

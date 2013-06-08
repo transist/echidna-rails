@@ -3,7 +3,7 @@ class TencentAgent
     extend ActiveSupport::Concern
 
     USERS_TRACKING_LIST_PREFIX = 'UTL'
-    TRACK_WAIT = 2
+    TRACK_WAIT = 0.2
 
     included do
       def self.get_agent_with_capacity

@@ -2,7 +2,7 @@ class TencentAgent
   module UsersSampling
     extend ActiveSupport::Concern
 
-    SAMPLE_WAIT = 5
+    SAMPLE_WAIT = 0.2
 
     def sample_users
       info 'Sampling Users...'

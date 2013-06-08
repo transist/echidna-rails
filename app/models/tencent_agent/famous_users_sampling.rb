@@ -40,7 +40,7 @@ class TencentAgent
       {classid: 951, name: '花儿朵朵'}
     ]
 
-    SAMPLE_WAIT = 0.1
+    SAMPLE_WAIT = 0.2
 
     def sample_famous_users
       info 'Sampling Famous Users...'

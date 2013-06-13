@@ -9,6 +9,7 @@ class TencentList
   field :member_count, type: Integer
 
   belongs_to :tencent_agent
+  has_many :people
 
   default_scope order_by(created_at: :asc)
   scope :available, lt(member_count: LIST_MAX_MEMBER_COUNT)
@@ -26,7 +27,9 @@ class TencentList
     result = tencent_agent.post('api/list/add_to_list', fopenids: user_openids.join('_'), listid: list_id)
 
     if result['ret'].to_i.zero?
-      people_to_track.map(&:mark_as_tracked!)
+      people_to_track.each do |person|
+        person.mark_as_tracked!(self)
+      end
       inc :member_count, people_to_track.size
 
       tencent_agent.info %{Tracked users "#{user_openids.join(',')}" by list}

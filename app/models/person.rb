@@ -38,6 +38,7 @@ class Person
   has_many :tweets
   belongs_to :city
   belongs_to :seed_person, class_name: 'Person'
+  belongs_to :tencent_list
   has_and_belongs_to_many :groups
 
   def spam!
@@ -49,7 +50,10 @@ class Person
     update_attribute :all_followings_sampled, true
   end
 
-  def mark_as_tracked!
-    update_attribute :tracked, true
+  def mark_as_tracked!(tencent_list)
+    update_attributes!(
+      tencent_list: tencent_list,
+      tracked: true
+    )
   end
 end

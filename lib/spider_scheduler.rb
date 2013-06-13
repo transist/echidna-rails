@@ -21,7 +21,7 @@ class SpiderScheduler
   private
 
   def schedule_gather_tweets
-    @scheduler.every '30s', first_in: '0s', mutex: :gather_tweets do
+    @scheduler.every '30s', first_in: '1s', mutex: :gather_tweets do
       ensure_cleanup_mongoid_session do
         TencentAgent.all.each do |agent|
           agent.gather_tweets
@@ -31,7 +31,7 @@ class SpiderScheduler
   end
 
   def schedule_sample_famous_users
-    @scheduler.every '1d', first_in: '0s', mutex: :sample_famous_users do
+    @scheduler.every '1d', first_in: '1s', mutex: :sample_famous_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.first.sample_famous_users
       end
@@ -39,7 +39,7 @@ class SpiderScheduler
   end
 
   def schedule_sample_hot_users
-    @scheduler.every '60m', first_in: '0s', mutex: :sample_hot_users do
+    @scheduler.every '60m', first_in: '1s', mutex: :sample_hot_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.first.sample_hot_users
       end
@@ -47,7 +47,7 @@ class SpiderScheduler
   end
 
   def schedule_sample_users_from_following_of_famous
-    @scheduler.every '10m', first_in: '0s', mutex: :sample_users_from_following_of_famous do
+    @scheduler.every '10m', first_in: '1s', mutex: :sample_users_from_following_of_famous do
       ensure_cleanup_mongoid_session do
         TencentAgent.first.sample_users_from_following_of_famous
       end
@@ -55,7 +55,7 @@ class SpiderScheduler
   end
 
   def schedule_sample_users
-    @scheduler.every '10m', first_in: '0s', mutex: :sample_users do
+    @scheduler.every '10m', first_in: '1s', mutex: :sample_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.first.sample_users
       end
@@ -63,7 +63,7 @@ class SpiderScheduler
   end
 
   def schedule_track_users
-    @scheduler.every '5m', first_in: '0s', mutex: :track_users do
+    @scheduler.every '5m', first_in: '1s', mutex: :track_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.track_users
       end

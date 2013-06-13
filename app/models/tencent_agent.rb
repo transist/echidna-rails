@@ -25,6 +25,8 @@ class TencentAgent
   field :list_last_timestamp_map, type: Hash, default: {}
   field :full_with_lists, type: Boolean, default: false
 
+  has_many :tencent_lists
+
   scope :with_available_lists, where(full_with_lists: false)
 
   def get(path, params = {}, &block)
@@ -56,6 +58,24 @@ class TencentAgent
       ENV['ECHIDNA_SPIDER_TENCENT_APP_SECRET'],
       ENV['ECHIDNA_SPIDER_TENCENT_REDIRECT_URI']
     )
+  end
+
+  def sync_lists
+    result = get('api/list/get_list')
+
+    if result['ret'].to_i.zero?
+      result['data']['info'].map do |list|
+        tencent_list = tencent_lists.find_or_initialize_by(list_id: list['listid'])
+        tencent_list.update_attributes!(
+          name: list['name'],
+          member_count: list['membernums'],
+          created_at: Time.at(list['createtime'].to_i)
+        )
+      end
+
+    else
+      raise Error, "Failed to sync lists: #{result['msg']}"
+    end
   end
 
   private

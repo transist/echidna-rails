@@ -67,14 +67,24 @@ class TencentAgent
     result = get('api/list/get_list')
 
     if result['ret'].to_i.zero?
-      result['data']['info'].map do |list|
+      synced_lists = result['data']['info'].map do |list|
         tencent_list = tencent_lists.find_or_initialize_by(list_id: list['listid'])
         tencent_list.update_attributes!(
           name: list['name'],
           member_count: list['membernums'],
           created_at: Time.at(list['createtime'].to_i)
         )
+        tencent_list
       end
+
+      (tencent_lists - synced_lists).map(&:delete)
+      reload.tencent_lists
+
+    elsif result['ret'].to_i == 1 && result['errcode'].to_i == 44
+      # Tencent API treat the case agent don't have any list yet as
+      # error, and return this error code combination.
+      tencent_lists.delete_all
+      reload.tencent_lists
 
     else
       raise TencentError, "Failed to sync lists: #{result['msg']}"

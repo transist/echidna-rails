@@ -21,9 +21,6 @@ class TencentAgent
   field :refresh_token, type: String
   field :expires_at, type: Integer
 
-  field :list_ids, type: Array, default: []
-  field :list_last_timestamp_map, type: Hash, default: {}
-
   field :available_for_tracking_users, type: Boolean, default: true
 
   has_many :tencent_lists

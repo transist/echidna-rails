@@ -12,6 +12,8 @@ class TencentAgent
   include ApiCallsLimiter
   include ApiResponseCacher
 
+  LIST_NAME_PREFIX = 'UTL'
+
   field :openid, type: String
   field :name, type: String
   field :nick, type: String
@@ -21,13 +23,14 @@ class TencentAgent
 
   field :list_ids, type: Array, default: []
   field :list_last_timestamp_map, type: Hash, default: {}
-  field :full_with_lists, type: Boolean, default: false
 
   field :available_for_tracking_users, type: Boolean, default: true
 
   has_many :tencent_lists
 
   scope :available_for_tracking_users, where(available_for_tracking_users: true)
+
+  after_create :create_lists
 
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed
@@ -78,6 +81,21 @@ class TencentAgent
     end
   end
 
+  def create_lists
+    count = 0
+    loop do
+      # Humanized 1 based name sequence
+      # The maximized allowd name length is 13
+      list_name = '%s_%09d' % [LIST_NAME_PREFIX, count + 1]
+
+      break unless create_list(list_name)
+      count += 1
+    end
+  ensure
+    sync_lists
+    info "Created #{count} lists"
+  end
+
   def mark_as_unavailable_for_tracking_users
     update_attribute :available_for_tracking_users, false
   end
@@ -87,5 +105,20 @@ class TencentAgent
   def access_token
     @weibo ||= self.class.weibo_client
     @access_token ||= Tencent::Weibo::AccessToken.from_hash(@weibo, attributes)
+  end
+
+  def create_list(list_name)
+    result = post('api/list/create', name: list_name, access: 1)
+    if result['ret'].to_i.zero?
+      info %{Created list "#{list_name}"}
+      true
+
+    elsif result['ret'].to_i == 4 and result['errcode'].to_i == 98
+      # List limitation of maximized members reached
+      false
+
+    else
+      raise TencentError.new(%{Failed to create list "#{list_name}"}, result)
+    end
   end
 end

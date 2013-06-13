@@ -30,7 +30,7 @@ class TencentAgent
 
   scope :available_for_tracking_users, where(available_for_tracking_users: true)
 
-  after_create :create_lists
+  after_create :create_lists_async
 
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed
@@ -111,6 +111,10 @@ class TencentAgent
   end
 
   private
+
+  def create_lists_async
+    CreateListsWorker.perform_async(id.to_s)
+  end
 
   def access_token
     @weibo ||= self.class.weibo_client

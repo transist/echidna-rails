@@ -9,7 +9,7 @@ class SpiderScheduler
     schedule_sample_famous_users
     schedule_sample_users_from_following_of_famous
     schedule_track_users
-    schedule_sample_hot_users
+    # schedule_sample_hot_users
     schedule_gather_tweets
     schedule_reset_api_calls_count
   end

@@ -16,6 +16,8 @@ class TweetWorker
       TencentAgent.first.sample_user(target_person_id)
     end
 
+    person.spam! if Judge.spam? tweet_attrs[:content]
+
     person.tweets.create(tweet_attrs) unless person.spam?
   end
 end

@@ -32,6 +32,13 @@ GIT
       oauth2 (~> 0.9.1)
 
 GIT
+  remote: git://github.com/simsicon/judge.git
+  revision: 6f737d14884a720a26012e913e42d582d87169e1
+  specs:
+    judge (0.0.1)
+      rmmseg-cpp (~> 0.2.9)
+
+GIT
   remote: git://github.com/transist/fazscore.git
   revision: 3f1c34f59aac050f33a90a48e3087e27a8bdae03
   specs:
@@ -335,6 +342,7 @@ GEM
     remotipart (1.0.5)
     responders (0.9.3)
       railties (~> 3.1)
+    rmmseg-cpp (0.2.9)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -450,6 +458,7 @@ DEPENDENCIES
   hiredis
   inherited_resources
   jquery-rails
+  judge!
   kiqstand
   launchy (>= 2.2.0)
   mocha

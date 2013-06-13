@@ -36,6 +36,7 @@ gem 'rails_admin'
 gem 'redis-rails'
 
 gem 'whenever', require: false
+gem 'judge', git: 'git://github.com/simsicon/judge.git'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

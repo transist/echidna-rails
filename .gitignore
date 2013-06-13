@@ -78,3 +78,5 @@ pickle-email-*.html
 
 # Ignore data.json in development env
 /data/data.json
+/data/normal_corpus
+/data/spam_corpus

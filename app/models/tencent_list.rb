@@ -16,6 +16,8 @@ class TencentList
   validates :list_id, presence: true, uniqueness: true
   validates :name, presence: true
 
+  before_destroy :delete_tencent_list
+
   def track(people)
     people_to_track = people[0, capacity]
     remaining_people = people[people_to_track.size..-1]
@@ -43,5 +45,17 @@ class TencentList
 
   def capacity
     LIST_MAX_MEMBER_COUNT - member_count
+  end
+
+  private
+
+  def delete_tencent_list
+    result = tencent_agent.post('api/list/delete', listid: list_id)
+    if result['ret'].to_i.zero?
+      tencent_agent.info %{Deleted list "#{name}"}
+      true
+    else
+      raise TencentError.new(%{Failed to delete list "#{name}"}, result)
+    end
   end
 end

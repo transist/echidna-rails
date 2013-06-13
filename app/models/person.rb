@@ -48,4 +48,8 @@ class Person
   def all_followings_sampled!
     update_attribute :all_followings_sampled, true
   end
+
+  def mark_as_tracked!
+    update_attribute :tracked, true
+  end
 end

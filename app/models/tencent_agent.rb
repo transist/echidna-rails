@@ -25,9 +25,11 @@ class TencentAgent
   field :list_last_timestamp_map, type: Hash, default: {}
   field :full_with_lists, type: Boolean, default: false
 
+  field :available_for_tracking_users, type: Boolean, default: true
+
   has_many :tencent_lists
 
-  scope :with_available_lists, where(full_with_lists: false)
+  scope :available_for_tracking_users, where(available_for_tracking_users: true)
 
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed
@@ -76,6 +78,10 @@ class TencentAgent
     else
       raise Error, "Failed to sync lists: #{result['msg']}"
     end
+  end
+
+  def mark_as_unavailable_for_tracking_users
+    update_attribute :available_for_tracking_users, false
   end
 
   private

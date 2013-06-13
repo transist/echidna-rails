@@ -23,7 +23,6 @@ class Person
   field :birth_year, type: Integer
   field :gender, type: String
   field :profile, type: Hashie::Mash
-  field :tracked, type: Boolean, default: false
   field :spam, type: Boolean, default: false
   field :seed_level, type: Integer
   field :all_followings_sampled, type: Boolean, default: false
@@ -32,14 +31,15 @@ class Person
 
   index({ target_source: 1, target_id: 1}, { unique: true })
   index({ famous: 1 })
-  index({ tracked: 1 })
   index({ seed_level: 1, all_followings_sampled: 1 })
 
   has_many :tweets
   belongs_to :city
   belongs_to :seed_person, class_name: 'Person'
-  belongs_to :tencent_list
+  belongs_to :tencent_list, index: true
   has_and_belongs_to_many :groups
+
+  scope :untracked, where(tencent_list: nil)
 
   def spam!
     update_attribute :spam, true
@@ -51,9 +51,6 @@ class Person
   end
 
   def mark_as_tracked!(tencent_list)
-    update_attributes!(
-      tencent_list: tencent_list,
-      tracked: true
-    )
+    update_attribute :tencent_list_id, tencent_list.id
   end
 end

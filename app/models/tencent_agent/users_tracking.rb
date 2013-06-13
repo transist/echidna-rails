@@ -9,7 +9,7 @@ class TencentAgent
       def track_users
         info "Tracking users..."
 
-        Person.where(tracked: false).each_slice(TRACK_LIMIT_PER_REQUEST) do |people|
+        Person.untracked.each_slice(TRACK_LIMIT_PER_REQUEST) do |people|
 
           remaining_people = people
           begin

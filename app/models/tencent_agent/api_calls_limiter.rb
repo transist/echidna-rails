@@ -8,7 +8,7 @@ class TencentAgent
       class Tencent::Weibo::AccessToken
         def request_with_conform_calls_limitation(*args, &block)
           if TencentAgent.limitation_reached?
-            raise Error, 'Tencent Weibo API calls limitation reached'
+            raise TencentError, 'Tencent Weibo API calls limitation reached'
           else
             count = $redis.incr(API_CALLS_COUNT_KEY)
             TencentAgent.logger.info "Tencent Weibo API calls count: #{count}"

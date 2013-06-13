@@ -1,5 +1,3 @@
-require 'tencent_agent/error'
-
 class TencentAgent
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -76,7 +74,7 @@ class TencentAgent
       end
 
     else
-      raise Error, "Failed to sync lists: #{result['msg']}"
+      raise TencentError, "Failed to sync lists: #{result['msg']}"
     end
   end
 

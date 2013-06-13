@@ -33,7 +33,7 @@ class TencentAgent
 
       info 'Finished users gathering'
 
-    rescue Error => e
+    rescue TencentError => e
       error "Aborted users gathering: #{e.message}"
     rescue => e
       log_unexpected_error(e)

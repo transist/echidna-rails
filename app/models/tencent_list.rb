@@ -36,7 +36,7 @@ class TencentList
         # Just return all people when list limitation of maximized members reached
         people
       else
-        raise TencentAgent::Error.new(%{Failed to track users "#{user_openids.join(',')}" by list}, result)
+        raise TencentError.new(%{Failed to track users "#{user_openids.join(',')}" by list}, result)
       end
     end
   end

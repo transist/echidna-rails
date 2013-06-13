@@ -17,13 +17,13 @@ class TencentAgent
             if agent
               remaining_people = agent.track(remaining_people)
             else
-              raise Error, 'Need more agents to track users'
+              raise TencentError, 'Need more agents to track users'
             end
           end until remaining_people.empty?
         end
 
         info "Finished users tracking"
-      rescue Error => e
+      rescue TencentError => e
         error "Aborted users tracking: #{e.message}"
       rescue => e
         log_unexpected_error(e)

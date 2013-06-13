@@ -52,7 +52,7 @@ class TencentAgent
 
       info 'Finished sample users from followings of famous'
 
-    rescue Error => e
+    rescue TencentError => e
       error "Aborted sample users from followings of famous: #{e.message}"
     rescue => e
       log_unexpected_error(e)

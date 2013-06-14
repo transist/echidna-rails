@@ -10,6 +10,8 @@ set :user, 'echidna'
 set :rvm_ruby_string, :local
 require 'rvm/capistrano'
 
+# Use HTTP proxy from Transist server to help bundler cross the GFW
+set :bundle_cmd, 'http_proxy=http://192.168.1.42:8123 bundle'
 set :bundle_flags, '--deployment --quiet --binstubs'
 set :bundle_without, [:development, :test]
 require 'bundler/capistrano'
@@ -21,11 +23,6 @@ role :sidekiq, 'echidna.transi.st'
 
 set :whenever_command, "bundle exec whenever"
 require "whenever/capistrano"
-
-# Use HTTP proxy from Transist server to help bundler cross the GFW
-set :default_environment, {
-  http_proxy: 'http://192.168.1.42:8123'
-}
 
 # Make capistrano create shared/sockets and symlink it to tmp/sockets
 set :shared_children, shared_children + %w(tmp/sockets)
@@ -74,7 +71,7 @@ end
 namespace :spider do
   desc 'Start spider'
   task :start, roles: :app do
-    run "cd #{current_release}; nohup bundle exec rake RAILS_ENV=production spider_scheduler > /dev/null 2>&1 &"
+    run "cd #{current_release}; nohup bin/rake RAILS_ENV=production spider_scheduler > /dev/null 2>&1 &"
   end
 
   desc 'Stop spider'

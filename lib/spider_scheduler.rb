@@ -63,7 +63,7 @@ class SpiderScheduler
   end
 
   def schedule_track_users
-    @scheduler.every '5m', first_in: '1s', mutex: :track_users do
+    @scheduler.every '30s', first_in: '1s', mutex: :track_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.track_users
       end

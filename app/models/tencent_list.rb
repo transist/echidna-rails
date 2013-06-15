@@ -15,6 +15,7 @@ class TencentList
 
   default_scope order_by(created_at: :asc)
   scope :available, lt(member_count: LIST_MAX_MEMBER_COUNT)
+  scope :ready_for_tweets_gathering, where(member_count: LIST_MAX_MEMBER_COUNT)
 
   validates :list_id, presence: true, uniqueness: true
   validates :name, presence: true

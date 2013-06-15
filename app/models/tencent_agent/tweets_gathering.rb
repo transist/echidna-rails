@@ -5,7 +5,7 @@ class TencentAgent
     GATHER_TWEET_WAIT = 0.2
 
     def gather_tweets
-      tencent_lists.each do |tencent_list|
+      tencent_lists.ready_for_tweets_gathering.each do |tencent_list|
         begin
           gather_tweets_from_list(tencent_list)
         rescue TencentError => e

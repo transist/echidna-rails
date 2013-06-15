@@ -4,7 +4,7 @@ class TencentAgent
 
     module ClassMethods
       def logger
-        @logger ||= Logger.new('log/spider.log', 10, 1024000)
+        @logger ||= Logger.new('log/spider.log', 10, 100.megabytes)
       end
 
       def info(message)

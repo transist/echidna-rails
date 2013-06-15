@@ -25,7 +25,7 @@ GIT
 
 GIT
   remote: git://github.com/rainux/tencent-weibo
-  revision: d74842463ce273f04ceaeca737e364e55a821718
+  revision: f7dddc8fbc2cd0f561efe25b42a14b7b59d4dcee
   specs:
     tencent-weibo (0.0.1)
       multi_json (~> 1.6)

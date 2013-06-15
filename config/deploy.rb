@@ -17,6 +17,8 @@ set :bundle_without, [:development, :test]
 require 'bundler/capistrano'
 
 require 'sidekiq/capistrano'
+set :sidekiq_cmd, 'bin/sidekiq'
+set :sidekiqctl_cmd, 'bin/sidekiqctl'
 set :sidekiq_role, :sidekiq
 set :sidekiq_processes, 2
 role :sidekiq, 'echidna.transi.st'

@@ -103,8 +103,9 @@ class TencentAgent
     info "Created #{count} lists"
   end
 
-  def mark_as_unavailable_for_tracking_users
-    update_attribute :available_for_tracking_users, false
+  def sync_availability_for_tracking_users
+    sync_lists
+    update_attribute :available_for_tracking_users, tencent_lists.available.exists?
   end
 
   private

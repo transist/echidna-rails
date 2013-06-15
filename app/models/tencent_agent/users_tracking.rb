@@ -38,10 +38,7 @@ class TencentAgent
         break if remaining_people.empty?
       end
 
-      unless remaining_people.empty?
-        mark_as_unavailable_for_tracking_users
-        sync_lists
-      end
+      sync_availability_for_tracking_users unless remaining_people.empty?
 
       remaining_people
     end

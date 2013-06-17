@@ -25,6 +25,7 @@ class TencentAgent
 
   has_many :tencent_lists
 
+  default_scope order_by(created_at: :desc)
   scope :available_for_tracking_users, ne(available_for_tracking_users: false)
 
   after_create :create_lists_async

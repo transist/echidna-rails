@@ -6,9 +6,10 @@ class SpiderScheduler
   def run
     schedule_refresh_access_token
     # schedule_sample_users
+    schedule_sample_famous_users
+    schedule_sample_users_from_following_of_famous
     schedule_track_users
-    # schedule_sample_famous_users
-    schedule_sample_hot_users
+    # schedule_sample_hot_users
     schedule_gather_tweets
     schedule_reset_api_calls_count
   end
@@ -20,7 +21,7 @@ class SpiderScheduler
   private
 
   def schedule_gather_tweets
-    @scheduler.every '30s', first_in: '0s', mutex: :gather_tweets do
+    @scheduler.every '30s', first_in: '1s', mutex: :gather_tweets do
       ensure_cleanup_mongoid_session do
         TencentAgent.all.each do |agent|
           agent.gather_tweets
@@ -30,7 +31,7 @@ class SpiderScheduler
   end
 
   def schedule_sample_famous_users
-    @scheduler.every '4w', first_in: '0s', mutex: :sample_famous_users do
+    @scheduler.every '1d', first_in: '1s', mutex: :sample_famous_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.first.sample_famous_users
       end
@@ -38,15 +39,23 @@ class SpiderScheduler
   end
 
   def schedule_sample_hot_users
-    @scheduler.every '60m', first_in: '0s', mutex: :sample_hot_users do
+    @scheduler.every '60m', first_in: '1s', mutex: :sample_hot_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.first.sample_hot_users
       end
     end
   end
 
+  def schedule_sample_users_from_following_of_famous
+    @scheduler.every '10m', first_in: '1s', mutex: :sample_users_from_following_of_famous do
+      ensure_cleanup_mongoid_session do
+        TencentAgent.first.sample_users_from_following_of_famous
+      end
+    end
+  end
+
   def schedule_sample_users
-    @scheduler.every '10m', first_in: '0s', mutex: :sample_users do
+    @scheduler.every '10m', first_in: '1s', mutex: :sample_users do
       ensure_cleanup_mongoid_session do
         TencentAgent.first.sample_users
       end
@@ -54,18 +63,17 @@ class SpiderScheduler
   end
 
   def schedule_track_users
-    @scheduler.every '5m', first_in: '0s', mutex: :track_users do
+    @scheduler.every '30s', first_in: '1s', mutex: :track_users do
       ensure_cleanup_mongoid_session do
-        TencentAgent.with_available_lists.each do |agent|
-          agent.track_users
-        end
+        TencentAgent.track_users
       end
     end
   end
 
   def schedule_refresh_access_token
     @scheduler.every '1d', first_in: '0s', mutex:
-      [:sample_users, :sample_famous_users, :sample_hot_users, :track_users, :gather_tweets] do
+      [:sample_users, :sample_users_from_following_of_famous, :sample_famous_users,
+       :sample_hot_users, :track_users, :gather_tweets] do
       ensure_cleanup_mongoid_session do
         TencentAgent.all.each do |agent|
           agent.refresh_access_token

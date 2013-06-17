@@ -2,7 +2,7 @@ class TencentAgent
   module UsersSampling
     extend ActiveSupport::Concern
 
-    SAMPLE_WAIT = 5
+    SAMPLE_WAIT = 0.2
 
     def sample_users
       info 'Sampling Users...'
@@ -33,18 +33,18 @@ class TencentAgent
 
       info 'Finished users gathering'
 
-    rescue Error => e
+    rescue TencentError => e
       error "Aborted users gathering: #{e.message}"
     rescue => e
       log_unexpected_error(e)
     end
 
-    def sample_user(user_openid)
+    def sample_user(user_openid, options = {})
       result = cached_get('api/user/other_info', fopenid: user_openid)
 
       if result['ret'].to_i.zero? && result['data']
         user = UserDecorator.decorate(result['data'])
-        publish_user(user)
+        publish_user(user, options)
       else
         error %{Failed to gather profile of user "#{user_openid}"}
       end
@@ -60,19 +60,23 @@ class TencentAgent
     end
 
     def publish_user(user, options = {})
-      famous = options.fetch(:famous, false)
-      hot = options.fetch(:hot, false)
+      # It's funny Tencent Weibo API sometimes return users with empty name which is invalid
+      if user['name'].blank?
+        info 'Skip invalid user with blank name'
+        return
+      end
+
       info %{Publishing user "#{user['name']}" openid: #{user['openid']}}
-      PersonWorker.perform_async(
+      person_attrs = {
         target_source: 'tencent',
         target_id: user['openid'],
         target_name: user['name'],
-        famous: famous,
-        hot: hot,
         birth_year: user['birth_year'],
         gender: user['gender'],
-        city: user['city']
-      )
+        city: user['city'],
+        profile: user
+      }.merge(options)
+      PersonWorker.perform_async(person_attrs)
     end
   end
 end

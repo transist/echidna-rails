@@ -1,14 +1,22 @@
-h3 Tencent Agents
+h3 Tencent agents
 
-- collection.each do |tecent_agent|
-  h4= tecent_agent.name
-  table
-    thead
-      th List ID
-      th Timestamp of latest known tweet
-    tbody
-      - tecent_agent.list_last_timestamp_map.each do |list_id, timestamp|
-        tr
-          td(style='width: 40%')= list_id
-          td= Time.at(timestamp.to_i)
-p
+= link_to 'Add new Tencent agent', new_tencent_agent_path
+
+.row
+  .span8
+    - collection.each do |tecent_agent|
+      table.table.table-bordered.table-striped
+        caption
+          h4= tecent_agent.name
+        thead
+          th.id List ID
+          th.name List name
+          th.members List members
+          th.time Timestamp of latest known tweet
+        tbody
+          - tecent_agent.tencent_lists.each do |list|
+            tr
+              td= list.list_id
+              td= list.name
+              td= list.member_count
+              td= list.latest_tweet_timestamp

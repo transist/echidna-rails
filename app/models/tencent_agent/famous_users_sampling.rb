@@ -40,7 +40,7 @@ class TencentAgent
       {classid: 951, name: '花儿朵朵'}
     ]
 
-    SAMPLE_WAIT = 0.1
+    SAMPLE_WAIT = 0.2
 
     def sample_famous_users
       info 'Sampling Famous Users...'
@@ -68,7 +68,7 @@ class TencentAgent
 
       info 'Finished famous users gathering'
 
-    rescue Error => e
+    rescue TencentError => e
       error "Aborted famous users gathering: #{e.message}"
     rescue => e
       log_unexpected_error(e)
@@ -81,7 +81,7 @@ class TencentAgent
 
       if result['ret'].to_i.zero? && result['data']
         user = UserDecorator.decorate(result['data'])
-        publish_user(user, famous: true)
+        publish_user(user, famous: true, seed_level: 0)
       else
         error %{Failed to gather profile of famous user "#{user_name}"}
       end

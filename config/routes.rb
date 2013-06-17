@@ -14,6 +14,12 @@ Echidna::Application.routes.draw do
       end
     end
 
+    resources :people do
+      collection do
+        get :stats
+      end
+    end
+
     resources :tweets, only: [] do
       member do
         post :spam

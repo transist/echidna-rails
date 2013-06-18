@@ -20,9 +20,10 @@ class BaseStat
             time = time.change(period.to_sym => stat[period])
             stat_count = stat["count"]
             if time >= start_time && time < current_time
-              history_stats[word] ||= Array.new((current_time - start_time) / interval, 0)
-              history_stats[word][(time - start_time) / interval] += stat_count
+              history_stats[word] ||= Hash.new(0)
+              history_stats[word][time] += stat_count
             elsif time == current_time
+              history_stats[word][time] += stat_count
               current_stats[word] ||= 0
               current_stats[word] += stat_count
             end
@@ -36,8 +37,8 @@ class BaseStat
         measure_time = Time.now
         current_stats.each { |word, current_stat|
           unless user.has_stopword? word
-            z_score = FAZScore.new(0.5, history_stats[word]).score(current_stat)
-            stat = {word: word, z_score: z_score, current_stat: current_stat}
+            z_score = FAZScore.new(0.5, history_stats[word].values[0..-2]).score(current_stat)
+            stat = {word: word, z_score: z_score, current_stat: current_stat, history_stats: history_stats[word]}
             if z_score > 0
               positive_stats << stat
             elsif z_score < 0

@@ -30,6 +30,7 @@ gem 'nokogiri', require: 'nokogiri'
 
 gem 'twitter-bootstrap-rails'
 gem 'font-awesome-rails'
+gem 'chartkick'
 
 gem 'rails_admin'
 

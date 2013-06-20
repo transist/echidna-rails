@@ -6,10 +6,13 @@ class TencentAgent
   include FamousUsersSampling
   include HotUsersSampling
   include UsersSampling
+  include UsersSamplingFromFollowingOfFamous
   include UsersTracking
   include TweetsGathering
   include ApiCallsLimiter
   include ApiResponseCacher
+
+  LIST_NAME_PREFIX = 'UTL'
 
   field :openid, type: String
   field :name, type: String
@@ -18,11 +21,14 @@ class TencentAgent
   field :refresh_token, type: String
   field :expires_at, type: Integer
 
-  field :list_ids, type: Array, default: []
-  field :list_last_timestamp_map, type: Hash, default: {}
-  field :full_with_lists, type: Boolean, default: false
+  field :available_for_tracking_users, type: Boolean, default: true
 
-  scope :with_available_lists, where(full_with_lists: false)
+  has_many :tencent_lists
+
+  default_scope order_by(created_at: :desc)
+  scope :available_for_tracking_users, ne(available_for_tracking_users: false)
+
+  after_create :create_lists_async
 
   def get(path, params = {}, &block)
     access_token.get(path, params: params, &block).parsed
@@ -55,10 +61,77 @@ class TencentAgent
     )
   end
 
+  def sync_lists
+    result = get('api/list/get_list')
+
+    if result['ret'].to_i.zero?
+      synced_lists = result['data']['info'].map do |list|
+        tencent_list = tencent_lists.find_or_initialize_by(list_id: list['listid'])
+        tencent_list.update_attributes!(
+          name: list['name'],
+          member_count: list['membernums'],
+          created_at: Time.at(list['createtime'].to_i)
+        )
+        tencent_list
+      end
+
+      (tencent_lists - synced_lists).map(&:delete)
+      reload.tencent_lists
+
+    elsif result['ret'].to_i == 1 && result['errcode'].to_i == 44
+      # Tencent API treat the case agent don't have any list yet as
+      # error, and return this error code combination.
+      tencent_lists.delete_all
+      reload.tencent_lists
+
+    else
+      raise TencentError, "Failed to sync lists: #{result['msg']}"
+    end
+  end
+
+  def create_lists
+    count = 0
+    loop do
+      # Humanized 1 based name sequence
+      # The maximized allowd name length is 13
+      list_name = '%s_%09d' % [LIST_NAME_PREFIX, count + 1]
+
+      break unless create_list(list_name)
+      count += 1
+    end
+  ensure
+    sync_lists
+    info "Created #{count} lists"
+  end
+
+  def sync_availability_for_tracking_users
+    sync_lists
+    update_attribute :available_for_tracking_users, tencent_lists.available.exists?
+  end
+
   private
+
+  def create_lists_async
+    CreateListsWorker.perform_async(id.to_s)
+  end
 
   def access_token
     @weibo ||= self.class.weibo_client
     @access_token ||= Tencent::Weibo::AccessToken.from_hash(@weibo, attributes)
+  end
+
+  def create_list(list_name)
+    result = post('api/list/create', name: list_name, access: 1)
+    if result['ret'].to_i.zero?
+      info %{Created list "#{list_name}"}
+      true
+
+    elsif result['ret'].to_i == 4 and result['errcode'].to_i == 98
+      # List limitation of maximized members reached
+      false
+
+    else
+      raise TencentError.new(%{Failed to create list "#{list_name}"}, result)
+    end
   end
 end

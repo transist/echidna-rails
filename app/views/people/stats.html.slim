@@ -1,0 +1,43 @@
+h2 People stats
+
+.row
+  .span5
+    table.table.table-bordered.table-hover
+      thead
+        tr
+          th Condition
+          th People
+          th Percentage
+      tbody
+        tr
+          th All
+          td= @stats.people_count
+          td= number_to_percentage(100)
+        tr
+          th Has birth year
+          td= @stats.has_birth_year
+          td= number_to_percentage(@stats.has_birth_year_percentage * 100)
+        tr
+          th Has gender
+          td= @stats.has_gender
+          td= number_to_percentage(@stats.has_gender_percentage * 100)
+        tr
+          th Has city
+          td= @stats.has_city
+          td= number_to_percentage(@stats.has_city_percentage * 100)
+        tr
+          th Has birth year, and gender
+          td= @stats.has_birth_year_gender
+          td= number_to_percentage(@stats.has_birth_year_gender_percentage * 100)
+        tr
+          th Has birth year, and city
+          td= @stats.has_birth_year_city
+          td= number_to_percentage(@stats.has_birth_year_city_percentage * 100)
+        tr
+          th Has gender, and city
+          td= @stats.has_gender_city
+          td= number_to_percentage(@stats.has_gender_city_percentage * 100)
+        tr
+          th Has birth year, gender, and city
+          td= @stats.has_birth_year_gender_city
+          td= number_to_percentage(@stats.has_birth_year_gender_city_percentage * 100)

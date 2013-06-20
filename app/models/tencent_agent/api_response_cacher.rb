@@ -7,8 +7,14 @@ class TencentAgent
       cache_path = cache_path(cache_key)
 
       if cache_exists?(cache_path)
-        info("Cache hit: #{cache_key}")
-        load_cache(cache_path)
+
+        if cache_expired?(cache_path)
+          info("Cache expired: #{cache_key}")
+          store_cache(cache_path, get(path, params, &block))
+        else
+          info("Cache hit: #{cache_key}")
+          load_cache(cache_path)
+        end
 
       else
         info("Cache miss: #{cache_key}")
@@ -25,6 +31,10 @@ class TencentAgent
 
     def cache_exists?(cache_path)
       cache_path.file?
+    end
+
+    def cache_expired?(cache_path)
+      cache_path.mtime < 1.day.ago
     end
 
     def load_cache(cache_path)

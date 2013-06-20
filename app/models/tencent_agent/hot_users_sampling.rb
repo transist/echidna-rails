@@ -2,7 +2,7 @@ class TencentAgent
   module HotUsersSampling
     extend ActiveSupport::Concern
 
-    SAMPLE_WAIT = 5
+    SAMPLE_WAIT = 0.2
 
     def sample_hot_users
       info 'Sampling Hot Users...'
@@ -28,7 +28,7 @@ class TencentAgent
 
       info 'Finished hot users gathering'
 
-    rescue Error => e
+    rescue TencentError => e
       error "Aborted hot users gathering: #{e.message}"
     rescue => e
       log_unexpected_error(e)

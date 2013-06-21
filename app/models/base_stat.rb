@@ -37,7 +37,7 @@ class BaseStat
         measure_time = Time.now
         current_stats.each { |word, current_stat|
           unless user.has_stopword? word
-            z_score = FAZScore.new(0.5, history_stats[word].values[0..-2]).score(current_stat)
+            z_score = FAZScore.new(ENV['TRENDS_DECAY'].to_f, history_stats[word].values[0..-2]).score(current_stat)
             stat = {word: word, z_score: z_score, current_stat: current_stat, history_stats: history_stats[word]}
             if z_score > 0
               positive_stats << stat

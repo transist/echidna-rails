@@ -33,7 +33,7 @@ GIT
 
 GIT
   remote: git://github.com/transist/fazscore.git
-  revision: 3f1c34f59aac050f33a90a48e3087e27a8bdae03
+  revision: 32ee50b3fd9e5a078f6e0db16f5f5cbc698b7267
   specs:
     fazscore (0.0.0)
 

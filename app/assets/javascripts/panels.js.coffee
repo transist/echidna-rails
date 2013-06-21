@@ -162,7 +162,6 @@ class Job
       word = $(event.target).text()
       history_stats = self.getHistoryStats(panelId, period, word)
 
-      console.log history_stats
       new Chartkick.LineChart('history-stats-chart', history_stats,
         library:
           title: "History stats for \"#{word}\""

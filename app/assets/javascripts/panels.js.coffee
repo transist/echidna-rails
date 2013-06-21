@@ -220,7 +220,7 @@ class Job
 
   checkJobStatus: (panelWidget, panelId, period, jobId)->
     self = this
-    $.poll 5000, (retry) ->
+    $.poll 500, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         switch data["status"]
           when "complete"
@@ -271,7 +271,7 @@ class Job
     $.getJSON trendsUrl, (data)->
       setTimeout ->
         self.checkJobStatus(panelWidget, panelId, period, data["job_id"])
-      , 2000
+      , 500
 
   liveCheck: (panelWidget)->
     self = this

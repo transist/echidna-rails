@@ -291,7 +291,7 @@ class Job
     @history_stats[panelId][period][stat.word] = stat.history_stats
 
   getHistoryStats: (panelId, period, word)->
-    @history_stats[panelId]?[period]?[word]
+    @history_stats[panelId][period][word]
 
 $ ->
   new Job()

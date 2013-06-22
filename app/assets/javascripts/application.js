@@ -15,4 +15,5 @@
 //= require twitter/bootstrap
 //= require jquery.smart-poll
 //= require jquery.mustache
+//= require chartkick
 //= require_tree .

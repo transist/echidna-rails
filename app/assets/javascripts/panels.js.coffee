@@ -90,6 +90,7 @@ class Job
 
     @period = "day"
     @initPanelWidgets()
+    @history_stats = {}
 
   initPanelWidgets: ->
     self = this
@@ -155,6 +156,24 @@ class Job
         , 2000
       false
 
+    $(panelWidget).on 'mouseenter', '.word', (event)->
+      panelId = $(panelWidget).data('panel-id')
+      period = $(panelWidget).data('panel-period')
+      word = $(event.target).text()
+      history_stats = self.getHistoryStats(panelId, period, word)
+
+      new Chartkick.LineChart('history-stats-chart', history_stats,
+        library:
+          title: "History stats for \"#{word}\""
+      )
+
+      right = $(window).innerWidth() - $(panelWidget).offset().left - $(panelWidget).width() + 10
+      top = $(panelWidget).find('.body').offset().top
+      $('#history-stats-chart').css(
+        right: right,
+        top: top
+      ).show()
+
   initIgnoreLinks: (panelWidget)->
     $(panelWidget).on 'click', '.stopword', ->
       $(panelWidget).find('.spinner').show()
@@ -198,9 +217,9 @@ class Job
       false
 
 
-  checkJobStatus: (panelWidget, jobId)->
+  checkJobStatus: (panelWidget, panelId, period, jobId)->
     self = this
-    $.poll 5000, (retry) ->
+    $.poll 500, (retry) ->
       $.getJSON "/jobs/" + jobId + "/status.json", (data)->
         switch data["status"]
           when "complete"
@@ -210,6 +229,11 @@ class Job
               payload = data["payload"]
               payload["score"] = ->
                 return Number(@z_score).toFixed(2)
+
+              $.each payload.positive_stats, $.proxy(self, 'updateHistoryStats', panelId, period)
+              $.each payload.negative_stats, $.proxy(self, 'updateHistoryStats', panelId, period)
+              $.each payload.zero_stats, $.proxy(self, 'updateHistoryStats', panelId, period)
+
               $(panelWidget).find('.trends').html $.mustache(self.trends_template, payload)
             $(panelWidget).find('.spinner').hide()
             if $(panelWidget).find('.live').prop("checked")
@@ -245,8 +269,8 @@ class Job
     $(panelWidget).data('send', true)
     $.getJSON trendsUrl, (data)->
       setTimeout ->
-        self.checkJobStatus(panelWidget, data["job_id"])
-      , 2000
+        self.checkJobStatus(panelWidget, panelId, period, data["job_id"])
+      , 500
 
   liveCheck: (panelWidget)->
     self = this
@@ -259,6 +283,14 @@ class Job
         setTimeout ->
           self.checkJobStatus(panelWidget, data["job_id"])
         , 10000
+
+  updateHistoryStats: (panelId, period, index, stat)->
+    @history_stats[panelId] ?= {}
+    @history_stats[panelId][period] ?= {}
+    @history_stats[panelId][period][stat.word] = stat.history_stats
+
+  getHistoryStats: (panelId, period, word)->
+    @history_stats[panelId][period][word]
 
 $ ->
   new Job()

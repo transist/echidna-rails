@@ -1,5 +1,45 @@
 require 'set'
 
+class StatsAnalyzer
+  def initialize(user, current_stats, history_stats)
+    @user = user
+    @current_stats = current_stats
+    @history_stats = history_stats
+    @positive_stats = []
+    @negative_stats = []
+    @zero_stats = []
+  end
+
+  def analyze(limit)
+    @current_stats.each do |word, current_stat|
+      unless @user.has_stopword? word
+        z_score = FAZScore.new(ENV['TRENDS_DECAY'].to_f, @history_stats[word].values[0..-2]).score(current_stat)
+        stat = {word: word, z_score: z_score, current_stat: current_stat, history_stats: @history_stats[word]}
+        if z_score > 0
+          @positive_stats << stat
+        elsif z_score < 0
+          @negative_stats << stat
+        else z_score == 0
+          @zero_stats << stat
+        end
+      end
+    end
+    {
+      positive_stats: json_safe(@positive_stats.sort_by { |stat| -stat[:z_score] }[0...limit]),
+      zero_stats: json_safe(@zero_stats.sort_by { |stat| -stat[:current_stat] }[0...limit]),
+      negative_stats: json_safe(@negative_stats.sort_by { |stat| stat[:z_score] }[0...limit])
+    }
+  end
+
+  private
+
+  def json_safe(stats)
+    stats.each do |stat|
+      stat[:z_score] = stat[:z_score].to_s
+    end
+  end
+end
+
 class BaseStat
   class << self
     def top_trends(panel, user, options={})
@@ -31,32 +71,9 @@ class BaseStat
         end
         Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to read stats for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
 
-        positive_stats = []
-        negative_stats = []
-        zero_stats = []
         measure_time = Time.now
-        current_stats.each { |word, current_stat|
-          unless user.has_stopword? word
-            z_score = FAZScore.new(ENV['TRENDS_DECAY'].to_f, history_stats[word].values[0..-2]).score(current_stat)
-            stat = {word: word, z_score: z_score, current_stat: current_stat, history_stats: history_stats[word]}
-            if z_score > 0
-              positive_stats << stat
-            elsif z_score < 0
-              negative_stats << stat
-            else z_score == 0
-              zero_stats << stat
-            end
-          end
-        }
+        result = StatsAnalyzer.new(user, current_stats, history_stats).analyze(limit)
         Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to calc z-scores for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
-
-        measure_time = Time.now
-        result = {
-          positive_stats: json_safe(positive_stats.sort_by { |stat| -stat[:z_score] }[0...limit]),
-          zero_stats: json_safe(zero_stats.sort_by { |stat| -stat[:current_stat] }[0...limit]),
-          negative_stats: json_safe(negative_stats.sort_by { |stat| stat[:z_score] }[0...limit])
-        }
-        Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to sort for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
         result
       end
     end
@@ -87,14 +104,6 @@ class BaseStat
           } unless tweet.spam || tweet.person.spam
         end.compact
       #end
-    end
-
-    private
-
-    def json_safe(stats)
-      stats.each do |stat|
-        stat[:z_score] = stat[:z_score].to_s
-      end
     end
   end
 end

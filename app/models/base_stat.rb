@@ -13,6 +13,7 @@ class StatsAnalyzer
   def analyze(limit)
     @current_stats.each do |word, current_stat|
       unless @user.has_stopword? word
+        next if frequency_too_low?(word, current_stat)
         z_score = FAZScore.new(ENV['TRENDS_DECAY'].to_f, @history_stats[word].values[0..-2]).score(current_stat)
         stat = {word: word, z_score: z_score, current_stat: current_stat, history_stats: @history_stats[word]}
         if z_score > 0
@@ -32,6 +33,24 @@ class StatsAnalyzer
   end
 
   private
+
+  def overall_average_frequency
+    @overall_average_frequency ||=
+      begin
+        non_zero_stats_count = @history_stats.sum {|word, stats| stats.count {|time, freq| freq > 0 }}
+        @history_stats.values.sum {|e| e.values.sum } / non_zero_stats_count.to_f
+      end
+  end
+
+  def average_frequency(word)
+    non_zero_stats_count = @history_stats[word].count {|time, freq| freq > 0 }
+    @history_stats[word].values.sum / non_zero_stats_count.to_f
+  end
+
+  def frequency_too_low?(word, current_stat)
+    average_frequency(word) < overall_average_frequency * 4 and
+      current_stat < overall_average_frequency * 4
+  end
 
   def json_safe(stats)
     stats.each do |stat|

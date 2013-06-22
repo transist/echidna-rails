@@ -7,7 +7,7 @@ class StatsAnalyzer
     @history_stats = history_stats
     @positive_stats = []
     @negative_stats = []
-    @zero_stats = []
+    @unusual_stats = []
   end
 
   def analyze(limit)
@@ -16,18 +16,18 @@ class StatsAnalyzer
         next if frequency_too_low?(word, current_stat)
         z_score = FAZScore.new(ENV['TRENDS_DECAY'].to_f, @history_stats[word].values[0..-2]).score(current_stat)
         stat = {word: word, z_score: z_score, current_stat: current_stat, history_stats: @history_stats[word]}
-        if z_score > 0
+        if z_score > 10
+          @unusual_stats << stat
+        elsif z_score > 0
           @positive_stats << stat
         elsif z_score < 0
           @negative_stats << stat
-        else z_score == 0
-          @zero_stats << stat
         end
       end
     end
     {
+      unusual_stats: json_safe(@unusual_stats.sort_by { |stat| -stat[:z_score] }[0...limit]),
       positive_stats: json_safe(@positive_stats.sort_by { |stat| -stat[:z_score] }[0...limit]),
-      zero_stats: json_safe(@zero_stats.sort_by { |stat| -stat[:current_stat] }[0...limit]),
       negative_stats: json_safe(@negative_stats.sort_by { |stat| stat[:z_score] }[0...limit])
     }
   end

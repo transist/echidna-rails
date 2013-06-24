@@ -45,7 +45,7 @@ class Job
                          </tbody>
                         </table>
                         <table class='stats table table-striped'>
-                         <caption>Zero Trends</caption>
+                         <caption>Unusual Trends</caption>
                          <thead>
                            <tr>
                              <th>Keyword</th>
@@ -55,14 +55,14 @@ class Job
                            </tr>
                          </thead>
                          <tbody>
-                         {{#zero_stats}}
+                         {{#unusual_stats}}
                            <tr>
                              <td><a href='#' class='word'>{{word}}</a></td>
                              <td>{{score}}</td>
                              <td>{{current_stat}}</td>
                              <td><a href='#' class='stopword'><span class='icon-remove'></span></a></td>
                            </tr>
-                         {{/zero_stats}}
+                         {{/unusual_stats}}
                          </tbody>
                         </table>"
     @tweets_template = "<table class='tweets table table-striped'>
@@ -232,7 +232,7 @@ class Job
 
               $.each payload.positive_stats, $.proxy(self, 'updateHistoryStats', panelId, period)
               $.each payload.negative_stats, $.proxy(self, 'updateHistoryStats', panelId, period)
-              $.each payload.zero_stats, $.proxy(self, 'updateHistoryStats', panelId, period)
+              $.each payload.unusual_stats, $.proxy(self, 'updateHistoryStats', panelId, period)
 
               $(panelWidget).find('.trends').html $.mustache(self.trends_template, payload)
             $(panelWidget).find('.spinner').hide()

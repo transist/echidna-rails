@@ -38,7 +38,7 @@ class TencentAgent
       when 2
         user['gender'] = 'female'
       else
-        user['gender'] = 'both'
+        user['gender'] = 'unknown'
       end
       user
     end

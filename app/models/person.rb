@@ -1,7 +1,7 @@
 class Person
   include Mongoid::Document
 
-  GENDERS = %w(male female both)
+  GENDERS = %w(male female unknown)
   BIRTH_YEARS = [
     [1947, 1953],
     [1954, 1960],
@@ -44,7 +44,7 @@ class Person
 
   scope :untracked, where(tencent_list: nil)
   scope :has_birth_year, ne(birth_year: 0)
-  scope :has_gender, ne(gender: 'both')
+  scope :has_gender, ne(gender: 'unknown')
   scope :has_city, ne(city_id: nil)
 
   def self.stats

@@ -77,6 +77,6 @@ module Echidna
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    config.cache_store = :redis_store
+    config.cache_store = :redis_store, {namespace: "e:cache:#{Rails.env[0]}"}
   end
 end

@@ -8,6 +8,7 @@ class TencentAgent
     def decorate(user)
       decorate_city(user)
       decorate_gender(user)
+      decorate_birth_year(user)
     end
 
     private
@@ -39,6 +40,14 @@ class TencentAgent
         user['gender'] = 'female'
       else
         user['gender'] = 'unknown'
+      end
+      user
+    end
+
+    def decorate_birth_year(user)
+      case user['birth_year']
+      when 0
+        user['birth_year'] = Person::BIRTH_YEAR_UNKNOWN
       end
       user
     end

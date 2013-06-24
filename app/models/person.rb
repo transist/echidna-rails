@@ -2,6 +2,7 @@ class Person
   include Mongoid::Document
 
   GENDERS = %w(male female unknown)
+  BIRTH_YEAR_UNKNOWN = 0
   BIRTH_YEARS = [
     [1947, 1953],
     [1954, 1960],

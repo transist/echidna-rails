@@ -39,7 +39,7 @@ GIT
 
 GIT
   remote: git@github.com:transist/echidna-stopwords.git
-  revision: 7539f1a00e13ac560f35bde2d9c59d7457fffae4
+  revision: f93a9c5e9e1249c9e54cdb976509e82c8e3cba87
   specs:
     echidna-stopwords (0.0.1)
 

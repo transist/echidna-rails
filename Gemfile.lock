@@ -175,9 +175,6 @@ GEM
     guard-sidekiq (0.0.11)
       guard (>= 1.1)
       sidekiq
-    guard-zeus (0.0.1)
-      guard
-      zeus
     haml (4.0.3)
       tilt
     has_scope (0.5.1)
@@ -448,7 +445,6 @@ DEPENDENCIES
   guard-rails (>= 0.4.0)
   guard-rspec (>= 2.5.2)
   guard-sidekiq
-  guard-zeus
   hashie
   hiredis
   inherited_resources

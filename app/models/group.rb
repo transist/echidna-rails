@@ -34,10 +34,12 @@ class Group
 
   def self.all_for_person(person)
     where(
-      :start_birth_year.lte => person.birth_year,
-      :end_birth_year.gte => person.birth_year,
-      :gender.in => [person.gender, 'both'],
-      city_id: person.city_id
+      :gender.in => [person.gender, nil],
+      :city_id.in => [person.city_id, nil]
+    ).or(
+      { :start_birth_year.lte => person.birth_year,
+        :end_birth_year.gte => person.birth_year },
+      {start_birth_year: nil, end_birth_year: nil}
     )
   end
 

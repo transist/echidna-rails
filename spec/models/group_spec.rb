@@ -7,20 +7,101 @@ describe Group do
   it { should have_and_belong_to_many :people }
   it { should have_and_belong_to_many :panels }
 
-  let(:person) { create(:person_shanghai_female_1999) }
-
   before { seed_groups }
 
   describe '.all_for_person' do
-    it 'find all groups for given person instance' do
-      groups = Group.all_for_person(person)
-      groups.count.should == 2
-      groups.each do |group|
-        [person.gender, 'both'].should include(group.gender)
-        group.start_birth_year.should <= person.birth_year
-        group.end_birth_year.should >= person.birth_year
-        group.city.should == person.city
-      end
+    include_context 'named groups'
+
+    subject { Group.all_for_person(person) }
+
+    context 'person with all info' do
+      let(:person) { create :person, birth_year: 1990, gender: 'female', city: @city_shanghai }
+
+      it { should have(8).groups }
+
+      it { should include(group_1989_1995_female_shanghai) }
+
+      it { should include(group_1989_1995_female_all) }
+      it { should include(group_1989_1995_all_shanghai) }
+      it { should include(group_all_female_shanghai) }
+
+      it { should include(group_1989_1995_all_all) }
+      it { should include(group_all_female_all) }
+      it { should include(group_all_all_shanghai) }
+
+      it { should include(group_all_all_all) }
+    end
+
+    context 'person with unknown gender' do
+      let(:person) { create :person, birth_year: 1990, gender: 'unknown', city: @city_shanghai }
+
+      it { should have(8).groups }
+
+      it { should include(group_1989_1995_unknown_shanghai) }
+
+      it { should include(group_1989_1995_unknown_all) }
+      it { should include(group_1989_1995_all_shanghai) }
+      it { should include(group_all_unknown_shanghai) }
+
+      it { should include(group_1989_1995_all_all) }
+      it { should include(group_all_unknown_all) }
+      it { should include(group_all_all_shanghai) }
+
+      it { should include(group_all_all_all) }
+    end
+
+    context 'person with unknown birth year' do
+      let(:person) { create :person, birth_year: 0, gender: 'female', city: @city_shanghai }
+
+      it { should have(8).groups }
+
+      it { should include(group_0_0_female_shanghai) }
+
+      it { should include(group_0_0_female_all) }
+      it { should include(group_0_0_all_shanghai) }
+      it { should include(group_all_female_shanghai) }
+
+      it { should include(group_0_0_all_all) }
+      it { should include(group_all_female_all) }
+      it { should include(group_all_all_shanghai) }
+
+      it { should include(group_all_all_all) }
+    end
+
+    context 'person with unknown city' do
+      let(:person) { create :person, birth_year: 1990, gender: 'female', city: @city_unknown }
+
+      it { should have(8).groups }
+
+      it { should include(group_1989_1995_female_unknown) }
+
+      it { should include(group_1989_1995_female_all) }
+      it { should include(group_1989_1995_all_unknown) }
+      it { should include(group_all_female_unknown) }
+
+      it { should include(group_1989_1995_all_all) }
+      it { should include(group_all_female_all) }
+      it { should include(group_all_all_unknown) }
+
+      it { should include(group_all_all_all) }
+    end
+
+    context 'person with unknown birth_year, unknown gender and unknown city' do
+      let(:person) { create :person, birth_year: 0, gender: 'unknown', city: @city_unknown }
+
+      it { should have(8).groups }
+
+      it { should include(group_0_0_unknown_unknown) }
+
+      it { should include(group_0_0_unknown_all) }
+      it { should include(group_0_0_all_unknown) }
+      it { should include(group_all_unknown_unknown) }
+
+      it { should include(group_0_0_all_all) }
+      it { should include(group_all_unknown_all) }
+      it { should include(group_all_all_unknown) }
+
+      it { should include(group_all_all_all) }
     end
   end
 

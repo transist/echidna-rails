@@ -1,20 +1,20 @@
 module Support
   module Groups
     def seed_groups
-      create(:city_shanghai)
-      create(:city_beijing)
-      create(:city_guangzhou)
-      create(:city_chengdu)
-      create(:city_hangzhou)
-      create(:city_qingdao)
-      create(:city_unknown)
+      @city_shanghai = create(:city_shanghai)
+      @city_beijing = create(:city_beijing)
+      @city_guangzhou = create(:city_guangzhou)
+      @city_chengdu = create(:city_chengdu)
+      @city_hangzhou = create(:city_hangzhou)
+      @city_qingdao = create(:city_qingdao)
+      @city_unknown = create(:city_unknown)
 
-      Person::GENDERS.each do |gender|
-        City.all.each do |city|
-          Person::BIRTH_YEARS.each do |birth_year|
+      [*Person::GENDERS, nil].each do |gender|
+        [*City.all.map(&:id), nil].each do |city_id|
+          [*Person::BIRTH_YEARS, [nil, nil]].each do |birth_year|
             Group.create!(
               gender: gender,
-              city: city,
+              city_id: city_id,
               start_birth_year: birth_year.first,
               end_birth_year: birth_year.last
             )

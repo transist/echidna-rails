@@ -13,7 +13,8 @@ class Person
     [1989, 1995],
     [1996, 2002],
     [2003, 2009],
-    [2010, 2013]
+    [2010, 2013],
+    [BIRTH_YEAR_UNKNOWN, BIRTH_YEAR_UNKNOWN]
   ]
 
   field :target_source, type: String

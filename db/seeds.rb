@@ -35,11 +35,11 @@ City.create! name: 'Unknown', tier: 'Tier unknown'
 puts 'Cities created'
 
 
-Person::GENDERS.each do |gender|
-  City.all.each do |city|
-    Person::BIRTH_YEARS.each do |birth_year|
+[*Person::GENDERS, nil].each do |gender|
+  [*City.all.map(&:id), nil].each do |city_id|
+    [*Person::BIRTH_YEARS, [nil, nil]].each do |birth_year|
       Group.create!(
-        gender: gender, city: city,
+        gender: gender, city_id: city_id,
         start_birth_year: birth_year.first,
         end_birth_year: birth_year.last
       )

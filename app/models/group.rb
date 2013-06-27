@@ -53,6 +53,11 @@ class Group
   end
 
   def to_s
-    '%s - %s %s %s' % [start_birth_year, end_birth_year, gender, city.name]
+    birth_year = if start_birth_year && end_birth_year
+                   '%s - %s' % [start_birth_year, end_birth_year]
+                 else
+                   'All birth years'
+                 end
+    '%s %s %s' % [birth_year, gender || 'All genders', city ? city.name : 'All cities']
   end
 end

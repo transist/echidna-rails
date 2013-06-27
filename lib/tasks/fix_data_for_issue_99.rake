@@ -8,15 +8,5 @@ task fix_data_for_issue_99: :environment do
 
   Person.where(city_id: nil).update_all(city_id: city_unknown.id)
 
-  [*Person::GENDERS, nil].each do |gender|
-    [*City.all.map(&:id), nil].each do |city_id|
-      [*Person::BIRTH_YEARS, [nil, nil]].each do |birth_year|
-        Group.create!(
-          gender: gender, city_id: city_id,
-          start_birth_year: birth_year.first,
-          end_birth_year: birth_year.last
-        )
-      end
-    end
-  end
+  Group.create_groups!
 end

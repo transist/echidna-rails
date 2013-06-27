@@ -9,18 +9,7 @@ module Support
       @city_qingdao = create(:city_qingdao)
       @city_unknown = create(:city_unknown)
 
-      [*Person::GENDERS, nil].each do |gender|
-        [*City.all.map(&:id), nil].each do |city_id|
-          [*Person::BIRTH_YEARS, [nil, nil]].each do |birth_year|
-            Group.create!(
-              gender: gender,
-              city_id: city_id,
-              start_birth_year: birth_year.first,
-              end_birth_year: birth_year.last
-            )
-          end
-        end
-      end
+      Group.create_groups!
     end
   end
 end

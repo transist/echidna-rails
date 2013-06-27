@@ -14,6 +14,24 @@ class Group
 
   index({ start_birth_year: 1, end_birth_year: 1, gender: 1, city_id: 1 }, { unique: true })
 
+  # Safely create all necessary groups.
+  #
+  # Field with nil value means "all". For example if gender of a group is nil,
+  # this group should contain people who's gender is male, female and unknown.
+  def self.create_groups!
+    [*Person::GENDERS, nil].each do |gender|
+      [*City.all.map(&:id), nil].each do |city_id|
+        [*Person::BIRTH_YEARS, [nil, nil]].each do |birth_year|
+          Group.create!(
+            gender: gender, city_id: city_id,
+            start_birth_year: birth_year.first,
+            end_birth_year: birth_year.last
+          )
+        end
+      end
+    end
+  end
+
   def self.all_for_person(person)
     where(
       :start_birth_year.lte => person.birth_year,

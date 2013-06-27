@@ -13,9 +13,9 @@ h2 Panels
         .panel data-panel-id=panel.id data-panel-period=(panel.period || "day")
           .header
             .info
-              span.cities.label.label-info= panel.cities.map(&:name).join(', ')
-              span.ages.label.label-info= panel.age_ranges.join(', ')
-              span.gender.label.label-info= panel.gender
+              span.cities.label.label-info= panel.cities_label
+              span.ages.label.label-info= panel.age_ranges_label
+              span.gender.label.label-info= panel.gender_label
             /.check-live
               /input.live type='checkbox' name='live'
               /label for='live' Live

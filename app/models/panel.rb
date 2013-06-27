@@ -18,16 +18,43 @@ class Panel
 
   index({ user_id: 1, created_at: -1 })
 
-  def to_s
-    '%s %s %s' % [age_ranges.join(', '), gender, cities.map(&:name)]
-  end
-
   def start_years
     self.age_ranges.map { |age_range| age_range.split(' - ').first }
   end
 
   def end_years
     self.age_ranges.map { |age_range| age_range.split(' - ').last }
+  end
+
+  def age_ranges_label
+    case age_ranges
+    when []
+      'Age all'
+    else
+      age_ranges.map do |age_range|
+        age_range == '0 - 0' ? 'Age unknown' : age_range
+      end.join(', ')
+    end
+  end
+
+  def gender_label
+    case gender
+    when 'unknown'
+      'Gender unknown'
+    when ''
+      'Gender all'
+    else
+      gender
+    end
+  end
+
+  def cities_label
+    case cities
+    when []
+      'City all'
+    else
+      cities.map(&:label).join(', ')
+    end
   end
 
   private

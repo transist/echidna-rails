@@ -9,9 +9,15 @@ class City
 
   validates :name, presence: true
 
+  default_scope order_by(tier: :asc)
+
   index({ name: 1 }, { unique: true })
 
   def self.unknown
     where(name: 'Unknown').first
+  end
+
+  def label
+    name == 'Unknown' ? 'City unknown' : name
   end
 end

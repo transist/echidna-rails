@@ -5,6 +5,11 @@ FactoryGirl.define do
     tier 'Tier 1'
   end
 
+  factory :city_unknown, parent: :city do
+    name 'Unknown'
+    tier 'Tier unknown'
+  end
+
   factory :city_shanghai, parent: :city do
     name '上海'
   end

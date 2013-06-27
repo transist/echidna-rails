@@ -10,4 +10,8 @@ class City
   validates :name, presence: true
 
   index({ name: 1 }, { unique: true })
+
+  def self.unknown
+    where(name: 'Unknown').first
+  end
 end

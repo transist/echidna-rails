@@ -46,7 +46,7 @@ class Person
   scope :untracked, where(tencent_list: nil)
   scope :has_birth_year, ne(birth_year: 0)
   scope :has_gender, ne(gender: 'unknown')
-  scope :has_city, ne(city_id: nil)
+  scope :has_city, -> { ne(city_id: City.unknown.id) }
 
   def self.stats
     stats = Hashie::Mash.new

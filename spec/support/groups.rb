@@ -7,6 +7,7 @@ module Support
       create(:city_chengdu)
       create(:city_hangzhou)
       create(:city_qingdao)
+      create(:city_unknown)
 
       Person::GENDERS.each do |gender|
         City.all.each do |city|

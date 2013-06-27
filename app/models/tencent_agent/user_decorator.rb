@@ -17,13 +17,13 @@ class TencentAgent
     def decorate_city(user)
       case user['province_code'].to_i
       when 0
-        # Do nothing
+        user['city'] = 'Unknown'
       when *SPECIAL_CITIES
         user['city'] = get_location_by_key(user['province_code'])
       else
         case user['city_code'].to_i
         when 0
-          # Do nothing
+          user['city'] = 'Unknown'
         else
           key = user['province_code'].to_s + ':' + user['city_code']
           user['city'] = get_location_by_key(key)

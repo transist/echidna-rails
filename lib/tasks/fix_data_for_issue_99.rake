@@ -14,20 +14,40 @@ task fix_data_for_issue_99: :environment do
   Group.create_groups!
 
   puts 'Clearing people groups and panels groups relations...'
-  Group.all.each do |group|
-    group.people.clear
-    group.panels.clear
-  end
+  Group.all.unset :person_ids
+  Group.update_all panel_ids: []
+  Person.update_all group_ids: []
+  Panel.update_all group_ids: []
 
   puts 'Rebuilding people groups relations...'
-  people_count = Person.count
+  groups_count = Group.count
   i = 0
-  Person.all.each do |person|
-    Group.all_for_person(person).each do |group|
-      group.add_person(person)
-    end
+  Group.all.each do |group|
+    criteria = if group.start_birth_year.nil? && group.end_birth_year.nil?
+                 Person.all
+               else
+                 Person.where(
+                   :birth_year.gte => group.start_birth_year,
+                   :birth_year.lte => group.end_birth_year
+                 )
+               end
+
+    criteria = if group.gender.nil?
+                 criteria
+               else
+                 criteria.where(gender: group.gender)
+               end
+
+    criteria = if group.city_id.nil?
+                 criteria
+               else
+                 criteria.where(city_id: group.city_id)
+               end
+
+    criteria.push(:group_ids, group.id)
+
+    print "\r%d/%d groups processed, completed %g%%." % [i, groups_count, i / groups_count.to_f * 100]
     i += 1
-    print "\r%d/%d people processed, completed %g%%." % [i, people_count, i / people_count.to_f * 100]
   end
 
   puts 'Rebuilding panels groups relations...'

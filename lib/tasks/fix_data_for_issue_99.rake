@@ -31,7 +31,7 @@ task fix_data_for_issue_99: :environment do
   puts 'Rebuilding people groups relations...'
   groups_count = Group.count
   i = 0
-  Group.all.each do |group|
+  Group.all.batch_size(Group.count).each do |group|
     criteria = if group.start_birth_year.nil? && group.end_birth_year.nil?
                  Person.all
                else

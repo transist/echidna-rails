@@ -1,5 +1,14 @@
 desc 'Fix data for issue 99'
 task fix_data_for_issue_99: :environment do
+  puts 'Dropping tweets and stats...'
+  Tweet.collection.drop
+  DailyStat.collection.drop
+  HourlyStat.collection.drop
+
+  puts 'Rebuilding indexes...'
+  Rake::Task['db:mongoid:remove_indexes'].execute
+  Rake::Task['db:mongoid:create_indexes'].execute
+
   puts 'Renaming gender both to unknown...'
   Person.where(gender: 'both').update_all(gender: 'unknown')
   Group.where(gender: 'both').update_all(gender: 'unknown')
@@ -49,6 +58,7 @@ task fix_data_for_issue_99: :environment do
     print "\r%d/%d groups processed, completed %g%%." % [i, groups_count, i / groups_count.to_f * 100]
     i += 1
   end
+  puts
 
   puts 'Rebuilding panels groups relations...'
   Panel.all.each do |panel|

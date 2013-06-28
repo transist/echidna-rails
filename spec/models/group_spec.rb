@@ -193,6 +193,7 @@ describe Group do
   end
 
   describe '#add_person' do
+    let(:person) { create(:person_shanghai_female_1999) }
     let(:group) { create(:group) }
     before { group.add_person(person) }
 

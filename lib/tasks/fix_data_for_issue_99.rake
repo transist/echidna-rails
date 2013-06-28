@@ -1,13 +1,16 @@
 desc 'Fix data for issue 99'
 task fix_data_for_issue_99: :environment do
+  puts 'Renaming gender both to unknown...'
   Person.where(gender: 'both').update_all(gender: 'unknown')
   Group.where(gender: 'both').update_all(gender: 'unknown')
   Panel.where(gender: 'both').update_all(gender: 'unknown')
 
+  puts 'Adding city unknown...'
   city_unknown = City.find_or_create_by(name: 'Unknown', tier: 'Tier unknown')
 
   Person.where(city_id: nil).update_all(city_id: city_unknown.id)
 
+  puts 'Creating missing groups...'
   Group.create_groups!
 
   puts 'Clearing people groups and panels groups relations...'

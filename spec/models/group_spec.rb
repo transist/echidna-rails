@@ -4,7 +4,6 @@ require_relative 'named_groups'
 describe Group do
   it { should validate_inclusion_of(:gender).to_allow(Person::GENDERS) }
   it { should validate_inclusion_of(:gender).to_allow(nil) }
-  it { should have_and_belong_to_many :people }
   it { should have_and_belong_to_many :panels }
 
   before { seed_groups }

@@ -9,7 +9,6 @@ class Group
 
   belongs_to :user
   belongs_to :city
-  has_and_belongs_to_many :people
   has_and_belongs_to_many :panels
 
   index({ start_birth_year: 1, end_birth_year: 1, gender: 1, city_id: 1 }, { unique: true })
@@ -64,8 +63,13 @@ class Group
                end
   end
 
+  # This method exists to emulate the relation between Person model for specs.
+  def people
+    Person.where(group_ids: id)
+  end
+
   def add_person(person)
-    people << person
+    person.groups << self
   end
 
   def z_scores(time)

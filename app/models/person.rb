@@ -42,7 +42,16 @@ class Person
   belongs_to :city
   belongs_to :seed_person, class_name: 'Person'
   belongs_to :tencent_list, index: true
-  has_and_belongs_to_many :groups
+
+  # This is a one side relation since MongoDB has a limitation: Size of a
+  # single BSON document can't be bigger than 16MB.
+  # http://docs.mongodb.org/manual/reference/limits/#BSON Document Size
+  #
+  # Size of a BSON::ObjectId is 12 bytes, storing 2M people (current system
+  # already have 2M+ people) in one group will cause the group document reach
+  # that limitation.
+  # http://docs.mongodb.org/manual/reference/object-id/#overview
+  has_and_belongs_to_many :groups, inverse_of: nil, index: true
 
   scope :untracked, where(tencent_list: nil)
   scope :has_birth_year, ne(birth_year: 0)

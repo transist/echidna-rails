@@ -17,10 +17,14 @@ task fix_data_for_issue_99: :environment do
   end
 
   puts 'Rebuilding people groups relations...'
+  people_count = Person.count
+  i = 0
   Person.all.each do |person|
     Group.all_for_person(person).each do |group|
       group.add_person(person)
     end
+    i += 1
+    print "\r%d/%d people processed, completed %g%%." % [i, people_count, i / people_count.to_f * 100]
   end
 
   puts 'Rebuilding panels groups relations...'

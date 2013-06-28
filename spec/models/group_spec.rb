@@ -190,25 +190,4 @@ describe Group do
       it { should include(group_all_all_all) }
     end
   end
-
-  describe '#add_person' do
-    let(:person) { create(:person_shanghai_female_1999) }
-    let(:group) { create(:group) }
-    before { group.add_person(person) }
-
-    it 'add the person to group' do
-      group.people.should include(person)
-    end
-
-    it 'add the group to person' do
-      person.groups.should include(group)
-    end
-
-    it 'should not produce duplicate relation' do
-      group.add_person(person)
-      group.add_person(person)
-      group.people.size.should == 1
-      person.groups.size.should == 1
-    end
-  end
 end

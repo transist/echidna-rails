@@ -68,10 +68,6 @@ class Group
     Person.where(group_ids: id)
   end
 
-  def add_person(person)
-    person.groups << self
-  end
-
   def z_scores(time)
     DailyStat.top_trends(self.id)
   end

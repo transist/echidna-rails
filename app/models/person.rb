@@ -85,6 +85,10 @@ class Person
     stats
   end
 
+  def add_to_groups(groups)
+    self.groups << groups
+  end
+
   def spam!
     update_attribute :spam, true
     self.tweets.map(&:spam!)

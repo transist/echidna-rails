@@ -3,7 +3,6 @@ require 'spec_helper'
 describe PersonWorker do
   before do
     seed_groups
-    create :tencent_agent
   end
 
   let(:person_attrs) { {

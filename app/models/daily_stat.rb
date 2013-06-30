@@ -12,11 +12,18 @@ class DailyStat < BaseStat
   before_save :set_default_stats
 
   class << self
-    def record(word, group, tweet)
+    def record(tweet)
       date = tweet.posted_at.to_date
-      daily_stat = self.find_or_create_by(word: word, group: group, date: date.beginning_of_month)
-      self.where(id: daily_stat.id, 'stats.day' => date.mday).
-        update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
+      beginning_of_month = date.beginning_of_month
+
+      daily_stat_ids = tweet.words.map do |word|
+        tweet.person.groups.map do |group|
+          self.find_or_create_by(word: word, group: group, date: beginning_of_month).id
+        end
+      end.flatten
+
+      self.where(:id.in => daily_stat_ids, 'stats.day' => date.mday)
+        .update_all('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
     end
 
     def remove(word, group, tweet)

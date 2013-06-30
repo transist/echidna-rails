@@ -10,11 +10,18 @@ class HourlyStat < BaseStat
   belongs_to :group
 
   class << self
-    def record(word, group, tweet)
+    def record(tweet)
       time = tweet.posted_at
-      hourly_stat = self.find_or_create_by(word: word, group: group, date: time.to_date)
-      self.where(id: hourly_stat.id, 'stats.hour' => time.hour).
-        update('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
+      date = time.to_date
+
+      hourly_stat_ids = tweet.words.map do |word|
+        tweet.person.groups.map do |group|
+          self.find_or_create_by(word: word, group: group, date: date).id
+        end
+      end.flatten
+
+      self.where(:id.in => hourly_stat_ids, 'stats.hour' => time.hour).
+        update_all('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
     end
 
     def remove(word, group, tweet)

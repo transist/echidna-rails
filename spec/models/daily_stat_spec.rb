@@ -36,68 +36,86 @@ describe DailyStat do
 
   describe '.record' do
     before { Tweet.skip_callback(:create, :after, :update_stats) }
-    let(:word) { 'Zerg' }
-    let(:group) { create(:group) }
     let(:tweets) { [
       create(:tweet, posted_at: Time.parse('2013-03-14 00:20:12')),
       create(:tweet, posted_at: Time.parse('2013-04-15 12:50:02')),
       create(:tweet, posted_at: Time.parse('2013-05-16 23:32:55'))
     ] }
 
-    context 'when the DailyStat instance not exists' do
-      it 'create an instance' do
+    context 'when the DailyStat instances not exist' do
+      it 'create instances' do
         tweets.each do |tweet|
           expect {
-            DailyStat.record(word, group, tweet)
-          }.to change(DailyStat, :count).by(1)
+            DailyStat.record(tweet)
+          }.to change(DailyStat, :count).by(tweet.words.size * tweet.person.groups.count)
         end
       end
 
       it 'increment count for the date' do
         tweets.each do |tweet|
-          DailyStat.record(word, group, tweet)
-          daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month).first
-          expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['count']).to eq(1)
+          DailyStat.record(tweet)
+
+          tweet.words.each do |word|
+            tweet.person.groups.each do |group|
+              daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month, group: group, word: word).first
+              expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['count']).to eq(1)
+            end
+          end
         end
       end
 
       it 'add tweet_id' do
         tweets.each do |tweet|
-          DailyStat.record(word, group, tweet)
-          daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month).first
-          expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to have(1).tweet_ids
-          expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to be_include tweet.id
+          DailyStat.record(tweet)
+
+          tweet.words.each do |word|
+            tweet.person.groups.each do |group|
+              daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month, group: group, word: word).first
+              expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to have(1).tweet_ids
+              expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to be_include tweet.id
+            end
+          end
         end
       end
     end
 
-    context 'when the DailyStat instance already exists' do
+    context 'when the DailyStat instances already exist' do
       before do
-        tweets.each { |tweet| DailyStat.record(word, group, tweet) }
+        tweets.each { |tweet| DailyStat.record(tweet) }
       end
 
-      it 'do not create new instance' do
+      it 'do not create new instances' do
         tweets.each do |tweet|
           expect {
-            DailyStat.record(word, group, tweet)
+            DailyStat.record(tweet)
           }.to_not change(DailyStat, :count)
         end
       end
 
       it 'increment count for the date' do
         tweets.each do |tweet|
-          DailyStat.record(word, group, tweet)
-          daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month).first
-          expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['count']).to eq(2)
+          DailyStat.record(tweet)
+
+          tweet.words.each do |word|
+            tweet.person.groups.each do |group|
+              daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month, group: group, word: word).first
+              expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['count']).to eq(2)
+            end
+          end
         end
       end
 
       it 'add tweet_id' do
         tweets.each do |tweet|
-          DailyStat.record(word, group, tweet)
-          daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month).first
-          expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to have(2).tweet_ids
-          expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to be_include tweet.id
+          DailyStat.record(tweet)
+
+          tweet.words.each do |word|
+            tweet.person.groups.each do |group|
+              daily_stat = DailyStat.where(date: tweet.posted_at.beginning_of_month, group: group, word: word).first
+              expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to have(2).tweet_ids
+              expect(daily_stat.stats.find {|stat| stat['day'] == tweet.posted_at.mday }['tweet_ids']).to be_include tweet.id
+            end
+          end
         end
       end
     end

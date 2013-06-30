@@ -31,21 +31,13 @@ describe Tweet do
     end
 
     it 'update daily stats of all words for all groups of the author' do
-      %w(We sense soul search answers).each do |word|
-        tweet.person.groups.each do |group|
-          HourlyStat.expects(:record).with(word, group, tweet)
-        end
-      end
+      HourlyStat.expects(:record).with(tweet)
 
       tweet.send :update_stats
     end
 
     it 'update hourly stats of all words for all groups of the author' do
-      %w(We sense soul search answers).each do |word|
-        tweet.person.groups.each do |group|
-          DailyStat.expects(:record).with(word, group, tweet)
-        end
-      end
+      DailyStat.expects(:record).with(tweet)
 
       tweet.send :update_stats
     end

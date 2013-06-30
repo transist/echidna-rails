@@ -38,11 +38,7 @@ class Tweet
   end
 
   def update_stats
-    self.words.each do |word|
-      person.groups.each do |group|
-        DailyStat.record(word, group, self)
-        HourlyStat.record(word, group, self)
-      end
-    end
+    DailyStat.record(self)
+    HourlyStat.record(self)
   end
 end

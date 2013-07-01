@@ -17,8 +17,8 @@ class DailyStat < BaseStat
       beginning_of_month = date.beginning_of_month
 
       tweet.words.each do |word|
-        tweet.person.groups.each do |group|
-          self.create(word: word, group: group, date: beginning_of_month)
+        tweet.person.group_ids.each do |group_id|
+          self.create(word: word, group_id: group_id, date: beginning_of_month)
         end
       end
 

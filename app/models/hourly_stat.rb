@@ -15,8 +15,8 @@ class HourlyStat < BaseStat
       date = time.to_date
 
       tweet.words.each do |word|
-        tweet.person.groups.each do |group|
-          self.create(word: word, group: group, date: date)
+        tweet.person.group_ids.each do |group_id|
+          self.create(word: word, group_id: group_id, date: date)
         end
       end
 

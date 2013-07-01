@@ -19,7 +19,7 @@ describe HourlyStat do
         tweets.each do |tweet|
           expect {
             HourlyStat.record(tweet)
-          }.to change(HourlyStat, :count).by(tweet.words.size * tweet.person.groups.count)
+          }.to change(HourlyStat, :count).by(tweet.words.size * tweet.person.groups.size)
         end
       end
 

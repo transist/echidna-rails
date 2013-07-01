@@ -16,13 +16,14 @@ class DailyStat < BaseStat
       date = tweet.posted_at.to_date
       beginning_of_month = date.beginning_of_month
 
-      daily_stat_ids = tweet.words.map do |word|
-        tweet.person.groups.map do |group|
-          self.find_or_create_by(word: word, group: group, date: beginning_of_month).id
+      tweet.words.each do |word|
+        tweet.person.groups.each do |group|
+          self.create(word: word, group: group, date: beginning_of_month)
         end
-      end.flatten
+      end
 
-      self.where(:id.in => daily_stat_ids, 'stats.day' => date.mday)
+      self.where(:word.in => tweet.words, :group_id.in => tweet.person.group_ids,
+                 date: beginning_of_month, 'stats.day' => date.mday)
         .update_all('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
     end
 

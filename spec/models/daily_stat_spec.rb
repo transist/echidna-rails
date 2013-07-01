@@ -47,7 +47,7 @@ describe DailyStat do
         tweets.each do |tweet|
           expect {
             DailyStat.record(tweet)
-          }.to change(DailyStat, :count).by(tweet.words.size * tweet.person.groups.count)
+          }.to change(DailyStat, :count).by(tweet.words.size * tweet.person.groups.size)
         end
       end
 

@@ -14,13 +14,14 @@ class HourlyStat < BaseStat
       time = tweet.posted_at
       date = time.to_date
 
-      hourly_stat_ids = tweet.words.map do |word|
-        tweet.person.groups.map do |group|
-          self.find_or_create_by(word: word, group: group, date: date).id
+      tweet.words.each do |word|
+        tweet.person.groups.each do |group|
+          self.create(word: word, group: group, date: date)
         end
-      end.flatten
+      end
 
-      self.where(:id.in => hourly_stat_ids, 'stats.hour' => time.hour).
+      self.where(:word.in => tweet.words, :group_id.in => tweet.person.group_ids,
+                 date: date, 'stats.hour' => time.hour).
         update_all('$inc' => {'stats.$.count' => 1}, '$push' => {'stats.$.tweet_ids' => tweet.id})
     end
 

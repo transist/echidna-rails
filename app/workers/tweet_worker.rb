@@ -16,6 +16,7 @@ class TweetWorker
       TencentAgent.first.sample_user(target_person_id)
     end
 
+    return if person.seed_level > 1
     person.tweets.create(tweet_attrs) unless person.spam?
   end
 end

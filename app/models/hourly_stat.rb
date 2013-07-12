@@ -36,7 +36,7 @@ class HourlyStat < BaseStat
     end
 
     def top_trends_cache_key(panel, start_time, current_time)
-      "hourly_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}"
+      "hourly_top_trends:#{start_time.to_i}:#{current_time.to_i}:#{panel.group_ids.join(',')}:#{panel.freq_limit}"
     end
 
     def tweets_cache_key(panel, word, start_time, current_time)

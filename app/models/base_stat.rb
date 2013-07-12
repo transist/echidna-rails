@@ -1,7 +1,8 @@
 require 'set'
 
 class StatsAnalyzer
-  def initialize(user, current_stats, history_stats)
+  def initialize(panel, user, current_stats, history_stats)
+    @panel = panel
     @user = user
     @current_stats = current_stats
     @history_stats = history_stats
@@ -48,8 +49,13 @@ class StatsAnalyzer
   end
 
   def frequency_too_low?(word, current_stat)
-    average_frequency(word) < overall_average_frequency * 4 and
-      current_stat < overall_average_frequency * 4
+    referencing_freq = if @panel.freq_limit.nil?
+                       overall_average_frequency * 4
+                     else
+                       @panel.freq_limit
+                     end
+    average_frequency(word) < referencing_freq and
+      current_stat < referencing_freq
   end
 
   def json_safe(stats)
@@ -91,7 +97,7 @@ class BaseStat
         Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to read stats for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
 
         measure_time = Time.now
-        result = StatsAnalyzer.new(user, current_stats, history_stats).analyze(limit)
+        result = StatsAnalyzer.new(panel, user, current_stats, history_stats).analyze(limit)
         Sidekiq.logger.info "#{self.name} takes #{Time.now - measure_time} to calc z-scores for panel: #{panel.id}, start_time: #{start_time}, current_time: #{current_time}"
         result
       end

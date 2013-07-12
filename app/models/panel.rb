@@ -6,6 +6,7 @@ class Panel
   field :age_ranges, type: Array
   field :gender
   field :period
+  field :freq_limit, type: Integer
 
   validates :name, presence: true
 

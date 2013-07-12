@@ -23,10 +23,15 @@ h2 Panels
             .commands
               = link_to 'Edit', edit_panel_path(panel), class: 'btn btn-primary'
               = link_to 'Delete', panel_path(panel), method: :delete, class: 'btn btn-danger', confirm: 'Are you sure to delete?'
-            ul.nav.nav-pills.periods
-              li= link_to '1 month', '#', "data-period" => "month"
-              li= link_to '1 week', '#', "data-period" => "week"
-              li= link_to '1 day', '#', "data-period" => "day"
+            .navbar
+              ul.nav.nav-pills.periods
+                li= link_to '1 month', '#', "data-period" => "month"
+                li= link_to '1 week', '#', "data-period" => "week"
+                li= link_to '1 day', '#', "data-period" => "day"
+              form.navbar-search
+                .input-prepend
+                  span.add-on Freq limit
+                  input.freq-limit.input-small type='text' value=panel.freq_limit
           .body
             .trends
             .tweets

@@ -1,4 +1,6 @@
 class PanelsController < InheritedResources::Base
+  respond_to :html, :json
+
   def create
     create! { root_url }
   end

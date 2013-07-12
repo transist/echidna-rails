@@ -126,6 +126,14 @@ class Job
     $.each $(panelWidget).find('.periods a'), (index, periodLink)->
       if $(panelWidget).data('panel-period') == $(periodLink).data('period')
         $(periodLink).parent().addClass('active')
+
+    $(panelWidget).find('.freq-limit').on 'focusout', (event)->
+      panelId = $(panelWidget).data('panel-id')
+      $.ajax '/panels/' + panelId,
+        data: {panel: {freq_limit: $(this).val()}},
+        dataType: 'json',
+        type: 'PUT'
+
     $(panelWidget).find('.periods').on 'click', 'a', (event)->
       $(panelWidget).find('.tweets').html ''
       $(panelWidget).find('.spinner').show()

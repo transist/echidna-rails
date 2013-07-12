@@ -1,0 +1,53 @@
+.new-panel-btn
+  margin: 10px 0
+
+.panels-tabs a
+  font-size: 18px
+
+.panel
+  .spinner
+    margin: 0 20px
+    width: 32px
+    height: 32px
+    background: url(<%= asset_path 'ajax-loader.gif' %>) no-repeat
+  .header
+    overflow: hidden
+  .info span
+    line-height: 32px
+    margin: 0 10px
+    padding: 0 10px
+    font-size: 14px
+  .periods
+    float: left
+  .check-live, .spinner, .commands
+    float: right
+    margin: 0 10px
+    height: 32px
+    line-height: 32px
+  .check-live
+    width: 50px
+    input, label
+      float: left
+  .commands a
+    margin: 0 10px
+  .body
+    height: 400px
+    overflow: scroll
+  .stats
+    width: auto
+    float: left
+    margin: 0 10px 0 0
+  .tweets
+    padding-top: 200px
+    width: 350px
+    float: right
+  table caption
+    font-size: 24px
+    font-weight: bold
+  .spam-user
+    float: right
+
+#history-stats-chart
+  display: none
+  position: absolute
+  width: 400px
